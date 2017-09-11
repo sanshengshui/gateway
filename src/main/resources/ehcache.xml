@@ -1,0 +1,17 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+
+    <cache name="common" maxEntriesLocalHeap="100" />
+
+    <cache name="appUsers" maxEntriesLocalHeap="10000" />
+    <cache name="appUserSessions" maxEntriesLocalHeap="10000" />
+    <cache name="devices" maxEntriesLocalHeap="10000" />
+    <cache name="deviceSettings" maxEntriesLocalHeap="10000" />
+    
+    <cache name="deviceBeat" maxEntriesLocalHeap="10000" />
+    <cache name="deviceIOSet" maxEntriesLocalHeap="10000" />
+    <cache name="deviceLatestStatus" maxEntriesLocalHeap="10000" />
+    <cache name="deviceLiveStatus" maxEntriesLocalHeap="10000" />
+    <cache name="deviceWifiSet" maxEntriesLocalHeap="10000" />
+
+</ehcache>

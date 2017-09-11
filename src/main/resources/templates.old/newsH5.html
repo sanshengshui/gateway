@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <th:block th:include="fragments/head :: head"></th:block>
+    </head>
+    <body style="padding-top: 0;">
+        <div class="container-fluid">
+          <div class="list-item" th:each="item : ${news}" th:id="${item.id}">
+            <div class="row">
+              <div class="col-xs-8">
+                <h4 th:text="${item.title}" th:if="${#strings.length(item.title) &lt; 11}">Title ...</h4>
+                <h4 th:text="${#strings.substring(item.title, 0, 10)}" th:if="${#strings.length(item.title) &gt; 10}">Title ...</h4>
+              </div>
+              <div class="col-xs-4 text-right">
+                <h6 th:text="${#calendars.format(item.createdAt, 'yyyy-MM-dd')}">Date ...</h6>
+              </div>
+            </div>
+            <p th:text="${item.content}" th:if="${#strings.length(item.content) &lt; 101}">Text ...</p>
+            <p th:text="${#strings.substring(item.content, 0, 100)}" th:if="${#strings.length(item.content) &gt; 100}">Text ...</p>
+          </div>
+        </div>
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/bootstrap/js/bootstrap.min.js"></script>
+
+        <script>
+        $(".list-item").on({
+            click: function() {
+                window.location.href = "/web/news/" + $( this ).attr('id');
+            }
+        });
+        </script>
+    </body>
+</html>

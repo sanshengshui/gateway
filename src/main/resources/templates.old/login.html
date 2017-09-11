@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <title>智能报警器管理平台</title>
+        <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="css/signin.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="container">
+
+          <form class="form-signin" th:action="@{/login}" method="post">
+            <h2 class="form-signin-heading">智慧消防云服务平台</h2>
+            <label for="inputUsername" class="sr-only">用户名</label>
+            <input type="text" name="username" id="inputUsername" class="form-control" placeholder="请输入用户名" required="true" autofocus="true" />
+            <label for="inputPassword" class="sr-only">密码</label>
+            <input type="password" name="password" id="inputPassword" class="form-control" placeholder="请输入密码" required="true" />
+            <button class="btn btn-lg btn-primary btn-block" type="submit">登　录</button>
+            <span th:if="${param.error}" class="label label-danger">用户名/密码错误！</span>
+            <span th:if="${param.logout}" class="label label-success">已退出！</span>
+          </form>
+
+        </div> <!-- /container -->
+    </body>
+</html>

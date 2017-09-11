@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <th:block th:include="fragments/head :: head"></th:block>
+    </head>
+    <body>
+        <th:block th:include="fragments/header :: header"></th:block>
+        <div class="container-fluid">
+          <div class="row">
+            <th:block th:include="fragments/menu :: menu"></th:block>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+              <h3 class="sub-header" th:text="${user.id} ? '修改帐号' : '新增帐号'"></h3>
+              <div class="form-container">
+                <form id="user" class="form-horizontal" th:object="${user}" th:action="@{/user/save}" method="post">
+                  <input type="hidden" th:field="*{id}" />
+                  <div th:class="${#fields.hasErrors('username')} ? 'form-group has-error' : 'form-group'">
+                    <label for="username" class="col-sm-2 control-label">用户名：</label>
+                    <div class="col-sm-4">
+                      <input type="text" id="username" class="form-control" required="true" th:field="*{username}" th:readonly="${user.id} ? 'true' : 'false'" />
+                    </div>
+                    <span class="help-block" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</span>
+                  </div>
+                  <div class="form-group">
+                    <label for="realname" class="col-sm-2 control-label">姓名：</label>
+                    <div class="col-sm-4">
+                      <input type="text" id="realname" class="form-control" required="true" th:field="*{realname}" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="password" class="col-sm-2 control-label">密码：</label>
+                    <div class="col-sm-4">
+                      <input type="password" id="password" class="form-control" th:field="*{password}" th:required="${user.id == null} ? 'true' : 'false'" />
+                    </div>
+                    <span class="help-block" th:if="${user.id != null}">留空不修改密码</span>
+                  </div>
+                  <div class="form-group">
+                    <label for="role" class="col-sm-2 control-label">权限：</label>
+                    <div class="col-sm-4">
+                      <label class="radio-inline" th:each="role : ${T(com.aiyolo.constant.RoleEnum).values()}">
+                        <input type="radio" th:field="*{role}" th:value="${role.name()}" /> <span th:text="${role.getName()}"></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group" id="areaContainer">
+                    <label for="area_code" class="col-sm-2 control-label">可查看区域：</label>
+                    <div class="col-sm-6">
+                      <label class="form-inline">
+                        <input type="hidden" id="area_code" class="form-control" th:field="*{areaCode}" />
+                        <div id="distpicker" class="form-group">
+                          <select class="form-control" id="area_code_p"></select>
+                          <select class="form-control" id="area_code_c"></select>
+                          <select class="form-control" id="area_code_d"></select>
+                        </div>
+                        <button type="button" class="btn btn-default">分配</button>
+                      </label>
+                      <ul id="area_list" class="list-unstyled">
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-4">
+                      <button type="submit" class="btn btn-primary">确认</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/distpicker.js"></script>
+        <script src="/bootstrap/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" class="init">
+        /*<![CDATA[*/
+        $('#menu-user').addClass("active");
+
+        // 省市区联动
+        $('#distpicker').distpicker({
+            province: "省　　",
+            city: "市　　",
+            district: "区　　",
+            valueType: "code"
+        });
+        var areaCodes = [];
+        $(".btn-default").click(function() {
+            if ($('#area_code_p').val()) {
+                var areaName1 = $('#area_code_p option:selected').text();
+                var areaName2 = $('#area_code_c').val() ? $('#area_code_c option:selected').text() : "";
+                var areaName3 = $('#area_code_d').val() ? $('#area_code_d option:selected').text() : "";
+
+                var areaCode = $('#area_code_d').val() ? $('#area_code_d').val() : ($('#area_code_c').val() ? $('#area_code_c').val() : $('#area_code_p').val());
+
+                if (!$('#' + areaCode).length) {
+                    addAreaText(areaCode, areaName1, areaName2, areaName3);
+
+                    areaCodes.push(areaCode);
+                    $('#area_code').val(areaCodes.toString());
+                }
+            }
+        });
+
+        function addAreaText(areaCode, areaName1, areaName2, areaName3) {
+            var areaText = '<li id="' + areaCode + '" class="has-feedback">';
+            areaText += areaName1 + " " + areaName2 + " " + areaName3;
+            // areaText += '<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true" onclick="remove(' +  areaCode + ')"></span></li>';
+            areaText += ' <a href="javascript:remove(' +  areaCode + ')">X</a></li>';
+            $('#area_list').append(areaText);
+        }
+
+        function remove(areaCode) {
+            if ($('#' + areaCode).length) {
+                $('#' + areaCode).remove();
+            }
+            var newAreaCodes = [];
+            for (var i = 0; i < areaCodes.length; i++) {
+                if (areaCodes[i] != areaCode) {
+                    newAreaCodes.push(areaCodes[i]);
+                }
+            }
+            areaCodes = newAreaCodes;
+            $('#area_code').val(areaCodes.toString());
+        }
+
+        // 初始化
+        if ($('#area_code').val()) {
+            areaCodes = $('#area_code').val().split(",");
+            var _p = $('#distpicker').distpicker('getDistricts');
+            for (var i = 0; i < areaCodes.length; i++) {
+                var p = areaCodes[i].substr(0, 2);
+                var areaName1 = _p[p * 10000];
+
+                var _c = $('#distpicker').distpicker('getDistricts', p * 10000);
+                var c = areaCodes[i].substr(2, 2);
+                var areaName2 = c != "00" ? _c[p * 10000 + c * 100] : "";
+
+                var _d = $('#distpicker').distpicker('getDistricts', p * 10000 + c * 100);
+                var d = areaCodes[i].substr(4);
+                var areaName3 = d != "00" ? _d[areaCodes[i]] : "";
+
+                addAreaText(areaCodes[i], areaName1, areaName2, areaName3);
+            }
+        }
+
+        $("input[name='role']").click(function() {
+            if ($(this).val() != "MANAGER") $('#areaContainer').show();
+            else $('#areaContainer').hide();
+        });
+        if ($("input[name='role']:checked").val() == "MANAGER") $('#areaContainer').hide();
+        /*]]>*/
+        </script>
+    </body>
+</html>

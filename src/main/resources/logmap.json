@@ -1,0 +1,22 @@
+{
+  "/login" : "登录成功",
+
+  "/device/save" : "编辑设备信息",
+  "/device/user/admin" : "设置设备管理员",
+  "/device/user/delete" : "删除设备成员",
+
+  "/device/setting/save" : "设置设备参数",
+
+  "/push_setting/save" : "修改APP/短信推送设置",
+
+  "/news/save" : "添加/编辑新闻资讯",
+  "/news/delete" : "删除新闻资讯",
+
+  "/user/save" : "新增/修改用户帐号",
+  "/user/delete" : "删除用户帐号",
+
+  "/channel/save" : "新增/修改渠道帐号",
+  "/channel/switch" : "停用/启用渠道帐号",
+
+  "/profile/changePassword" : "修改密码"
+}

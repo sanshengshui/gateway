@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <th:block th:include="fragments/head :: head"></th:block>
+    </head>
+    <body>
+        <th:block th:include="fragments/header :: header"></th:block>
+        <div class="container-fluid">
+          <div class="row">
+            <th:block th:include="fragments/menu :: menu"></th:block>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+              <h3 class="sub-header">编辑设备信息</h3>
+              <div>
+                <form id="device" class="form-horizontal" th:object="${device}" th:action="@{/device/save}" method="post">
+                  <input type="hidden" th:field="*{id}" />
+                  <input type="hidden" id="user_phones" th:field="*{userPhones}" />
+                  <div class="form-group">
+                    <label for="gl_id" class="col-sm-2 control-label">设备ID：</label>
+                    <div class="col-sm-3">
+                      <p class="form-control-static" th:text="*{glImei}">设备ID</p>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="user_name" class="col-sm-2 control-label">报警联系人：</label>
+                    <div class="col-sm-3">
+                      <input type="text" id="user_name" class="form-control" required="true" th:field="*{userName}" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="user_phones_0" class="col-sm-2 control-label">联系人手机：</label>
+                    <div class="col-sm-3">
+                      <input type="text" id="user_phones_0" class="form-control" readonly="true" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="user_phones_1" class="col-sm-2 control-label"> </label>
+                    <div class="col-sm-3">
+                      <input type="text" id="user_phones_1" class="form-control" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="user_phones_2" class="col-sm-2 control-label"> </label>
+                    <div class="col-sm-3">
+                      <input type="text" id="user_phones_2" class="form-control" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="user_phones_3" class="col-sm-2 control-label"> </label>
+                    <div class="col-sm-3">
+                      <input type="text" id="user_phones_3" class="form-control" />
+                    </div>
+                  </div>
+                  <div class="form-group form-toline">
+                    <label for="area_code" class="col-sm-2 control-label">设备地址：</label>
+                    <div class="col-sm-6">
+                      <input type="hidden" th:field="*{areaCode}" />
+                      <label class="form-inline">
+                        <div id="distpicker" class="form-group">
+                          <select class="form-control" id="area_code_p"></select>
+                          <select class="form-control" id="area_code_c"></select>
+                          <select class="form-control" id="area_code_d"></select>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="address" class="col-sm-2 control-label"> </label>
+                    <div class="col-sm-6">
+                      <input type="text" id="address" class="form-control" required="true" th:field="*{address}" />
+                    </div>
+                  </div>
+                  <div class="form-group" th:if="*{#strings.length(locationAddress) > 0}">
+                    <label for="location_address" class="col-sm-2 control-label">自动定位的地址：</label>
+                    <div class="col-sm-6">
+                      <input type="hidden" th:field="*{locationAreaCode}" />
+                      <p class="form-control-static" id="location_address" th:text="*{locationAddress}">自动定位的地址</p>
+                    </div>
+                    <span class="help-block">注：定位地址仅供参考</span>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-6">
+                      <button type="submit" class="btn btn-primary">确认</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/distpicker.js"></script>
+        <script src="/bootstrap/js/bootstrap.min.js"></script>
+
+        <script th:inline="javascript">
+        /*<![CDATA[*/
+        $('#menu-device').addClass("active");
+
+        var area_code = [[${device.areaCode}]];
+
+        // 省市区联动
+        $('#distpicker').distpicker({
+            province: area_code.substring(0, 2) + '0000',
+            city: area_code.substring(0, 4) + '00',
+            district: area_code,
+            valueType: "code",
+            placeholder: false
+        });
+
+        var user_phones = $("#user_phones").val();
+        if (user_phones) {
+            user_phones = JSON.parse(user_phones);
+            if (user_phones[0]) $("#user_phones_0").val(user_phones[0]);
+            if (user_phones[1]) $("#user_phones_1").val(user_phones[1]);
+            if (user_phones[2]) $("#user_phones_2").val(user_phones[2]);
+            if (user_phones[3]) $("#user_phones_3").val(user_phones[3]);
+        }
+
+        var checkAreaCode = function() {
+            if ($("#areaCode").val() != $("#locationAreaCode").val()) {
+                $("#location_address").addClass('bg-danger');
+            } else {
+                $("#location_address").removeClass('bg-danger');
+            }
+        }
+        checkAreaCode();
+
+        $("#distpicker select").change(function() {
+            $("#areaCode").val($("#area_code_d").val() ? $("#area_code_d").val() : ($("#area_code_c").val() ? $("#area_code_c").val() : $("#area_code_p").val()));
+            checkAreaCode();
+        });
+
+        $("#device").submit(function(event) {
+            var user_phones = new Array(3);
+            user_phones[0] = $("#user_phones_1").val();
+            user_phones[1] = $("#user_phones_2").val();
+            user_phones[2] = $("#user_phones_3").val();
+            $("#user_phones").val(JSON.stringify(user_phones));
+            return;
+        });
+        /*]]>*/
+        </script>
+    </body>
+</html>

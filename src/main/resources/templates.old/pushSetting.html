@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <th:block th:include="fragments/head :: head"></th:block>
+    </head>
+    <body>
+        <th:block th:include="fragments/header :: header"></th:block>
+        <div class="container-fluid">
+          <div class="row">
+            <th:block th:include="fragments/menu :: menu"></th:block>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" th:switch="${pushSetting0.type}">
+              <h3 class="sub-header" th:case="app">APP推送内容设置</h3>
+              <h3 class="sub-header" th:case="sms">短信推送内容设置</h3>
+              <div>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                  <li role="presentation" class="active"><a href="#1" aria-controls="1" role="tab" data-toggle="tab">警报推送内容</a></li>
+                  <li role="presentation"><a href="#0" aria-controls="0" role="tab" data-toggle="tab">警报解除推送内容</a></li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                  <div role="tabpanel" class="tab-pane active" id="1">
+                    <form class="form-horizontal" th:object="${pushSetting1}" th:action="@{/push_setting/save}" method="post">
+                      <input type="hidden" th:field="*{id}" />
+                      <div class="form-group">
+                        <label for="title" class="col-sm-2 control-label">标题：</label>
+                        <div class="col-sm-6">
+                          <input type="text" id="title" class="form-control" required="true" maxlength="10" th:field="*{title}" />
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="content" class="col-sm-2 control-label">内容：</label>
+                        <div class="col-sm-6">
+                          <textarea id="content" class="form-control" required="true" maxlength="40" th:field="*{content}"></textarea>
+                          <span class="help-block">注：括号内的内容为不可编辑内容，括号外的内容可自由编辑，限40个字内。</span>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                          <button type="submit" class="btn btn-primary">确认</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <div role="tabpanel" class="tab-pane" id="0">
+                    <form class="form-horizontal" th:object="${pushSetting0}" th:action="@{/push_setting/save}" method="post">
+                      <input type="hidden" th:field="*{id}" />
+                      <div class="form-group">
+                        <label for="title" class="col-sm-2 control-label">标题：</label>
+                        <div class="col-sm-6">
+                          <input type="text" id="title" class="form-control" required="true" maxlength="10" th:field="*{title}" />
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="content" class="col-sm-2 control-label">内容：</label>
+                        <div class="col-sm-6">
+                          <textarea id="content" class="form-control" required="true" maxlength="40" th:field="*{content}"></textarea>
+                          <span class="help-block">注：括号内的内容为不可编辑内容，括号外的内容可自由编辑，限40个字内。</span>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                          <button type="submit" class="btn btn-primary">确认</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/bootstrap/js/bootstrap.min.js"></script>
+
+        <script th:inline="javascript">
+        /*<![CDATA[*/
+        var type = /*[[${pushSetting0.type}]]*/ 'app';
+        $('#menu-push-setting-' + type).addClass("active");
+
+        $('.nav-tabs a').click(function() {
+            $(this).tab('show');
+        });
+
+        var reg = new RegExp("#(.*)$", "i");
+        var r = window.location.href.match(reg);
+        if (r != null) {
+            var activeTab = unescape(r[1]);
+            $('.nav-tabs a[href="#' + activeTab + '"]').tab('show');
+        }
+        /*]]>*/
+        </script>
+    </body>
+</html>

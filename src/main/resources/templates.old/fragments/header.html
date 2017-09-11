@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <title>智慧消防云服务平台</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/dashboard.css" rel="stylesheet" />
+</head>
+<body>
+
+<div th:fragment="header">
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">智慧消防云服务平台</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/profile" th:inline="text">[[${#httpServletRequest.remoteUser}]]</a></li>
+          <li><a href="/logout">退出登录</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div th:fragment="message">
+  <div class="message">
+    <p class="bg-success" th:text="${message}" th:if="${message}">...</p>
+    <p class="bg-danger" th:text="${error}" th:if="${error}">...</p>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:include="fragments/head :: head"></th:block>
+    <link rel="stylesheet" href="/AdminLTE/plugins/datatables/dataTables.bootstrap.css"/>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <th:block th:include="fragments/header :: main-header"></th:block>
+    <th:block th:include="fragments/menu :: menu"></th:block>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <th:block th:include="fragments/header :: content-header"></th:block>
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">资讯列表</h3>
+                            <div class="box-tools pull-right">
+                                <a class="btn btn-sm" href="/news/new"><i class="fa fa-plus-square"></i> 添加资讯</a>
+                            </div><!-- /.box-tools -->
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table id="news" class="table table-striped" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>标题</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <th:block th:include="fragments/footer :: footer"></th:block>
+</div>
+
+<th:block th:include="fragments/footer :: js"></th:block>
+<script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/AdminLTE/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/js/moment.js"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+fragment_polish("news");
+
+$(document).ready(function() {
+    $('#news').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "searching": false,
+        "lengthChange": false,
+        "pageLength": 20,
+        "ordering": false,
+        "ajax": "/news/list",
+        "columns": [
+            { "data": "id" },
+            { "data": "title" },
+            { "data": "createdAt", "render": function(data, type, full, meta) {
+                return moment(data).format('YYYY-MM-DD');
+            } },
+            { "data": function(row, type, val, meta) {
+                var top = row.top == 1 ? "取消置顶" : "置顶";
+                var status = row.status == 0 ? "开启" : "关闭";
+
+                var op =
+                    '<ul class="list-inline">' +
+                    '<li><a href="/news/edit/' + row.id + '">修改</a></li>' +
+                    '<li><a href="/news/switch/' + row.id + '">' + status + '</a></li>' +
+                    '<li><a href="/news/top/' + row.id + '">' + top + '</a></li>' +
+                    '<li><a href="/news/delete/' + row.id + '" onclick="return confirm(\'删除后不可恢复，是否删除？\')">删除</a></li></ul>';
+                return op;
+            } }
+        ]
+    } );
+} );
+/*]]>*/
+</script>
+</body>
+</html>

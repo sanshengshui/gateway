@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:include="fragments/head :: head"></th:block>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <th:block th:include="fragments/header :: main-header"></th:block>
+    <th:block th:include="fragments/menu :: menu"></th:block>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <th:block th:include="fragments/header :: content-header"></th:block>
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title" th:text="${user.id} ? '修改帐号' : '新增帐号'"></h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <!-- form start -->
+                        <form id="user" class="form-horizontal" th:object="${user}" th:action="@{/user/save}" method="post">
+                            <input type="hidden" th:field="*{id}"/>
+                            <input type="hidden" th:field="*{productIds}"/>
+                            <div class="box-body">
+                                <div class="form-group" sec:authorize="hasRole('ROLE_MANAGER')">
+                                    <label for="channelId" class="col-sm-2 control-label">所属渠道：</label>
+                                    <div class="col-sm-4">
+                                        <select id="channelId" name="channelId" class="form-control">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div th:class="${#fields.hasErrors('username')} ? 'form-group has-error' : 'form-group'">
+                                    <label for="username" class="col-sm-2 control-label">用户名：</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" id="username" class="form-control" th:field="*{username}"
+                                               required="true" th:readonly="${user.id} ? 'true' : 'false'"/>
+                                    </div>
+                                    <span class="help-block" th:if="${#fields.hasErrors('username')}"
+                                          th:errors="*{username}">Username Error</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="realname" class="col-sm-2 control-label">姓名：</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" id="realname" class="form-control" th:field="*{realname}"
+                                               required="true"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone" class="col-sm-2 control-label">手机：</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" id="phone" class="form-control" th:field="*{phone}"
+                                               required="true"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password" class="col-sm-2 control-label">密码：</label>
+                                    <div class="col-sm-4">
+                                        <input type="password" id="password" class="form-control" th:field="*{password}"
+                                               th:required="${user.id == null} ? 'true' : 'false'"/>
+                                    </div>
+                                    <span class="help-block" th:if="${user.id != null}">留空不修改密码</span>
+                                </div>
+                                <div th:class="${#fields.hasErrors('productIds')} ? 'form-group has-error' : 'form-group'">
+                                    <label class="col-sm-2 control-label">关联产品：</label>
+                                    <div class="col-sm-4">
+                                        <div id="d_productIds" class="checkbox">
+                                        </div>
+                                    </div>
+                                    <span class="help-block" th:if="${#fields.hasErrors('productIds')}"
+                                          th:errors="*{productIds}">Product Error</span>
+                                </div>
+                                <div id="areaContainer" class="form-group">
+                                    <label for="areaCode" class="col-sm-2 control-label">可查看区域：</label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="areaCode" th:field="*{deviceAreaCodes}"/>
+                                        <div id="distpicker" class="form-inline">
+                                            <select id="province" class="form-control"></select>
+                                            <select id="city" class="form-control"></select>
+                                            <select id="district" class="form-control"></select>
+                                            <button type="button" class="btn btn-default">分配</button>
+                                        </div>
+                                        <ul id="areaList" class="list-unstyled added">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                            <div class="box-footer">
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-6">
+                                        <button type="submit" class="btn btn-primary">确认</button>
+                                        &nbsp;&nbsp;
+                                        <button type="button" class="btn btn-default"
+                                                onclick="javascript:window.location.href='/user'">取消
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.box-footer -->
+                        </form>
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <th:block th:include="fragments/footer :: footer"></th:block>
+</div>
+
+<th:block th:include="fragments/footer :: js"></th:block>
+<script src="/js/dict.js?product,channel"></script>
+<script src="/js/distpicker.js"></script>
+<script src="/js/distpicker.init.js"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+fragment_polish("user");
+
+var authorities = [[${#authentication.getAuthorities()}]];
+distpickerInit(authorities);
+
+var channelId = [[${user.channelId}]];
+
+// 省市区联动
+$('#distpicker').distpicker({
+    valueType: "code"
+});
+
+var areaCodes = [];
+$("#areaContainer .btn-default").click(function() {
+    if ($('#province').val()) {
+        var areaName1 = $('#province option:selected').text();
+        var areaName2 = $('#city').val() ? $('#city option:selected').text() : "";
+        var areaName3 = $('#district').val() ? $('#district option:selected').text() : "";
+
+        var areaCode = $('#district').val() ? $('#district').val() : ($('#city').val() ? $('#city').val() : $('#province').val());
+
+        if (!$('#' + areaCode).length) {
+            addAreaText(areaCode, areaName1, areaName2, areaName3);
+
+            areaCodes.push(areaCode);
+            $('#areaCode').val(areaCodes.toString());
+        }
+    }
+});
+
+function addAreaText(areaCode, areaName1, areaName2, areaName3) {
+    var areaText = '<li id="' + areaCode + '" class="has-feedback">';
+    areaText += areaName1 + " " + areaName2 + " " + areaName3;
+    areaText += ' <a href="javascript:remove(' +  areaCode + ')"><i class="fa fa-remove"></i></a></li>';
+    $('#areaList').append(areaText);
+}
+
+function remove(areaCode) {
+    if ($('#' + areaCode).length) {
+        $('#' + areaCode).remove();
+    }
+    var newAreaCodes = [];
+    for (var i = 0; i < areaCodes.length; i++) {
+        if (areaCodes[i] != areaCode) {
+            newAreaCodes.push(areaCodes[i]);
+        }
+    }
+    areaCodes = newAreaCodes;
+    $('#areaCode').val(areaCodes.toString());
+}
+
+$(document).ready(function() {
+    if ($("#channelId").length > 0) {
+        $.each(dict_channel, function(key, value) {
+             $('#channelId')
+                 .append($("<option></option>")
+                 .attr("value", key)
+                 .text(value));
+        });
+        if (channelId) {
+            $("#channelId").val(channelId).change();
+        }
+    }
+
+    $.each(authorities, function(key, value) {
+        if (value.authority.substring(0, 4) == "PROD") {
+            var productId = value.authority.substring(5);
+            $('#d_productIds')
+                .append('<label><input type="checkbox" value="' + productId + '"/>' + dict(productId, 'product') + '</label>');
+        }
+    });
+    if ($('#productIds').val()) {
+        var productIds = $('#productIds').val().split(",");
+        $("input:checkbox").val(productIds);
+    }
+
+    // 初始化
+    if ($('#areaCode').val()) {
+        areaCodes = $('#areaCode').val().split(",");
+        var _p = $('#distpicker').distpicker('getDistricts');
+        for (var i = 0; i < areaCodes.length; i++) {
+            var p = areaCodes[i].substr(0, 2);
+            var areaName1 = _p[p * 10000];
+
+            var _c = $('#distpicker').distpicker('getDistricts', p * 10000);
+            var c = areaCodes[i].substr(2, 2);
+            var areaName2 = c != "00" ? _c[p * 10000 + c * 100] : "";
+
+            var _d = $('#distpicker').distpicker('getDistricts', p * 10000 + c * 100);
+            var d = areaCodes[i].substr(4);
+            var areaName3 = d != "00" ? _d[areaCodes[i]] : "";
+
+            addAreaText(areaCodes[i], areaName1, areaName2, areaName3);
+        }
+    }
+
+    $("#user").submit(function(event) {
+        $("#productIds").val(
+            $("input:checked").map(function() {
+                return $(this).val();
+            })
+            .get()
+            .join()
+        );
+
+        $(".has-error .help-block").remove();
+        $("div").removeClass("has-error");
+
+        if ($("#productIds").val() == "") {
+            $("#d_productIds").parent().after('<span class="help-block">请选择关联产品！</span>');
+            $("#d_productIds").parent().parent().addClass("has-error");
+            return false;
+        }
+
+        return;
+    });
+});
+/*]]>*/
+</script>
+</body>
+</html>

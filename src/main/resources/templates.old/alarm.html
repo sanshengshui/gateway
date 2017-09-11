@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <th:block th:include="fragments/head :: head"></th:block>
+        <link href="/css/jquery.dataTables.min.css" rel="stylesheet" />
+    </head>
+    <body>
+        <th:block th:include="fragments/header :: header"></th:block>
+        <div class="container-fluid">
+            <div class="row">
+                <th:block th:include="fragments/menu :: menu"></th:block>
+                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    <h3 class="sub-header">警报记录</h3>
+                    <div class="table-responsive">
+                        <table id="alarm" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>警报时间</th>
+                                    <th>设备ID</th>
+                                    <th>设备名称</th>
+                                    <th>用户姓名</th>
+                                    <th>手机号码</th>
+                                    <th>详细地址</th>
+                                    <th>警报类型</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/jquery.dataTables.min.js"></script>
+        <script src="/js/moment.js"></script>
+        <script src="/js/dict.js?area_code,alarm_type,alarm_status"></script>
+        <script src="/bootstrap/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" class="init">
+        $('#menu-alarm').addClass("active");
+
+        $(document).ready(function() {
+            $('#alarm').DataTable( {
+                "processing": true,
+                "serverSide": true,
+                "searching": false,
+                "lengthChange": false,
+                "pageLength": 20,
+                "ordering": false,
+                "ajax": "/alarm/list",
+                "columns": [
+                    { "data": "timestamp", "render": function(data, type, full, meta) {
+                        return moment(data * 1000).format('YYYY-MM-DD HH:mm:ss');
+                    } },
+                    { "data": "glImei" },
+                    { "data": "device.glName" },
+                    { "data": "device.userName" },
+                    { "data": "device.userPhones", "render": function(data, type, full, meta) {
+                        return data ? JSON.parse(data).toString() : "";
+                    } },
+                    { "data": "device.address", "render": function(data, type, full, meta) {
+                        return areaCodeDict.init().getAreaName(full.device.areaCode) + data;
+                    } },
+                    { "data": "type", "render": function(data, type, full, meta) {
+                        return dict(data, 'alarm_type');
+                    } },
+                    { "data": "status", "render": function(data, type, full, meta) {
+                        return dict(data, 'alarm_status');
+                    } }
+                ]
+            } );
+        } );
+        </script>
+    </body>
+</html>

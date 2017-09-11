@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:include="fragments/head :: head"></th:block>
+    <link rel="stylesheet" href="/AdminLTE/plugins/datatables/dataTables.bootstrap.css"/>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <th:block th:include="fragments/header :: main-header"></th:block>
+    <th:block th:include="fragments/menu :: menu"></th:block>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <th:block th:include="fragments/header :: content-header"></th:block>
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">设备信息</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <input type="hidden" id="areaCode" th:field="${device.areaCode}"/>
+                            <input type="hidden" id="locationAreaCode" th:field="${device.locationAreaCode}"/>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <td>设备ID</td>
+                                    <td th:text="${device.glImei}"></td>
+                                </tr>
+                                </thead>
+                                <tr>
+                                    <td>设备名称</td>
+                                    <td th:text="${device.glName}"></td>
+                                </tr>
+                                <tr>
+                                    <td>报警联系人</td>
+                                    <td th:text="${device.userName}"></td>
+                                </tr>
+                                <tr>
+                                    <td>联系人手机</td>
+                                    <td th:text="${device.userPhones}" id="userPhones"></td>
+                                </tr>
+                                <tr>
+                                    <td>设备地址</td>
+                                    <td th:text="${device.address}" id="address"></td>
+                                </tr>
+                                <tr>
+                                    <td>自动定位的地址</td>
+                                    <td th:text="${device.locationAddress}" id="locationAddress"></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>注：定位地址仅供参考</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">设备成员列表</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table id="deviceAppUser" class="table table-striped" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>绑定时间</th>
+                                    <th>成员ID</th>
+                                    <th>成员类型</th>
+                                    <th>手机号码</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">警报记录</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table id="deviceAlarm" class="table table-striped" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>警报时间</th>
+                                    <th>警报类型</th>
+                                    <th>状态</th>
+                                    <th>解除时间</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <th:block th:include="fragments/footer :: footer"></th:block>
+</div>
+
+<th:block th:include="fragments/footer :: js"></th:block>
+<script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/AdminLTE/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/js/moment.js"></script>
+<script src="/js/dict.js?area_code,role_device,alarm_type,alarm_status"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+fragment_polish("device");
+
+$(document).ready(function() {
+    var userPhones = $("#userPhones").text();
+    if (userPhones) {
+        userPhones = JSON.parse(userPhones);
+        $("#userPhones").text(userPhones.join());
+    }
+
+    $("#address").text(areaCodeDict.init().getAreaName($("#areaCode").val()) + $("#address").text());
+
+    var checkAreaCode = function() {
+        if ($("#areaCode").val() != $("#locationAreaCode").val()) {
+            $("#locationAddress").addClass('bg-danger');
+        }
+    }
+    checkAreaCode();
+
+    $('#deviceAppUser').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "searching": false,
+        "lengthChange": false,
+        "pageLength": 10,
+        "ordering": false,
+        "ajax": "/device/user/list/" + [[${device.glImei}]],
+        "columns": [
+            { "data": "createdAt", "render": function(data, type, full, meta) {
+                return moment(data).format('YYYY-MM-DD HH:mm:ss');
+            } },
+            { "data": "userId" },
+            { "data": "role", "render": function(data, type, full, meta) {
+                return dict(data, 'role_device');
+            } },
+            { "data": "appUser.phone" },
+            { "data": function(row, type, val, meta) {
+                if (row.role != "MANAGER") {
+                    var op =
+                        '<ul class="list-inline">' +
+                        '<li><a href="/device/user/delete/' + row.id + '" onclick="return confirm(\'删除后不可恢复，是否删除？\')">删除</a></li>' +
+                        '<li><a href="/device/user/admin/' + row.id + '">设为管理员</a></li></ul>';
+                    return op;
+                } else {
+                    return "";
+                }
+            } }
+        ]
+    } );
+
+    $('#deviceAlarm').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "searching": false,
+        "lengthChange": false,
+        "pageLength": 10,
+        "ordering": false,
+        "ajax": "/alarm/list?glImei=" + [[${device.glImei}]],
+        "columns": [
+            { "data": "timestamp", "render": function(data, type, full, meta) {
+                return moment(data * 1000).format('YYYY-MM-DD HH:mm:ss');
+            } },
+            { "data": "type", "render": function(data, type, full, meta) {
+                return dict(data, 'alarm_type');
+            } },
+            { "data": "status", "render": function(data, type, full, meta) {
+                return dict(data, 'alarm_status');
+            } },
+            { "data": "updatedAt", "render": function(data, type, full, meta) {
+                return full.status == 0 ? moment(data).format('YYYY-MM-DD HH:mm:ss') : "";
+            } }
+        ]
+    } );
+} );
+/*]]>*/
+</script>
+</body>
+</html>

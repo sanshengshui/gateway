@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:include="fragments/head :: head"></th:block>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&amp;ak=aKIjifPRabvI63HVtjCOhN4fOFCvDVgB"></script>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <th:block th:include="fragments/header :: main-header"></th:block>
+    <th:block th:include="fragments/menu :: menu"></th:block>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">设备地图</h3>
+                            <div class="box-tools pull-right">
+                                <form class="form-inline">
+                                    <div id="distpicker" class="form-group form-group-sm">
+                                        <select id="province" name="province" class="form-control"></select>
+                                        <select id="city" name="city" class="form-control"></select>
+                                        <select id="district" name="district" class="form-control"></select>
+                                    </div>
+                                    <button type="submit" class="btn btn-default btn-sm">查询</button>
+                                </form>
+                            </div><!-- /.box-tools -->
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body" style="padding: 5px;">
+                            <div id="mapContainer" style="width: 100%; height: 1000px;"></div>
+                            <div class="box box-primary box-alarm">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">报警信息</h3>
+                                    <div class="box-tools pull-right">
+                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body">
+                                    <ul class="list-group list-group-unbordered">
+                                    </ul>
+                                </div>
+                                <!-- /.box-body -->
+                            </div>
+                            <!-- /.box -->
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <th:block th:include="fragments/footer :: footer"></th:block>
+</div>
+
+<th:block th:include="fragments/footer :: js"></th:block>
+<script src="/js/moment.js"></script>
+<script src="/js/dict.js?alarm_type,alarm_status,area_code"></script>
+<script src="/js/distpicker.js"></script>
+<script src="/js/distpicker.init.js"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+fragment_polish("home");
+
+var authorities = [[${#authentication.getAuthorities()}]];
+distpickerInit(authorities);
+
+// 省市区联动
+$('#distpicker').distpicker({
+    valueType: "code"
+});
+
+var map_init = false;
+var map_timer;
+var map_areaCode;
+var map_deviceId;
+var mapInfoWinOpts = { width: 400, enableMessage: false };
+var mapRedIcon = new BMap.Icon("/images/red.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
+var mapBlueIcon = new BMap.Icon("/images/blue.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
+
+var mapMarkers = [];
+var mapInfoWins = [];
+
+var map;
+var displayMap = function(areaCode, id) {
+    clearTimeout(map_timer);
+
+    map_init = (map_init && areaCode == map_areaCode && id == map_deviceId) ? true : false;
+    map_areaCode = areaCode;
+    map_deviceId = id;
+
+    $.getJSON("/home/data?id=" + id + "&areaCode=" + areaCode, function(data) {
+        var devices = data.devices;
+        var deviceAlarms = data.deviceAlarms;
+
+        for (var i = 0; i < devices.length; i++) {
+            if (devices[i].addressLocation == "") {
+                continue;
+            }
+            var lo = devices[i].addressLocation.split(",");
+            if (!map_init) {
+                map = new BMap.Map("mapContainer");
+                map.centerAndZoom(new BMap.Point(lo[0], lo[1]), 10);
+                map.enableScrollWheelZoom();
+                map.addControl(new BMap.NavigationControl()); //添加默认缩放平移控件
+                map_init = true;
+                $('.box-alarm').show();
+            } else {
+                if (mapMarkers[devices[i].id]) {
+                    map.removeOverlay(mapMarkers[devices[i].id]);
+                }
+            }
+            mapMarkers[devices[i].id] = new BMap.Marker(new BMap.Point(lo[0], lo[1]));
+            if (deviceAlarms[devices[i].glId] && deviceAlarms[devices[i].glId].status == 1) {
+                mapMarkers[devices[i].id].setIcon(mapRedIcon);
+            } else {
+                mapMarkers[devices[i].id].setIcon(mapBlueIcon);
+            }
+            map.addOverlay(mapMarkers[devices[i].id]);
+            mapMarkers[devices[i].id].device_id = devices[i].id;
+
+            var infoWinContent = '<dl>' +
+                '<dt>地址</dt>' +
+                '<dd>' + areaCodeDict.init().getAreaName(devices[i].areaCode) + devices[i].address + '</dd>' +
+                '<dt>联系人</dt>' +
+                '<dd>' + devices[i].userName + '</dd>' +
+                '<dt>联系电话</dt>' +
+                '<dd>' + JSON.parse(devices[i].userPhones).toString() + '</dd></dl>';
+            mapInfoWins[devices[i].id] = new BMap.InfoWindow(infoWinContent, mapInfoWinOpts);
+            mapMarkers[devices[i].id].addEventListener('click', function(evt) {
+                var id = evt.target.device_id;
+                mapMarkers[id].openInfoWindow(mapInfoWins[id]);
+            });
+        }
+
+        if (!map_init) {
+            alert("无地图数据！");
+        } else {
+            $(".list-group").empty();
+            for (var glId in deviceAlarms) {
+                if (deviceAlarms[glId].status == 1) {
+                    $(".list-group").prepend('<li class="list-group-item">' +
+                        '<b>' + (deviceAlarms[glId].device.glName ? deviceAlarms[glId].device.glName : deviceAlarms[glId].device.glImei) + '</b>' +
+                        '<span class="pull-right">' + moment(deviceAlarms[glId].timestamp * 1000).format('YYYY-MM-DD HH:mm:ss') + '</span>' +
+                        '<p>' + dict(deviceAlarms[glId].type, 'alarm_type') + '</p></li>');
+                }
+            }
+
+            map_timer = setTimeout("displayMap(" + areaCode + ", " + id + ")", 5000);
+        }
+    }).error(function() {
+        // alert("无数据！");
+    });
+}
+
+$(document).ready(function() {
+    // 调整地图容器尺寸
+    var maxHeight = $(window).height();
+    $('#mapContainer').height(maxHeight - 130);
+
+    var id = getUrlParam("id") != null ? getUrlParam("id") : 0;
+    displayMap(0, id);
+
+    $('form').submit(function(e) {
+        e.preventDefault();
+        var province = $("#province").val();
+        var city = $("#city").val();
+        var district = $("#district").val();
+        var areaCode = district ? district : (city ? city : province);
+        displayMap(areaCode, 0);
+        return false;
+    });
+} );
+/*]]>*/
+</script>
+</body>
+</html>

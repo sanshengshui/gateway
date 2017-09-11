@@ -1,0 +1,109 @@
+.content-header > h1 {
+  font-size: 22px;
+}
+
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+  vertical-align: middle;
+}
+
+.form-group > div > table {
+  margin-bottom: 0;
+}
+
+td ul {
+  margin-bottom: 0;
+}
+
+.sidebar-menu .treeview-menu {
+  padding-left: 15px;
+}
+
+.sidebar-menu .treeview-menu > li > a {
+  padding: 8px 5px 8px 15px
+}
+
+/*
+.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right),
+.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu {
+  width: 250px;
+}
+
+.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > .pull-right-container {
+  left: 270px!important;
+}
+*/
+
+.box-footer .form-group {
+  margin-bottom: 0;
+}
+
+/*
+ * newsH5.html
+ */
+.list-group-item-news {
+  border-bottom: 1px solid #eee;
+}
+
+/*
+ * userForm.html
+ */
+ul.added {
+  padding-top: 10px;
+}
+
+/*
+ * home.html
+ */
+.box-alarm {
+  position: absolute;
+  right: 20px;
+  top: 60px;
+  width: 200px;
+  max-height: 300px;
+  overflow: auto;
+  display: none;
+}
+
+.box-alarm .box-header.with-border {
+  border-bottom: 1px solid #ddd;
+}
+
+.box-alarm .list-group {
+  margin-bottom: 0;
+}
+
+.box-alarm .list-group-item {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.box-alarm .list-group-unbordered > .list-group-item:first-child {
+  border-top: 0;
+}
+
+.box-alarm .list-group-item b {
+  display: inline-block;
+  width: 60px;
+  overflow: hidden;
+}
+
+.box-alarm .list-group-item p {
+  margin-bottom: 0;
+}
+
+dl {
+  margin-bottom: 0;
+}
+
+/*
+ * userForm.html
+ */
+.radio label,
+.checkbox label {
+  padding-right: 10px;
+}

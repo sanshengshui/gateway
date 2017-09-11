@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <th:block th:include="fragments/head :: head"></th:block>
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&amp;ak=aKIjifPRabvI63HVtjCOhN4fOFCvDVgB"></script>
+    </head>
+    <body>
+        <th:block th:include="fragments/header :: header"></th:block>
+        <div class="container-fluid">
+          <div class="row">
+            <th:block th:include="fragments/menu :: menu"></th:block>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+              <div class="row sub-header op-header">
+                <div class="col-sm-3"><h3>首页</h3></div>
+                <div class="col-sm-9 text-right">
+                  <form class="form-inline" th:action="@{/home}">
+                    <div id="distpicker" class="form-group">
+                      <select class="form-control" name="p"></select>
+                      <select class="form-control" name="c"></select>
+                      <select class="form-control" name="d"></select>
+                    </div>
+                    <button class="btn btn-primary" type="submit">查询</button>
+                  </form>
+                </div>
+              </div>
+              <div style="width: 100%; height: 600px;" id="container"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alarm-container"></div>
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/dict.js?alarm_type,alarm_status,area_code"></script>
+        <script src="/js/distpicker.js"></script>
+        <script src="/js/distpicker.init.js"></script>
+        <script src="/bootstrap/js/bootstrap.min.js"></script>
+
+        <script th:inline="javascript">
+        /*<![CDATA[*/
+        $('#menu-home').addClass("active");
+
+        var authorities = [[${#authentication.getAuthorities()}]];
+        distpickerInit(authorities);
+
+        // 省市区联动
+        $('#distpicker').distpicker({
+            province: province ? province : "省　　",
+            city: city ? city : "市　　",
+            district: district ? district : "区　　",
+            valueType: "code"
+        });
+
+        var id = getUrlParam("id") != null ? getUrlParam("id") : 0;
+
+        var init = false;
+        var marker = [];
+        var infoWindow = [];
+        var infoWinOpts = { width: 500, enableMessage: false };
+        var mapRedIcon = new BMap.Icon("/images/red.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
+        var mapBlueIcon = new BMap.Icon("/images/blue.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
+
+        $.getJSON("/home/data?id=" + id + "&areaCode=" + areaCode, function(data) {
+            var devices = data.devices;
+            var deviceAlarms = data.deviceAlarms;
+
+            for (var i = 0; i < devices.length; i++) {
+                if (devices[i].addressLocation == "") {
+                    continue;
+                }
+                var lo = devices[i].addressLocation.split(",");
+                if (!init) {
+                    var map = new BMap.Map("container");
+                    map.centerAndZoom(new BMap.Point(lo[0], lo[1]), 10);
+                    map.enableScrollWheelZoom();
+                    init = true;
+                    $('.alarm-container').show();
+                }
+
+                marker[devices[i].id] = new BMap.Marker(new BMap.Point(lo[0], lo[1]));
+                if (deviceAlarms[devices[i].glId] && deviceAlarms[devices[i].glId].status == 1) {
+                    marker[devices[i].id].setIcon(mapRedIcon);
+                } else {
+                    marker[devices[i].id].setIcon(mapBlueIcon);
+                }
+                map.addOverlay(marker[devices[i].id]);
+                marker[devices[i].id].device_id = devices[i].id;
+
+                var infoWinContent = "<span><strong>地址：</strong>" + areaCodeDict.init().getAreaName(devices[i].areaCode) + devices[i].address + "</span><br>";
+                    infoWinContent += "<span><strong>联系人：</strong>" + devices[i].userName + "</span><br>";
+                    infoWinContent += "<span><strong>联系电话：</strong>" + JSON.parse(devices[i].userPhones).toString() + "</span>";
+                infoWindow[devices[i].id] = new BMap.InfoWindow(infoWinContent, infoWinOpts);
+                marker[devices[i].id].addEventListener('click', function(evt) {
+                    var id = evt.target.device_id;
+                    marker[id].openInfoWindow(infoWindow[id]);
+                });
+            }
+
+            for (var glId in deviceAlarms) {
+                if (deviceAlarms[glId].status == 1) {
+                    $(".alarm-container").prepend("<p>【" + (deviceAlarms[glId].device.glName ? deviceAlarms[glId].device.glName : deviceAlarms[glId].device.glImei) + "】 出现" + dict(deviceAlarms[glId].type, 'alarm_type') + "预警</p>");
+                }
+            }
+
+            if (!init) {
+                alert("无地图数据！");
+                // history.go(-1);
+            }
+        }).error(function() {
+            alert("无数据！");
+            // history.go(-1);
+        });
+        /*]]>*/
+        </script>
+    </body>
+</html>

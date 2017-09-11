@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:include="fragments/head :: head"></th:block>
+</head>
+<body>
+<div class="container-fluid">
+    <h4 class="text-center" th:text="${news.title}">Title ...</h4>
+    <h5 class="text-center" th:text="${#calendars.format(news.createdAt, 'yyyy-MM-dd')}">Date ...</h5>
+    <p th:utext="${news.content}">Text ...</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:include="fragments/head :: head"></th:block>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <th:block th:include="fragments/header :: main-header"></th:block>
+    <th:block th:include="fragments/menu :: menu"></th:block>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <th:block th:include="fragments/header :: content-header"></th:block>
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title" th:text="${news.id} ? '编辑新闻资讯' : '添加新闻资讯'"></h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <!-- form start -->
+                        <form class="form-horizontal" th:object="${news}" th:action="@{/news/save}" method="post">
+                            <input type="hidden" th:field="*{id}"/>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label for="title" class="col-sm-1 control-label">标题：</label>
+                                    <div class="col-sm-11">
+                                        <input type="text" id="title" class="form-control" maxlength="50"
+                                               th:field="*{title}" required="true"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="content" class="col-sm-1 control-label">内容：</label>
+                                    <div class="col-sm-11">
+                                        <textarea id="content" rows="15" th:field="*{content}"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                            <div class="box-footer">
+                                <div class="form-group">
+                                    <div class="col-sm-offset-1 col-sm-11">
+                                        <button type="submit" class="btn btn-primary">确认</button>
+                                        &nbsp;&nbsp;
+                                        <button type="button" class="btn btn-default"
+                                                onclick="javascript:window.location.href='/news'">取消
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.box-footer -->
+                        </form>
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <th:block th:include="fragments/footer :: footer"></th:block>
+</div>
+
+<th:block th:include="fragments/footer :: js"></th:block>
+<script src="https://cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+fragment_polish("news");
+
+$(function () {
+    CKEDITOR.replace('content');
+});
+/*]]>*/
+</script>
+</body>
+</html>

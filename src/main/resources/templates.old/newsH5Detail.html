@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <th:block th:include="fragments/head :: head"></th:block>
+    </head>
+    <body style="padding-top: 0;">
+        <div class="container-fluid">
+          <h4 class="sub-header text-center" th:text="${news.title}">Title ...</h4>
+          <h6 class="text-center" th:text="${#calendars.format(news.createdAt, 'yyyy-MM-dd')}">Date ...</h6>
+          <p th:utext="${news.content}">Text ...</p>
+        </div>
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/bootstrap/js/bootstrap.min.js"></script>
+    </body>
+</html>

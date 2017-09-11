@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:include="fragments/head :: head"></th:block>
+    <link rel="stylesheet" href="/AdminLTE/plugins/datatables/dataTables.bootstrap.css"/>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <th:block th:include="fragments/header :: main-header"></th:block>
+    <th:block th:include="fragments/menu :: menu"></th:block>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <th:block th:include="fragments/header :: content-header"></th:block>
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">日志列表</h3>
+                            <div class="box-tools pull-right">
+                                <form class="form-inline">
+                                    <div class="form-group form-group-sm">
+                                        <input type="text" id="username" name="username" class="form-control"
+                                               placeholder="账号"/>
+                                    </div>
+                                    <button type="submit" class="btn btn-default btn-sm">查询</button>
+                                </form>
+                            </div><!-- /.box-tools -->
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table id="log" class="table table-striped" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>账号</th>
+                                    <th>操作</th>
+                                    <th>IP地址</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <th:block th:include="fragments/footer :: footer"></th:block>
+</div>
+
+<th:block th:include="fragments/footer :: js"></th:block>
+<script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/AdminLTE/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/js/moment.js"></script>
+<script src="/js/dict.js?log_map"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+fragment_polish("log");
+
+$(document).ready(function() {
+    var table = $('#log').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "searching": false,
+        "lengthChange": false,
+        "pageLength": 20,
+        "ordering": false,
+        "ajax": "/log/list",
+        "columns": [
+            { "data": "createdAt", "render": function(data, type, full, meta) {
+                return moment(data).format('YYYY-MM-DD HH:mm:ss');
+            } },
+            { "data": "username" },
+            { "data": "uri", "render": function(data, type, full, meta) {
+                data = data.replace(/\/\d*$/, "");
+                console.log(data);
+                return dict(data, 'log_map');
+            } },
+            { "data": "ip" }
+        ]
+    } );
+
+    $('form').submit(function(e) {
+        e.preventDefault();
+        var username = $("#username").val();
+        var url = "/log/list?username=" + encodeURI(username);
+        table.ajax.url(url).load();
+        return false;
+    });
+});
+/*]]>*/
+</script>
+</body>
+</html>

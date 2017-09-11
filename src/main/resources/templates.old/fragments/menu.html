@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <title>智慧消防云服务平台</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/dashboard.css" rel="stylesheet" />
+</head>
+<body>
+
+<div th:fragment="menu">
+  <div class="col-sm-3 col-md-2 sidebar">
+    <ul class="nav nav-sidebar">
+      <li id="menu-home"><a href="/">首页</a></li>
+      <li id="menu-device"><a href="/device">设备列表</a></li>
+      <li id="menu-alarm"><a href="/alarm">警报记录</a></li>
+      <!-- <li sec:authorize="hasRole('ROLE_MANAGER')" id="menu-stat"><a href="/stat">数据分析</a></li> -->
+      <li sec:authorize="hasRole('ROLE_MANAGER')" id="menu-device-setting"><a href="/device/setting">报警器参数设置</a></li>
+    </ul>
+    <ul class="nav nav-sidebar">
+      <li sec:authorize="hasRole('ROLE_MANAGER')" id="menu-push-setting-app"><a href="/push_setting/app">APP推送内容设置</a></li>
+      <li sec:authorize="hasRole('ROLE_MANAGER')" id="menu-push-setting-sms"><a href="/push_setting/sms">短信推送内容设置</a></li>
+      <li sec:authorize="hasRole('ROLE_MANAGER')" id="menu-news"><a href="/news">新闻资讯</a></li>
+    </ul>
+    <ul class="nav nav-sidebar">
+      <li sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_AGENT')" id="menu-user"><a href="/user">用户帐号管理</a></li>
+      <li sec:authorize="hasRole('ROLE_MANAGER')" id="menu-channel"><a href="/channel">渠道帐号管理</a></li>
+      <li sec:authorize="hasRole('ROLE_MANAGER')" id="menu-log"><a href="/log">操作日志</a></li>
+      <li id="menu-profile"><a href="/profile">个人设置</a></li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>

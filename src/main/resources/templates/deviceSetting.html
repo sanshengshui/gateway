@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:include="fragments/head :: head"></th:block>
+    <link rel="stylesheet" href="/AdminLTE/plugins/datatables/dataTables.bootstrap.css"/>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <th:block th:include="fragments/header :: main-header"></th:block>
+    <th:block th:include="fragments/menu :: menu"></th:block>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <th:block th:include="fragments/header :: content-header"></th:block>
+        <!-- Main content -->
+        <section class="content">
+            <th:block th:include="fragments/header :: message"></th:block>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li id="nav_areaCode" class="active"><a href="#tab_setting" data-toggle="tab">按区域</a></li>
+                            <li id="nav_glImei"><a href="#tab_setting" data-toggle="tab">按设备ID</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_setting">
+                                <form id="deviceSettingForm" class="form-horizontal" th:object="${deviceSetting}"
+                                      th:action="@{/device/setting/save}" method="post">
+                                    <div id="d_areaCode"
+                                         th:class="${#fields.hasErrors('areaCode')} ? 'form-group has-error' : 'form-group'">
+                                        <label for="areaCode" class="col-sm-2 control-label">区域：</label>
+                                        <div class="col-sm-3" id="distpicker">
+                                            <select id="areaCode" name="areaCode" class="form-control"></select>
+                                        </div>
+                                        <span class="help-block" th:if="${#fields.hasErrors('areaCode')}"
+                                              th:errors="*{areaCode}">Target Error</span>
+                                    </div>
+                                    <div id="d_glImei"
+                                         th:class="${#fields.hasErrors('glImei')} ? 'form-group has-error' : 'form-group'">
+                                        <label for="glImei" class="col-sm-2 control-label">设备ID：</label>
+                                        <div class="col-sm-3">
+                                            <input type="text" id="glImei" class="form-control" th:field="*{glImei}"/>
+                                        </div>
+                                        <span class="help-block" th:if="${#fields.hasErrors('glImei')}"
+                                              th:errors="*{glImei}">Target Error</span>
+                                    </div>
+                                    <div id="d_oneLevelAlarmTemperature"
+                                         th:class="${#fields.hasErrors('oneLevelAlarmTemperature')} ? 'form-group has-error' : 'form-group'">
+                                        <label for="oneLevelAlarmTemperature"
+                                               class="col-sm-2 control-label">一级预警温度值：</label>
+                                        <div class="col-sm-3">
+                                            <input type="text" id="oneLevelAlarmTemperature" class="form-control"
+                                                   th:field="*{oneLevelAlarmTemperature}" required="true"/>
+                                        </div>
+                                        <span class="help-block"
+                                              th:if="${#fields.hasErrors('oneLevelAlarmTemperature')}"
+                                              th:errors="*{oneLevelAlarmTemperature}">Temperature Error</span>
+                                    </div>
+                                    <div id="d_twoLevelAlarmTemperature"
+                                         th:class="${#fields.hasErrors('twoLevelAlarmTemperature')} ? 'form-group has-error' : 'form-group'">
+                                        <label for="twoLevelAlarmTemperature"
+                                               class="col-sm-2 control-label">二级预警温度值：</label>
+                                        <div class="col-sm-3">
+                                            <input type="text" id="twoLevelAlarmTemperature" class="form-control"
+                                                   th:field="*{twoLevelAlarmTemperature}" required="true"/>
+                                        </div>
+                                        <span class="help-block"
+                                              th:if="${#fields.hasErrors('twoLevelAlarmTemperature')}"
+                                              th:errors="*{twoLevelAlarmTemperature}">Temperature Error</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-3">
+                                            <button type="submit" class="btn btn-danger">确认</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- /.tab-pane -->
+                        </div>
+                        <!-- /.tab-content -->
+                    </div>
+                    <!-- /.nav-tabs-custom -->
+
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">修改记录</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table id="deviceSettings" class="table table-striped" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>修改时间</th>
+                                    <th>一级预警温度值</th>
+                                    <th>二级预警温度值</th>
+                                    <th>修改范围</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <th:block th:include="fragments/footer :: footer"></th:block>
+</div>
+
+<th:block th:include="fragments/footer :: js"></th:block>
+<script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/AdminLTE/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/js/moment.js"></script>
+<script src="/js/dict.js?area_code"></script>
+<script src="/js/distpicker.js"></script>
+<script src="/js/distpicker.init.js"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+fragment_polish("device-setting");
+
+var authorities = [[${#authentication.getAuthorities()}]];
+distpickerInit(authorities);
+
+var areaCode = [[${deviceSetting.areaCode}]];
+var glImei = [[${deviceSetting.glImei}]];
+
+// 省市区联动
+$('#distpicker').distpicker({
+    province: areaCode ? areaCode : "",
+    valueType: "code"
+});
+
+if (glImei != '') {
+    $('#nav_glImei a').tab('show');
+    $('#d_areaCode').hide();
+    $('#d_glImei').show();
+} else {
+    $('#d_glImei').hide();
+    $('#d_areaCode').show();
+}
+
+$(document).ready(function() {
+    $('#deviceSettings').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "searching": false,
+        "lengthChange": false,
+        "pageLength": 10,
+        "ordering": false,
+        "ajax": "/device/setting/list",
+        "columns": [
+            { "data": "createdAt", "render": function(data, type, full, meta) {
+                return moment(data).format('YYYY-MM-DD HH:mm:ss');
+            } },
+            { "data": "oneLevelAlarmTemperature" },
+            { "data": "twoLevelAlarmTemperature" },
+            { "data": "areaCode", "render": function(data, type, full, meta) {
+                return data ? areaCodeDict.init().getAreaName(data) : full.glImei;
+            } }
+        ]
+    } );
+} );
+
+$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    if ($(this).parent().attr("id") == "nav_glImei") {
+        $('#d_areaCode').hide();
+        $('#d_glImei').show();
+    } else {
+        $('#d_glImei').hide();
+        $('#d_areaCode').show();
+    }
+})
+
+$("#deviceSettingForm").submit(function(event) {
+    $(".help-block").remove();
+    $("div").removeClass("has-error");
+
+    if ($("#nav_areaCode").hasClass("active")) {
+        $("#glImei").val("");
+        if ($("#areaCode").val() == "") {
+            $("#areaCode").parent().after('<span class="help-block">请选择区域！</span>');
+            $("#d_areaCode").addClass("has-error");
+            return false;
+        }
+    }
+
+    if ($("#nav_glImei").hasClass("active")) {
+        $("#areaCode").val("");
+        if ($("#glImei").val() == "") {
+            $("#glImei").parent().after('<span class="help-block">请输入设备ID！</span>');
+            $("#d_glImei").addClass("has-error");
+            return false;
+        }
+    }
+
+    var oneLevelAlarmTemperature = $("#oneLevelAlarmTemperature").val();
+    if ((oneLevelAlarmTemperature | 0) != oneLevelAlarmTemperature ||
+        oneLevelAlarmTemperature < 0 ||
+        oneLevelAlarmTemperature > 80) {
+        $("#oneLevelAlarmTemperature").parent().after('<span class="help-block">预警温度值应是介于0至80之间的整数！</span>');
+        $("#d_oneLevelAlarmTemperature").addClass("has-error");
+        return false;
+    }
+
+    var twoLevelAlarmTemperature = $("#twoLevelAlarmTemperature").val();
+    if ((twoLevelAlarmTemperature | 0) != twoLevelAlarmTemperature ||
+        twoLevelAlarmTemperature < 0 ||
+        twoLevelAlarmTemperature > 80) {
+        $("#twoLevelAlarmTemperature").parent().after('<span class="help-block">预警温度值应是介于0至80之间的整数！</span>');
+        $("#d_twoLevelAlarmTemperature").addClass("has-error");
+        return false;
+    }
+
+    if (twoLevelAlarmTemperature < oneLevelAlarmTemperature) {
+        $("#twoLevelAlarmTemperature").parent().after('<span class="help-block">二级预警温度值应大于一级预警温度值！</span>');
+        $("#d_twoLevelAlarmTemperature").addClass("has-error");
+        return false;
+    }
+
+    if (window.confirm('确定提交报警器参数设置？')) {
+        return true;
+    } else {
+        return false;
+    }
+});
+/*]]>*/
+</script>
+</body>
+</html>

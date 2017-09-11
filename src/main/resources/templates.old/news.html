@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <th:block th:include="fragments/head :: head"></th:block>
+        <link href="/css/jquery.dataTables.min.css" rel="stylesheet" />
+    </head>
+    <body>
+        <th:block th:include="fragments/header :: header"></th:block>
+        <div class="container-fluid">
+            <div class="row">
+                <th:block th:include="fragments/menu :: menu"></th:block>
+                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    <div class="row sub-header op-header">
+                        <div class="col-sm-8"><h3>新闻资讯</h3></div>
+                        <div class="col-sm-4 text-right link"><a href="/news/new">添加资讯</a></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="news" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>标题</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/jquery.dataTables.min.js"></script>
+        <script src="/js/moment.js"></script>
+        <script src="/bootstrap/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" class="init">
+        $('#menu-news').addClass("active");
+
+        $(document).ready(function() {
+            $('#news').DataTable( {
+                "processing": true,
+                "serverSide": true,
+                "searching": false,
+                "lengthChange": false,
+                "pageLength": 20,
+                "ordering": false,
+                "ajax": "/news/list",
+                "columns": [
+                    { "data": "id" },
+                    { "data": "title" },
+                    { "data": "createdAt", "render": function(data, type, full, meta) {
+                        return moment(data).format('YYYY-MM-DD');
+                    } },
+                    { "data": function(row, type, val, meta) {
+                        var top = row.top == 1 ? "取消置顶" : "置顶";
+                        var status = row.status == 0 ? "开启" : "关闭";
+
+                        var op =
+                            '<ul class="list-inline">' +
+                            '<li><a href="/news/edit/' + row.id + '">修改</a></li>' +
+                            '<li><a href="/news/switch/' + row.id + '">' + status + '</a></li>' +
+                            '<li><a href="/news/top/' + row.id + '">' + top + '</a></li>' +
+                            '<li><a href="/news/delete/' + row.id + '">删除</a></li></ul>';
+                        return op;
+                    } }
+                ]
+            } );
+        } );
+        </script>
+    </body>
+</html>

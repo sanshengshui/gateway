@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:include="fragments/head :: head"></th:block>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <th:block th:include="fragments/header :: main-header"></th:block>
+    <th:block th:include="fragments/menu :: menu"></th:block>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <th:block th:include="fragments/header :: content-header"></th:block>
+        <!-- Main content -->
+        <section class="content">
+            <th:block th:include="fragments/header :: message"></th:block>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#1" data-toggle="tab">警报推送内容</a></li>
+                            <li><a href="#0" data-toggle="tab">警报解除推送内容</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="1">
+                                <form class="form-horizontal" th:object="${pushSetting1}"
+                                      th:action="@{/push_setting/save}" method="post">
+                                    <input type="hidden" th:field="*{id}"/>
+                                    <div class="form-group">
+                                        <label for="title" class="col-sm-2 control-label">标题：</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" id="title" class="form-control" maxlength="10"
+                                                   th:field="*{title}" required="true"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="content" class="col-sm-2 control-label">内容：</label>
+                                        <div class="col-sm-6">
+                                            <textarea id="content" class="form-control" maxlength="40" rows="5"
+                                                      th:field="*{content}" required="true"></textarea>
+                                            <span class="help-block">注：括号内的内容为不可编辑内容，括号外的内容可自由编辑，限40个字内。</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-6">
+                                            <button type="submit" class="btn btn-primary">确认</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- /.tab-pane -->
+                            <div class="tab-pane" id="0">
+                                <form class="form-horizontal" th:object="${pushSetting0}"
+                                      th:action="@{/push_setting/save}" method="post">
+                                    <input type="hidden" th:field="*{id}"/>
+                                    <div class="form-group">
+                                        <label for="title" class="col-sm-2 control-label">标题：</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" id="title" class="form-control" maxlength="10"
+                                                   th:field="*{title}" required="true"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="content" class="col-sm-2 control-label">内容：</label>
+                                        <div class="col-sm-6">
+                                            <textarea id="content" class="form-control" maxlength="40" rows="5"
+                                                      th:field="*{content}" required="true"></textarea>
+                                            <span class="help-block">注：括号内的内容为不可编辑内容，括号外的内容可自由编辑，限40个字内。</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-6">
+                                            <button type="submit" class="btn btn-primary">确认</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- /.tab-pane -->
+                        </div>
+                        <!-- /.tab-content -->
+                    </div>
+                    <!-- /.nav-tabs-custom -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <th:block th:include="fragments/footer :: footer"></th:block>
+</div>
+
+<th:block th:include="fragments/footer :: js"></th:block>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+var type = /*[[${pushSetting0.type}]]*/ 'app';
+fragment_polish("push-setting-" + type);
+
+var reg = new RegExp("#(.*)$", "i");
+var r = window.location.href.match(reg);
+if (r != null) {
+    var activeTab = unescape(r[1]);
+    $('.nav-tabs a[href="#' + activeTab + '"]').tab('show');
+}
+/*]]>*/
+</script>
+</body>
+</html>
