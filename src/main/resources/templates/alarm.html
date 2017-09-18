@@ -94,13 +94,13 @@ $(document).ready(function() {
                 return moment(data * 1000).format('YYYY-MM-DD HH:mm:ss');
             } },
             { "data": "glImei" },
-            { "data": "device.glName" },
-            { "data": "device.userName" },
-            { "data": "device.userPhones", "render": function(data, type, full, meta) {
+            { "data": "gateway.glName" },
+            { "data": "gateway.userName" },
+            { "data": "gateway.userPhones", "render": function(data, type, full, meta) {
                 return data ? JSON.parse(data).toString() : "";
             } },
-            { "data": "device.address", "render": function(data, type, full, meta) {
-                return areaCodeDict.init().getAreaName(full.device.areaCode) + data;
+            { "data": "gateway.address", "render": function(data, type, full, meta) {
+                return areaCodeDict.init().getAreaName(full.gateway.areaCode) + data;
             } },
             { "data": "type", "render": function(data, type, full, meta) {
                 return dict(data, 'alarm_type');

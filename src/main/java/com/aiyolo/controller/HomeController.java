@@ -2,12 +2,12 @@ package com.aiyolo.controller;
 
 import com.aiyolo.common.ArrayHelper;
 import com.aiyolo.common.BaiduMapHelper;
-import com.aiyolo.entity.Device;
+import com.aiyolo.entity.Gateway;
 import com.aiyolo.entity.DeviceAlarm;
 import com.aiyolo.repository.DeviceAlarmRepository;
-import com.aiyolo.repository.DeviceRepository;
+import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.service.AreaCodeService;
-import com.aiyolo.service.DeviceService;
+import com.aiyolo.service.GatewayService;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +24,19 @@ import java.util.Map;
 @RequestMapping("/home")
 public class HomeController {
 
-    @Autowired DeviceRepository deviceRepository;
+    @Autowired GatewayRepository gatewayRepository;
     @Autowired DeviceAlarmRepository deviceAlarmRepository;
 
-    @Autowired DeviceService deviceService;
+    @Autowired GatewayService gatewayService;
     @Autowired AreaCodeService areaCodeService;
 
     @RequestMapping("/data")
     public Map<String, Object> data(
             @RequestParam(value="id", defaultValue="0") String id,
             @RequestParam(value="areaCode", defaultValue="0") String areaCode) {
-        Long deviceId;
+        Long gatewayId;
         try {
-            deviceId = Long.valueOf(id);
+            gatewayId = Long.valueOf(id);
         } catch (NumberFormatException e) {
             return null;
         }
@@ -45,47 +45,47 @@ public class HomeController {
             return null;
         }
 
-        List<Device> devices = new ArrayList<Device>();
-        if (deviceId == 0) {
-            devices = deviceService.getAllDeviceByAreaCode(areaCode);
+        List<Gateway> gateways = new ArrayList<Gateway>();
+        if (gatewayId == 0) {
+            gateways = gatewayService.getAllGatewayByAreaCode(areaCode);
         } else {
-            Device device = deviceService.getDeviceById(deviceId);
-            if (device != null) {
-                devices.add(device);
+            Gateway gateway = gatewayService.getGatewayById(gatewayId);
+            if (gateway != null) {
+                gateways.add(gateway);
             }
         }
 
         Map<String, DeviceAlarm> deviceAlarms = new HashMap<String, DeviceAlarm>();
-        for (int i = 0; i < devices.size(); i++) {
-            if (StringUtils.isNotEmpty(devices.get(i).getAreaCode())) {
-                String areaName = areaCodeService.getAreaName(devices.get(i).getAreaCode());
-                if (StringUtils.isNotEmpty(areaName) && StringUtils.isEmpty(devices.get(i).getAddressLocation())) {
-                    String fullAddress = areaName + devices.get(i).getAddress();
+        for (int i = 0; i < gateways.size(); i++) {
+            if (StringUtils.isNotEmpty(gateways.get(i).getAreaCode())) {
+                String areaName = areaCodeService.getAreaName(gateways.get(i).getAreaCode());
+                if (StringUtils.isNotEmpty(areaName) && StringUtils.isEmpty(gateways.get(i).getAddressLocation())) {
+                    String fullAddress = areaName + gateways.get(i).getAddress();
                     Map<String, String> addressLocation = BaiduMapHelper.getLocationByAddress(fullAddress);
                     if (addressLocation != null) {
-                        devices.get(i).setAddressLocation(addressLocation.get("longitude") + "," + addressLocation.get("latitude"));
-                        deviceRepository.save(devices.get(i));
+                        gateways.get(i).setAddressLocation(addressLocation.get("longitude") + "," + addressLocation.get("latitude"));
+                        gatewayRepository.save(gateways.get(i));
                     }
                 }
             }
 
-            // 添加设备管理员手机至userPhones
-            String managerPhone = deviceService.getManagerPhone(devices.get(i).getGlImei());
+            // 添加网关管理员手机至userPhones
+            String managerPhone = gatewayService.getManagerPhone(gateways.get(i).getGlImei());
             if (StringUtils.isNotEmpty(managerPhone)) {
-                String[] userPhones = ArrayHelper.getStringArray(devices.get(i).getUserPhones());
+                String[] userPhones = ArrayHelper.getStringArray(gateways.get(i).getUserPhones());
                 String[] newUserPhones = (String[]) ArrayUtils.addAll(new String[]{managerPhone}, userPhones);
-                devices.get(i).setUserPhones(ArrayHelper.getArrayString(newUserPhones));
+                gateways.get(i).setUserPhones(ArrayHelper.getArrayString(newUserPhones));
             }
 
             // 获取最近一次警报记录
-            DeviceAlarm deviceAlarm = deviceAlarmRepository.findFirstByGlIdOrderByIdDesc(devices.get(i).getGlId());
+            DeviceAlarm deviceAlarm = deviceAlarmRepository.findFirstByGlImeiOrderByIdDesc(gateways.get(i).getGlImei());
             if (deviceAlarm != null) {
-                deviceAlarms.put(deviceAlarm.getGlId(), deviceAlarm);
+                deviceAlarms.put(deviceAlarm.getGlImei(), deviceAlarm);
             }
         }
 
         Map<String, Object> response = new HashMap<String, Object>();
-        response.put("devices", devices);
+        response.put("gateways", gateways);
         response.put("deviceAlarms", deviceAlarms);
         return response;
     }

@@ -83,9 +83,9 @@ public class UserController {
         }
 
         // 取有权限的区域
-        if (! StringUtils.isEmpty(user.getDeviceAreaCodes())) {
+        if (!StringUtils.isEmpty(user.getGatewayAreaCodes())) {
             List<String> ownAreaCodes = customUserDetailsService.getAuthorities().get("areas");
-            String[] userAreaCodes = user.getDeviceAreaCodes().split(",");
+            String[] userAreaCodes = user.getGatewayAreaCodes().split(",");
             List<String> newUserAreaCodes = new ArrayList<String>();
             for (int i = 0; i < userAreaCodes.length; i++) {
                 if (areaCodeService.checkAreaCode(userAreaCodes[i]) &&
@@ -94,9 +94,9 @@ public class UserController {
                 }
             }
             if (newUserAreaCodes.size() > 0) {
-                user.setDeviceAreaCodes(String.join(",", newUserAreaCodes));
+                user.setGatewayAreaCodes(String.join(",", newUserAreaCodes));
             } else {
-                user.setDeviceAreaCodes("");
+                user.setGatewayAreaCodes("");
             }
         }
 
@@ -107,7 +107,7 @@ public class UserController {
                 userRecord.setRealname(user.getRealname());
                 userRecord.setPhone(user.getPhone());
                 userRecord.setProductIds(user.getProductIds());
-                userRecord.setDeviceAreaCodes(user.getDeviceAreaCodes());
+                userRecord.setGatewayAreaCodes(user.getGatewayAreaCodes());
 
                 if (! StringUtils.isEmpty(user.getPassword())) {
                     String hashedPassword = passwordEncoder.encode(user.getPassword());
@@ -133,7 +133,7 @@ public class UserController {
                     hashedPassword,
                     RoleEnum.EMPLOYEE,
                     user.getProductIds(),
-                    user.getDeviceAreaCodes()));
+                    user.getGatewayAreaCodes()));
 
             return "redirect:/user";
         }

@@ -2,7 +2,7 @@ package com.aiyolo.constant;
 
 public enum PushSettingPlaceholderEnum {
 
-    GL_NAME("glName", "【报警器名称】"),
+    GL_NAME("glName", "【网关名称】"),
     DATETIME("datetime", "【时间】"),
     ADDRESS("address", "【地址】"),
     ALARM_TYPE("alarmType", "【警报内容】");

@@ -16,7 +16,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         registry.addViewController("/403").setViewName("403");
         registry.addViewController("/404").setViewName("404");
 
-        registry.addViewController("/device").setViewName("device");
+        registry.addViewController("/gateway").setViewName("gateway");
         registry.addViewController("/alarm").setViewName("alarm");
         registry.addViewController("/news").setViewName("news");
 

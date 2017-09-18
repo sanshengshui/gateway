@@ -33,7 +33,7 @@
                                                placeholder="手机"/>
                                     </div>
                                     <div class="form-group form-group-sm">
-                                        <input type="text" id="deviceId" name="deviceId" class="form-control"
+                                        <input type="text" id="gatewayId" name="gatewayId" class="form-control"
                                                placeholder="设备ID"/>
                                     </div>
                                     <button type="submit" class="btn btn-default btn-sm">查询</button>
@@ -109,7 +109,7 @@ $(document).ready(function() {
                 return names.join();
             } },
             { "data": "id", "render": function(data, type, full, meta) {
-                return '<a href="/channel/device_export/' + data + '">下载</a></li>';
+                return '<a href="/channel/gateway_export/' + data + '">下载</a></li>';
             } },
             { "data": "createdAt", "render": function(data, type, full, meta) {
                 return moment(data).format('YYYY-MM-DD');
@@ -120,7 +120,7 @@ $(document).ready(function() {
                 var op =
                     '<ul class="list-inline">' +
                     '<li><a href="/channel/edit/' + row.id + '">修改</a></li>' +
-                    '<li><a href="/channel/device_import/' + row.id + '">导入</a></li>' +
+                    '<li><a href="/channel/gateway_import/' + row.id + '">导入</a></li>' +
                     '<li><a href="/channel/switch/' + row.id + '">' + status + '</a></li></ul>';
                 return op;
             } }
@@ -132,11 +132,11 @@ $(document).ready(function() {
         var channelName = $("#channelName").val();
         var username = $("#username").val();
         var phone = $("#phone").val();
-        var deviceId = $("#deviceId").val();
+        var gatewayId = $("#gatewayId").val();
         var url = "/channel/list?channelName=" + encodeURI(channelName) +
             "&username=" + encodeURI(username) +
             "&phone=" + encodeURI(phone) +
-            "&deviceId=" + encodeURI(deviceId);
+            "&gatewayId=" + encodeURI(gatewayId);
         table.ajax.url(url).load();
         return false;
     });

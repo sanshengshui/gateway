@@ -11,8 +11,8 @@ public enum ApiResponseStateEnum {
     ERROR_AUTHENTICATE(10304, "认证错误"),
     ERROR_AUTHORITY(10305, "无权限"),
 
-    ERROR_DEVICE_OFFLINE(10601, "设备离线"),
-    ERROR_DEVICE_NONE_RESPONSE(10602, "设备未响应"),
+    ERROR_GATEWAY_OFFLINE(10601, "网关离线"),
+    ERROR_GATEWAY_NONE_RESPONSE(10602, "网关未响应"),
     
     ERROR_UNKOWN(10900, "未知错误");
 

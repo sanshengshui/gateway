@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:include="fragments/head :: head"></th:block>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <th:block th:include="fragments/header :: main-header"></th:block>
+    <th:block th:include="fragments/menu :: menu"></th:block>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <th:block th:include="fragments/header :: content-header"></th:block>
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">编辑设备信息</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <!-- form start -->
+                        <form id="gateway" class="form-horizontal" th:object="${gateway}" th:action="@{/gateway/save}"
+                              method="post">
+                            <input type="hidden" th:field="*{id}"/>
+                            <input type="hidden" id="userPhones" th:field="*{userPhones}"/>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">设备ID：</label>
+                                    <div class="col-sm-3">
+                                        <p class="form-control-static" th:text="*{glImei}">设备ID</p>
+                                    </div>
+                                </div>
+                                <div th:class="${#fields.hasErrors('userName')} ? 'form-group has-error' : 'form-group'">
+                                    <label for="userName" class="col-sm-2 control-label">报警联系人：</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" id="userName" class="form-control" th:field="*{userName}"
+                                               required="true"/>
+                                    </div>
+                                    <span class="help-block" th:if="${#fields.hasErrors('userName')}"
+                                          th:errors="*{userName}">Username Error</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="userPhone0" class="col-sm-2 control-label">联系人手机：</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" id="userPhone0" class="form-control" readonly="true"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="userPhone1" class="col-sm-2 control-label"> </label>
+                                    <div class="col-sm-6">
+                                        <input type="text" id="userPhone1" class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="userPhone2" class="col-sm-2 control-label"> </label>
+                                    <div class="col-sm-6">
+                                        <input type="text" id="userPhone2" class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="userPhone3" class="col-sm-2 control-label"> </label>
+                                    <div class="col-sm-6">
+                                        <input type="text" id="userPhone3" class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">设备地址：</label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" th:field="*{areaCode}"/>
+                                        <div id="distpicker" class="form-inline">
+                                            <select id="province" class="form-control"></select>
+                                            <select id="city" class="form-control"></select>
+                                            <select id="district" class="form-control"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div th:class="${#fields.hasErrors('address')} ? 'form-group has-error' : 'form-group'">
+                                    <label for="address" class="col-sm-2 control-label"> </label>
+                                    <div class="col-sm-6">
+                                        <input type="text" id="address" class="form-control" th:field="*{address}"
+                                               placeholder="详细地址" required="true"/>
+                                    </div>
+                                    <span class="help-block" th:if="${#fields.hasErrors('address')}"
+                                          th:errors="*{address}">Address Error</span>
+                                </div>
+                                <div class="form-group" th:if="*{#strings.length(locationAddress) > 0}">
+                                    <label for="locationAddress" class="col-sm-2 control-label">自动定位的地址：</label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" th:field="*{locationAreaCode}"/>
+                                        <input type="text" id="locationAddress" class="form-control"
+                                               th:field="*{locationAddress}" readonly="true"/>
+                                    </div>
+                                    <span class="help-block">注：定位地址仅供参考</span>
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                            <div class="box-footer">
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-6">
+                                        <button type="submit" class="btn btn-primary">确认</button>
+                                        &nbsp;&nbsp;
+                                        <button type="button" class="btn btn-default"
+                                                onclick="javascript:window.location.href='/gateway'">取消
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.box-footer -->
+                        </form>
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <th:block th:include="fragments/footer :: footer"></th:block>
+</div>
+
+<th:block th:include="fragments/footer :: js"></th:block>
+<script src="/js/distpicker.js"></script>
+<script src="/js/distpicker.init.js"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+fragment_polish("gateway");
+
+var authorities = [[${#authentication.getAuthorities()}]];
+distpickerInit(authorities);
+
+var areaCode = [[${gateway.areaCode}]];
+
+// 省市区联动
+$('#distpicker').distpicker({
+    province: areaCode.substring(0, 2) + '0000',
+    city: areaCode.substring(0, 4) + '00',
+    district: areaCode,
+    valueType: "code",
+    placeholder: false
+});
+
+var userPhones = $("#userPhones").val();
+if (userPhones) {
+    userPhones = JSON.parse(userPhones);
+    if (userPhones[0]) $("#userPhone0").val(userPhones[0]);
+    if (userPhones[1]) $("#userPhone1").val(userPhones[1]);
+    if (userPhones[2]) $("#userPhone2").val(userPhones[2]);
+    if (userPhones[3]) $("#userPhone3").val(userPhones[3]);
+}
+
+var checkAreaCode = function() {
+    if ($("#areaCode").val() != $("#locationAreaCode").val()) {
+        $("#locationAddress").addClass('bg-danger');
+        $("#locationAddress").parent().addClass('has-error');
+    } else {
+        $("#locationAddress").removeClass('bg-danger');
+        $("#locationAddress").parent().removeClass('has-error');
+    }
+}
+checkAreaCode();
+
+$("#distpicker select").change(function() {
+    $("#areaCode").val($("#district").val() ? $("#district").val() : ($("#city").val() ? $("#city").val() : $("#province").val()));
+    checkAreaCode();
+});
+
+$("#gateway").submit(function(event) {
+    var userPhones = new Array(3);
+    userPhones[0] = $("#userPhone1").val();
+    userPhones[1] = $("#userPhone2").val();
+    userPhones[2] = $("#userPhone3").val();
+    $("#userPhones").val(JSON.stringify(userPhones));
+    return;
+});
+/*]]>*/
+</script>
+</body>
+</html>

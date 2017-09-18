@@ -48,12 +48,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/**",
                         "/file/**").permitAll()
                 .antMatchers(
-                        "/device/edit/**",
-                        "/device/save",
+                        "/gateway/edit/**",
+                        "/gateway/save",
                         "/user/**").hasAnyRole("MANAGER", "AGENT")
                 .antMatchers(
                         "/stat/**",
-                        "/device/setting/**",
+                        "/gateway/setting/**",
                         "/push_setting/**",
                         "/news/**",
                         "/channel/**",

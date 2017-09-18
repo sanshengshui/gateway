@@ -1,0 +1,27 @@
+{
+  "AF-MC" : { "name" : "门磁", "value" : { "1" : "打开" }},
+  "AF-HRD" : { "name" : "红外热释电", "value" : { "1" : "检测到" }},
+
+  "XF-YW" : { "name" : "烟雾", "value" : { "1" : "烟雾报警" }},
+  "XF-RQ" : { "name" : "燃气", "value" : { "1" : "燃气报警" }},
+  "XF-QJ" : { "name" : "求救 or SOS", "value" : { "1" : "求救报警" }},
+  "XF-SF" : { "name" : "水阀", "value" : { "1" : "水阀报警" }},
+  "XF-CO" : { "name" : "CO", "value" : { "1" : "CO报警" }},
+  "XF-CG" : { "name" : "CO+GAS", "value" : { "1" : "CO+GAS报警" }},
+
+  "DQ-LD" : { "name" : "漏电开关", "value" : { "1" : "漏电" }},
+  "DQ-GL" : { "name" : "过流开关", "value" : { "1" : "过流" }},
+  "DQ-CW" : { "name" : "超温开关", "value" : { "1" : "超温" }},
+  "DQ-GY" : { "name" : "过压开关", "value" : { "1" : "过压" }},
+  "DQ-DY" : { "name" : "低压开关", "value" : { "1" : "低压" }},
+  "DQ-DL" : { "name" : "短路开关", "value" : { "1" : "短路" }},
+  "DQ-LX" : { "name" : "零线开关", "value" : { "1" : "零线断开" }},
+  "DQ-FL" : { "name" : "防雷开关", "value" : { "1" : "雷电导致断开" }},
+
+  "HJ-WD" : { "name" : "温度", "value" : {}},
+  "HJ-SD" : { "name" : "湿度", "value" : {}},
+  "HJ-DQY" : { "name" : "大气压", "value" : {}},
+  "HJ-PM25" : { "name" : "PM2.5", "value" : {}},
+
+  "ZRZH-DZ" : { "name" : "地震检测", "value" : {}}
+}

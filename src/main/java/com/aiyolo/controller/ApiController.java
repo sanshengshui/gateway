@@ -6,7 +6,6 @@ import com.aiyolo.common.SpringUtil;
 import com.aiyolo.common.StringHelper;
 import com.aiyolo.service.api.ApiService;
 import com.aiyolo.service.api.BaseService;
-import com.aiyolo.service.api.request.FileUploadRequest;
 import com.aiyolo.service.api.request.Request;
 import com.aiyolo.service.api.request.RequestObject;
 import com.aiyolo.service.api.response.ResponseObject;
@@ -19,11 +18,12 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
@@ -72,7 +72,7 @@ public class ApiController {
                 return response;
             }
 
-            action = requestObject.getAction();
+            action = requestObject.getAct();
             if (SpringUtil.getApplicationContext().containsBean(StringHelper.underline2Camel(action) + "Request")) {
                 Req requestBean = (Req) SpringUtil.getBean(StringHelper.underline2Camel(action) + "Request");
                 requestObject = (Req) objectMapper.readValue(body, requestBean.getClass());
@@ -98,37 +98,6 @@ public class ApiController {
             return response;
         } finally {
             apiLogger.info("Request: " + body.replace("\n", "") + ", Response: " + JSONObject.fromObject(response).toString());
-        }
-    }
-
-    @PostMapping("/upload/{type:.+}")
-    @SuppressWarnings("unchecked")
-    public @ResponseBody <S extends ApiService, Res extends ResponseObject> Res upload(
-            @PathVariable String type,
-            @Valid FileUploadRequest fileUploadRequest,
-            BindingResult bindingResult) {
-        Res response = null;
-        try {
-            if (bindingResult.hasErrors()) {
-                response = (Res) baseService.responseRequestParameterError(fileUploadRequest.getAction());
-                return response;
-            }
-
-            String serviceName = "upload" + StringHelper.underline2Camel(type, true) + "Service";
-            S service = (S) SpringUtil.getBean(serviceName);
-
-            response = (Res) service.doExecute(fileUploadRequest);
-            return response;
-        } catch (Exception e) {
-            errorLogger.error("ApiController异常！RequestBody(FileUpload:" + type + "):" + fileUploadRequest.toString(), e);
-            if (e instanceof AuthenticateError) {
-                response = (Res) baseService.responseAuthenticateError(fileUploadRequest.getAction());
-                return response;
-            }
-            response = (Res) baseService.responseInternalServerError(fileUploadRequest.getAction());
-            return response;
-        } finally {
-            apiLogger.info("Request(FileUpload:" + type + "): " + fileUploadRequest.toString() + ", Response: " + JSONObject.fromObject(response).toString());
         }
     }
 

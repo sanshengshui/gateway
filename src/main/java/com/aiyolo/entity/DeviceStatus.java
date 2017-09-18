@@ -1,60 +1,65 @@
 package com.aiyolo.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 @Entity
 public class DeviceStatus extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String glId = "";
+    private String type = "";
+    private String imei = "";
     private String glImei = "";
     private Integer timestamp = 0;
-    private String date = "";
-    private String hour = "";
-    private String version = "";
-    private Integer temperature = 0;
-    private Integer humidity = 0;
-    private Integer netStatus = 0;
-    private Integer devStatus = 0;
+    private Integer online = 0;
+    private Integer status = 0;
+    private Integer rssi = 0;
+    private Integer bat = 0;
+    private String info = "";
 
     @ManyToOne
-    @JoinColumn(name = "glId", referencedColumnName = "glId", insertable = false, updatable = false)
+    @JoinColumn(name = "imei", referencedColumnName = "imei", insertable = false, updatable = false)
     private Device device;
 
     protected DeviceStatus() {}
 
-    public DeviceStatus(String glId, String glImei, Integer timestamp, String date, String hour, String version, Integer temperature, Integer humidity,
-            Integer netStatus, Integer devStatus) {
-        this.glId = glId;
+    public DeviceStatus(String type, String imei, String glImei, Integer timestamp, Integer online, Integer status, Integer rssi,
+                        Integer bat, String info) {
+        this.type = type;
+        this.imei = imei;
         this.glImei = glImei;
         this.timestamp = timestamp;
-        this.date = date;
-        this.hour = hour;
-        this.version = version;
-        this.temperature = temperature;
-        this.humidity = humidity;
-        this.netStatus = netStatus;
-        this.devStatus = devStatus;
+        this.online = online;
+        this.status = status;
+        this.rssi = rssi;
+        this.bat = bat;
+        this.info = info;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "DeviceStatus[id=%d, gl_id='%s', gl_imei='%s', date='%s', hour='%s']",
-                id, glId, glImei, date, hour);
+                "DeviceStatus[id=%d, type='%s', imei='%s', gl_imei='%s']",
+                id, type, imei, glImei);
     }
 
-    public String getGlId() {
-        return glId;
+    public String getType() {
+        return type;
     }
 
-    public void setGlId(String glId) {
-        this.glId = glId;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getImei() {
+        return imei;
+    }
+
+    public void setImei(String imei) {
+        this.imei = imei;
     }
 
     public String getGlImei() {
@@ -73,60 +78,44 @@ public class DeviceStatus extends BaseEntity implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public String getDate() {
-        return date;
+    public Integer getOnline() {
+        return online;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setOnline(Integer online) {
+        this.online = online;
     }
 
-    public String getHour() {
-        return hour;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setHour(String hour) {
-        this.hour = hour;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
-    public String getVersion() {
-        return version;
+    public Integer getRssi() {
+        return rssi;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setRssi(Integer rssi) {
+        this.rssi = rssi;
     }
 
-    public Integer getTemperature() {
-        return temperature;
+    public Integer getBat() {
+        return bat;
     }
 
-    public void setTemperature(Integer temperature) {
-        this.temperature = temperature;
+    public void setBat(Integer bat) {
+        this.bat = bat;
     }
 
-    public Integer getHumidity() {
-        return humidity;
+    public String getInfo() {
+        return info;
     }
 
-    public void setHumidity(Integer humidity) {
-        this.humidity = humidity;
-    }
-
-    public Integer getNetStatus() {
-        return netStatus;
-    }
-
-    public void setNetStatus(Integer netStatus) {
-        this.netStatus = netStatus;
-    }
-
-    public Integer getDevStatus() {
-        return devStatus;
-    }
-
-    public void setDevStatus(Integer devStatus) {
-        this.devStatus = devStatus;
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     public Device getDevice() {

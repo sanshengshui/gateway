@@ -1,66 +1,123 @@
 package com.aiyolo.service;
 
-import com.aiyolo.cache.DeviceLatestStatusCache;
-import com.aiyolo.cache.DeviceLiveStatusCache;
-import com.aiyolo.cache.entity.DeviceLatestStatus;
-import com.aiyolo.constant.DeviceNetStatusEnum;
+import com.aiyolo.channel.data.request.AppNoticeDeviceRequest;
+import com.aiyolo.constant.AppNoticeTypeConsts;
+import com.aiyolo.constant.SmsConsts;
+import com.aiyolo.entity.Device;
 import com.aiyolo.entity.DeviceAlarm;
 import com.aiyolo.entity.DeviceStatus;
+import com.aiyolo.queue.Sender;
+import com.aiyolo.repository.DeviceAlarmRepository;
+import com.aiyolo.repository.DeviceRepository;
+import com.aiyolo.repository.DeviceStatusRepository;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class DeviceStatusService {
 
-    @Autowired DeviceLatestStatusCache deviceLatestStatusCache;
-    @Autowired DeviceLiveStatusCache deviceLiveStatusCache;
+    private static final Log errorLogger = LogFactory.getLog("errorLog");
 
-    public DeviceLatestStatus getLatestDeviceStatusByGlImei(String glImei) {
-        DeviceLatestStatus latestDeviceStatus = deviceLatestStatusCache.getByGlImei(glImei);
-        latestDeviceStatus = (DeviceLatestStatus) latestDeviceStatus.clone(); // 克隆对象，以避免后续程序set操作修改到原始缓存
+    @Autowired Sender sender;
 
-        // 判断设备是否离线
-        int deviceLiveStatus = deviceLiveStatusCache.getByGlId(latestDeviceStatus.getGlId());
-        if (deviceLiveStatus != DeviceLiveStatusCache.LIVE) {
-            latestDeviceStatus.setNetStatus(DeviceNetStatusEnum.OFFLINE.getValue());
-        }
+    @Autowired DeviceRepository deviceRepository;
+    @Autowired DeviceStatusRepository deviceStatusRepository;
+    @Autowired DeviceAlarmRepository deviceAlarmRepository;
 
-        return latestDeviceStatus;
+    @Autowired GatewayService gatewayService;
+    @Autowired PushSettingService pushSettingService;
+    @Autowired MessagePushService messagePushService;
+    @Autowired SmsPushService smsPushService;
+
+    public void pushDeviceStatus(Device device) {
+        pushDeviceStatus(device, AppNoticeTypeConsts.MODIFY);
     }
 
-    public Integer getDeviceNetStatus(String glImei) {
-        DeviceLatestStatus latestDeviceStatus = getLatestDeviceStatusByGlImei(glImei);
-        return latestDeviceStatus.getNetStatus();
+    public void pushDeviceStatus(Device device, Integer noticeType) {
+        pushDeviceStatus(device, noticeType, null);
     }
 
-    public void updateLatestDeviceStatus(DeviceStatus deviceStatus) {
-        if (deviceStatus == null) {
+    public void pushDeviceStatus(Device device, Integer noticeType, DeviceAlarm deviceAlarm) {
+        if (device == null) {
             return;
         }
 
-        DeviceLatestStatus latestDeviceStatus = deviceLatestStatusCache.getByGlImei(deviceStatus.getGlImei());
+        try {
+            String[] mobileIds = gatewayService.getGatewayUserMobileIds(device.getGlImei());
+            if (mobileIds != null && mobileIds.length > 0) {
+                // 推送给app
+                Map<String, Object> headerMap = AppNoticeDeviceRequest.getInstance().requestHeader(mobileIds);
+                headerMap.put("cache_time", 24 * 60 * 60 * 1000L);
 
-        latestDeviceStatus.setVersion(deviceStatus.getVersion());
-        latestDeviceStatus.setTemperature(deviceStatus.getTemperature());
-        latestDeviceStatus.setHumidity(deviceStatus.getHumidity());
-        latestDeviceStatus.setNetStatus(deviceStatus.getNetStatus());
-        latestDeviceStatus.setDevStatus(deviceStatus.getDevStatus());
+                Map<String, Object> queryParamMap = new HashMap<String, Object>();
+                queryParamMap.put("imei", device.getImei());
+                queryParamMap.put("notice", noticeType);
+                queryParamMap.put("dev", device.getType());
+                queryParamMap.put("pid", device.getPid());
 
-        deviceLatestStatusCache.save(deviceStatus.getGlImei(), latestDeviceStatus);
+                DeviceStatus deviceStatus = deviceStatusRepository.findFirstByImeiOrderByIdDesc(device.getImei());
+                queryParamMap.put("online", deviceStatus.getOnline());
+                queryParamMap.put("location", device.getPosition());
+                queryParamMap.put("name", device.getName());
+                queryParamMap.put("rssi", deviceStatus.getRssi());
+                if (deviceAlarm == null) {
+                    DeviceAlarm _deviceAlarm = deviceAlarmRepository.findFirstByImeiOrderByIdDesc(device.getImei());
+                    queryParamMap.put("val", _deviceAlarm.getValue());
+                } else {
+                    queryParamMap.put("val", deviceAlarm.getValue());
+                }
+                queryParamMap.put("bat", deviceStatus.getBat());
+
+                Map<String, Object> bodyMap = AppNoticeDeviceRequest.getInstance().requestBody(queryParamMap);
+
+                sender.sendMessage(headerMap, bodyMap);
+
+                if (deviceAlarm != null) {
+                    // 推送给个推
+                    String msgTitle = "";
+                    String msgContent = "";
+                    String smsContent = "";
+
+                    Map<String, String> placeholderValues = pushSettingService.buildPlaceholderValues(device, deviceAlarm);
+                    Map<String, Map<String, String>> pushSetting = pushSettingService.getPushSettingByLevel(
+                            pushSettingService.getPushSettingLevel(deviceAlarm.getValue()),
+                            placeholderValues);
+                    msgTitle = pushSetting.get("app").get("title");
+                    msgContent = SmsConsts.SMS_SIGN + pushSetting.get("app").get("content");
+                    smsContent = SmsConsts.SMS_SIGN + pushSetting.get("sms").get("content");
+
+                    messagePushService.pushMessage(mobileIds, device.getGateway().getGlId(), msgTitle, msgContent);
+
+                    // 发送短信
+                    smsPushService.pushSms(device.getGlImei(), smsContent);
+                }
+            }
+        } catch (Exception e) {
+            errorLogger.error("pushDeviceStatus异常！device:" + device.toString() + ", deviceAlarm:" + (deviceAlarm != null ? deviceAlarm.toString() : "null"), e);
+        }
     }
 
-    public void updateLatestDeviceStatus(DeviceAlarm deviceAlarm) {
-        if (deviceAlarm == null) {
+    public void pushDeviceStatus(String imei) {
+        Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imei);
+        if (device == null) {
             return;
         }
 
-        DeviceLatestStatus latestDeviceStatus = deviceLatestStatusCache.getByGlImei(deviceAlarm.getGlImei());
+        pushDeviceStatus(device);
+    }
 
-        latestDeviceStatus.setTemperature(deviceAlarm.getTemperature());
-        latestDeviceStatus.setHumidity(deviceAlarm.getHumidity());
-        latestDeviceStatus.setAlarmType(deviceAlarm.getType());
+    public void pushDeviceStatus(DeviceAlarm deviceAlarm) {
+        Device device = deviceRepository.findFirstByImeiOrderByIdDesc(deviceAlarm.getImei());
+        if (device == null) {
+            return;
+        }
 
-        deviceLatestStatusCache.save(deviceAlarm.getGlImei(), latestDeviceStatus);
+        pushDeviceStatus(device, AppNoticeTypeConsts.MODIFY, deviceAlarm);
     }
 
 }

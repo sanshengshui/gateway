@@ -1,10 +1,5 @@
 package com.aiyolo.service;
 
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.aiyolo.constant.AlarmMessageTemplateConsts;
 import com.aiyolo.constant.PushSettingLevelEnum;
 import com.aiyolo.constant.PushSettingPlaceholderEnum;
@@ -17,12 +12,17 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class PushSettingService {
 
     @Autowired PushSettingRepository pushSettingRepository;
 
-    @Autowired DeviceService deviceService;
+    @Autowired GatewayService gatewayService;
     @Autowired DeviceAlarmService deviceAlarmService;
 
     public Map<String, Map<String, String>> getDefaultPushSetting(int level) {
@@ -82,14 +82,14 @@ public class PushSettingService {
 
     public Map<String, String> buildPlaceholderValues(Device device, DeviceAlarm deviceAlarm) {
         Map<String, String> placeholderValues = new HashMap<String, String>();
-        placeholderValues.put("glName", device.getGlName());
+        placeholderValues.put("glName", device.getGateway().getGlName());
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String datetime = format.format(deviceAlarm.getTimestamp() * 1000L);
         placeholderValues.put("datetime", datetime);
 
-        placeholderValues.put("address", deviceService.getFullAddress(device.getAddress(), device.getAreaCode()));
-        placeholderValues.put("alarmType", deviceAlarmService.getDeviceAlarmTypeName(deviceAlarm.getType()));
+        placeholderValues.put("address", gatewayService.getFullAddress(device.getGateway().getAddress(), device.getGateway().getAreaCode()));
+        placeholderValues.put("alarmType", deviceAlarm.getValue().toString());
 
         return placeholderValues;
     }

@@ -3,10 +3,10 @@ package com.aiyolo.constant;
 public enum ProductEnum {
 
     /**
-     * 测试环境：40001040010001
-     * 生产环境：40001070010003
+     * 测试环境：40001040010008
+     * 生产环境：40001070010006
      */
-    ALARM("40001070010003", "智能报警器");
+    GATEWAY("40001040010008", "智能报警器网关");
 
     private String id;
     private String name;

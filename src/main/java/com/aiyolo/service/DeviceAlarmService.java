@@ -33,7 +33,7 @@ public class DeviceAlarmService {
         } else {
             String areaCodeSearchPat = areaCodeService.getAreaCodeSearchPat(authorities, areaCode);
             if (StringUtils.isNotEmpty(areaCodeSearchPat)) {
-                alarms = deviceAlarmRepository.findPageByDeviceAreaCodeMatch(pageable, areaCodeSearchPat);
+                alarms = deviceAlarmRepository.findPageByGatewayAreaCodeMatch(pageable, areaCodeSearchPat);
             }
         }
 

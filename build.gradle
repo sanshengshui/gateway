@@ -21,7 +21,7 @@ idea {
 }
 
 jar {
-    baseName = 'alarm-backend'
+    baseName = 'gateway-backend'
     version =  '0.1.0'
 }
 

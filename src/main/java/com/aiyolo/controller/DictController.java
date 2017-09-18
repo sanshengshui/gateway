@@ -2,10 +2,7 @@ package com.aiyolo.controller;
 
 import com.aiyolo.common.FileHelper;
 import com.aiyolo.common.SpringUtil;
-import com.aiyolo.constant.AlarmStatusEnum;
-import com.aiyolo.constant.ProductEnum;
-import com.aiyolo.constant.Role4DeviceEnum;
-import com.aiyolo.constant.RoleEnum;
+import com.aiyolo.constant.*;
 import com.aiyolo.entity.Channel;
 import com.aiyolo.repository.ChannelRepository;
 import com.aiyolo.service.AreaCodeService;
@@ -78,14 +75,14 @@ public class DictController {
         return "var dict_role = " + JSONObject.fromObject(roleMap).toString();
     }
 
-    @RequestMapping(value = "/role_device", produces = "text/javascript; charset=UTF-8")
-    public String role4Device() {
+    @RequestMapping(value = "/role_gateway", produces = "text/javascript; charset=UTF-8")
+    public String role4Gateway() {
         Map<String, String> roleMap = new HashMap<String, String>();
-        for (int i = 0; i < Role4DeviceEnum.values().length; i++) {
-            roleMap.put(String.valueOf(Role4DeviceEnum.values()[i].name()), Role4DeviceEnum.values()[i].getName());
+        for (int i = 0; i < Role4GatewayEnum.values().length; i++) {
+            roleMap.put(String.valueOf(Role4GatewayEnum.values()[i].name()), Role4GatewayEnum.values()[i].getName());
         }
 
-        return "var dict_role_device = " + JSONObject.fromObject(roleMap).toString();
+        return "var dict_role_gateway = " + JSONObject.fromObject(roleMap).toString();
     }
 
     @RequestMapping(value = "/area_code", produces = "text/javascript; charset=UTF-8")

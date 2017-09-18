@@ -1,49 +1,58 @@
 package com.aiyolo.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 @Entity
 public class DeviceAlarmCancel extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String glId = "";
+    private String type = "";
+    private String imei = "";
     private String glImei = "";
     private Integer timestamp = 0;
-    private Integer temperature = 0;
-    private Integer humidity = 0;
 
     @ManyToOne
-    @JoinColumn(name = "glId", referencedColumnName = "glId", insertable = false, updatable = false)
+    @JoinColumn(name = "imei", referencedColumnName = "imei", insertable = false, updatable = false)
     private Device device;
+
+    @ManyToOne
+    @JoinColumn(name = "glImei", referencedColumnName = "glImei", insertable = false, updatable = false)
+    private Gateway gateway;
 
     protected DeviceAlarmCancel() {}
 
-    public DeviceAlarmCancel(String glId, String glImei, Integer timestamp, Integer temperature, Integer humidity) {
-        this.glId = glId;
+    public DeviceAlarmCancel(String type, String imei, String glImei, Integer timestamp) {
+        this.type = type;
+        this.imei = imei;
         this.glImei = glImei;
         this.timestamp = timestamp;
-        this.temperature = temperature;
-        this.humidity = humidity;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "DeviceAlarmCancel[id=%d, gl_id='%s', gl_imei='%s']",
-                id, glId, glImei);
+                "DeviceAlarmCancel[id=%d, type='%s', imei='%s', gl_imei='%s', timestamp=%d]",
+                id, type, imei, glImei, timestamp);
     }
 
-    public String getGlId() {
-        return glId;
+    public String getType() {
+        return type;
     }
 
-    public void setGlId(String glId) {
-        this.glId = glId;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getImei() {
+        return imei;
+    }
+
+    public void setImei(String imei) {
+        this.imei = imei;
     }
 
     public String getGlImei() {
@@ -60,22 +69,6 @@ public class DeviceAlarmCancel extends BaseEntity implements Serializable {
 
     public void setTimestamp(Integer timestamp) {
         this.timestamp = timestamp;
-    }
-
-    public Integer getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(Integer temperature) {
-        this.temperature = temperature;
-    }
-
-    public Integer getHumidity() {
-        return humidity;
-    }
-
-    public void setHumidity(Integer humidity) {
-        this.humidity = humidity;
     }
 
     public Device getDevice() {

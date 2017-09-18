@@ -28,14 +28,14 @@
                 <li id="menu-home">
                     <a href="/"><i class="fa fa-dashboard"></i> <span>首页</span></a>
                 </li>
-                <li id="menu-device">
-                    <a href="/device"><i class="fa fa-hdd-o"></i> <span>设备管理</span></a>
+                <li id="menu-gateway">
+                    <a href="/gateway"><i class="fa fa-hdd-o"></i> <span>设备管理</span></a>
                 </li>
                 <li id="menu-alarm">
                     <a href="/alarm"><i class="fa fa-warning"></i> <span>警报记录</span></a>
                 </li>
-                <li id="menu-device-setting" sec:authorize="hasRole('ROLE_MANAGER')">
-                    <a href="/device/setting"><i class="fa fa-gear"></i> <span>设备参数设置</span></a>
+                <li id="menu-gateway-setting" sec:authorize="hasRole('ROLE_MANAGER')">
+                    <a href="/gateway/setting"><i class="fa fa-gear"></i> <span>设备参数设置</span></a>
                 </li>
                 <li id="menu-push-setting-app" sec:authorize="hasRole('ROLE_MANAGER')">
                     <a href="/push_setting/app"><i class="fa fa-share-square-o"></i> <span>APP推送设置</span></a>

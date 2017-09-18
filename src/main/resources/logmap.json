@@ -1,11 +1,11 @@
 {
   "/login" : "登录成功",
 
-  "/device/save" : "编辑设备信息",
-  "/device/user/admin" : "设置设备管理员",
-  "/device/user/delete" : "删除设备成员",
+  "/gateway/save" : "编辑设备信息",
+  "/gateway/user/admin" : "设置设备管理员",
+  "/gateway/user/delete" : "删除设备成员",
 
-  "/device/setting/save" : "设置设备参数",
+  "/gateway/setting/save" : "设置设备参数",
 
   "/push_setting/save" : "修改APP/短信推送设置",
 

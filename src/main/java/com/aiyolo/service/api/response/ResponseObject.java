@@ -4,48 +4,48 @@ import com.aiyolo.constant.ApiResponseStateEnum;
 
 public class ResponseObject {
 
-    private String action;
-    private Integer result;
+    private String act;
+    private Integer ret;
     private String error;
 
     public ResponseObject() {
     }
 
     public ResponseObject(String action, ApiResponseStateEnum state) {
-        this.action = action;
-        this.result = state.getResult();
+        this.act = action;
+        this.ret = state.getResult();
         this.error = state.getDes();
     }
 
     public ResponseObject(String action, Integer result, String error) {
-        this.action = action;
-        this.result = result;
+        this.act = action;
+        this.ret = result;
         this.error = error;
     }
 
     @Override
     public String toString() {
         return "ResponseObject{" +
-                "action='" + action + '\'' +
-                ", result=" + result +
+                "act='" + act + '\'' +
+                ", ret=" + ret +
                 ", error='" + error + '\'' +
                 '}';
     }
 
-    public String getAction() {
-        return action;
+    public String getAct() {
+        return act;
     }
 
-    public void setAction(String action) {
-        this.action = action;
+    public void setAct(String act) {
+        this.act = act;
     }
 
-    public Integer getResult() {
-        return result;
+    public Integer getRet() {
+        return ret;
     }
 
-    public void setResult(Integer result) {
-        this.result = result;
+    public void setRet(Integer ret) {
+        this.ret = ret;
     }
 
     public String getError() {

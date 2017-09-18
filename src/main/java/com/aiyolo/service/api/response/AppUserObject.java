@@ -1,43 +1,29 @@
 package com.aiyolo.service.api.response;
 
-import com.aiyolo.constant.Role4DeviceEnum;
+import com.aiyolo.constant.Role4GatewayEnum;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class AppUserObject {
 
-    private String name = "";
     private String phone = "";
-    private String avatar = "";
-    private Integer admin = Role4DeviceEnum.USER.getValue();
+    private Integer admin = Role4GatewayEnum.USER.getValue();
 
     public AppUserObject() {
     }
 
-    public AppUserObject(String name, String phone, String avatar, Integer admin) {
-        this.name = name;
+    public AppUserObject(String phone, Integer admin) {
         this.phone = phone;
-        this.avatar = avatar;
         this.admin = admin;
     }
 
     @Override
     public String toString() {
         return "AppUserObject{" +
-                "name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
-                ", avatar='" + avatar + '\'' +
                 ", admin=" + admin +
                 '}';
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getPhone() {
@@ -46,14 +32,6 @@ public class AppUserObject {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
     }
 
     public Integer getAdmin() {

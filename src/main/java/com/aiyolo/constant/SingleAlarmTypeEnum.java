@@ -3,9 +3,9 @@ package com.aiyolo.constant;
 public enum SingleAlarmTypeEnum {
 
     CLEAR(0, "警报解除"),
-    ONE_LEVEL_HIGH_TEMPERATURE(1, "一级预警报"),
-    TWO_LEVEL_HIGH_TEMPERATURE(2, "二级预警报"),
-    FIRE(4, "火灾警报"),
+    ONE_LEVEL_HIGH_TEMPERATURE(1, "一级预报警"),
+    TWO_LEVEL_HIGH_TEMPERATURE(2, "二级预报警"),
+    FIRE(4, "火灾报警"),
     GAS_LEAK(8, "燃气泄漏"),
     CO_LEAK(16, "CO气体泄漏"),
     SMOKE(32, "烟雾");

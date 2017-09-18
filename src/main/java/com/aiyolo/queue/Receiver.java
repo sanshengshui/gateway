@@ -24,9 +24,9 @@ public class Receiver {
             JSONObject messageBodyJson = messageJson.getJSONObject("body");
 
             if (new Integer(702).equals(messageHeaderJson.get("code"))) {
-                processorFactory.getProcessor("DeviceBeatProcessor").run(messageString); // 设备心跳
+                processorFactory.getProcessor("GatewayBeatProcessor").run(messageString); // 网关心跳
             } else if ("info".equals(messageHeaderJson.get("cmd"))) {
-                processorFactory.getProcessor("DeviceInfoProcessor").run(messageString);
+                processorFactory.getProcessor("GatewayInfoProcessor").run(messageString);
             } else if ("user_login".equals(messageHeaderJson.get("cmd"))) {
                 processorFactory.getProcessor("AppUserLoginProcessor").run(messageString);
             } else {
@@ -41,7 +41,7 @@ public class Receiver {
 
                 String className = "";
                 if (new Integer(601).equals(messageHeaderJson.get("code"))) {
-                    className = new StringBuilder().append("Device").append(new String(actionByte).replace("_", "")).append("Processor").toString();
+                    className = new StringBuilder().append("Gateway").append(new String(actionByte).replace("_", "")).append("Processor").toString();
                 } else if (new Integer(603).equals(messageHeaderJson.get("code"))) {
                     className = new StringBuilder().append("App").append(new String(actionByte).replace("_", "")).append("Processor").toString();
                 }

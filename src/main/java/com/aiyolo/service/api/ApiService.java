@@ -45,12 +45,12 @@ public abstract class ApiService {
 
     // 设备离线
     public Response responseDeviceOfflineError(String action) {
-        return new Response(action, ApiResponseStateEnum.ERROR_DEVICE_OFFLINE);
+        return new Response(action, ApiResponseStateEnum.ERROR_GATEWAY_OFFLINE);
     }
 
     // 设备未响应
     public Response responseDeviceNoneResponseError(String action) {
-        return new Response(action, ApiResponseStateEnum.ERROR_DEVICE_NONE_RESPONSE);
+        return new Response(action, ApiResponseStateEnum.ERROR_GATEWAY_NONE_RESPONSE);
     }
 
     // 未知错误

@@ -1,6 +1,8 @@
 package com.aiyolo.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.util.List;
@@ -10,56 +12,58 @@ public class Device extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String glId = "";
-    private String glName = "";
+    private String type = "";
+    private String pid = "";
+    private String imei = "";
     private String glImei = "";
-    private String glPin = "";
-    private String glLogintime = "";
-    private String glLongitude = "";
-    private String glLatitude = "";
-    private String userName = "";
-    private String userPhones = "";
-    private String areaCode = "";
-    private String address = "";
-    private String locationAreaCode = "";
-    private String locationAddress = "";
-    private String addressLocation = "";
+    private String name = "";
+    private String position = "";
+
+    @ManyToOne
+    @JoinColumn(name = "glImei", referencedColumnName = "glImei", insertable = false, updatable = false)
+    private Gateway gateway;
 
     @OneToMany(mappedBy = "device")
     private List<DeviceAlarm> deviceAlarms;
 
-    @OneToMany(mappedBy = "device")
-    private List<AppUserDevice> deviceAppUsers;
-
     protected Device() {}
 
-    public Device(String glId, String glImei, String glPin) {
-        this.glId = glId;
+    public Device(String type, String pid, String imei, String glImei) {
+        this.type = type;
+        this.pid = pid;
+        this.imei = imei;
         this.glImei = glImei;
-        this.glPin = glPin;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "Device[id=%d, gl_id='%s', gl_name='%s', gl_imei='%s', gl_pin='%s', user_name='%s', user_phones='%s', area_code='%s', address='%s']",
-                id, glId, glName, glImei, glPin, userName, userPhones, areaCode, address);
+                "Device[id=%d, type='%s', pid='%s', imei='%s', gl_imei='%s', name='%s', position='%s']",
+                id, type, pid, imei, glImei, name, position);
     }
 
-    public String getGlId() {
-        return glId;
+    public String getType() {
+        return type;
     }
 
-    public void setGlId(String glId) {
-        this.glId = glId;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public String getGlName() {
-        return glName;
+    public String getPid() {
+        return pid;
     }
 
-    public void setGlName(String glName) {
-        this.glName = glName;
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+
+    public String getImei() {
+        return imei;
+    }
+
+    public void setImei(String imei) {
+        this.imei = imei;
     }
 
     public String getGlImei() {
@@ -70,101 +74,28 @@ public class Device extends BaseEntity implements Serializable {
         this.glImei = glImei;
     }
 
-    public String getGlPin() {
-        return glPin;
+    public String getName() {
+        return name;
     }
 
-    public void setGlPin(String glPin) {
-        this.glPin = glPin;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getGlLogintime() {
-        return glLogintime;
+    public String getPosition() {
+        return position;
     }
 
-    public void setGlLogintime(String glLogintime) {
-        this.glLogintime = glLogintime;
+    public void setPosition(String position) {
+        this.position = position;
     }
 
-    public String getGlLongitude() {
-        return glLongitude;
+    public Gateway getGateway() {
+        return gateway;
     }
 
-    public void setGlLongitude(String glLongitude) {
-        if (glLongitude == null || !glLongitude.equals(this.glLongitude)) {
-            locationAreaCode = "";
-            locationAddress = "";
-        }
-
-        this.glLongitude = glLongitude;
-    }
-
-    public String getGlLatitude() {
-        return glLatitude;
-    }
-
-    public void setGlLatitude(String glLatitude) {
-        this.glLatitude = glLatitude;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getUserPhones() {
-        return userPhones;
-    }
-
-    public void setUserPhones(String userPhones) {
-        this.userPhones = userPhones;
-    }
-
-    public String getAreaCode() {
-        return areaCode;
-    }
-
-    public void setAreaCode(String areaCode) {
-        this.areaCode = areaCode;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        if (address == null || !address.equals(this.address)) {
-            addressLocation = ""; // 置空地址经纬度信息，进入首页触发重新转换
-        }
-
-        this.address = address;
-    }
-
-    public String getLocationAreaCode() {
-        return locationAreaCode;
-    }
-
-    public void setLocationAreaCode(String locationAreaCode) {
-        this.locationAreaCode = locationAreaCode;
-    }
-
-    public String getLocationAddress() {
-        return locationAddress;
-    }
-
-    public void setLocationAddress(String locationAddress) {
-        this.locationAddress = locationAddress;
-    }
-
-    public String getAddressLocation() {
-        return addressLocation;
-    }
-
-    public void setAddressLocation(String addressLocation) {
-        this.addressLocation = addressLocation;
+    public void setGateway(Gateway gateway) {
+        this.gateway = gateway;
     }
 
 }

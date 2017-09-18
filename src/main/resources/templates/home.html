@@ -86,7 +86,7 @@ $('#distpicker').distpicker({
 var map_init = false;
 var map_timer;
 var map_areaCode;
-var map_deviceId;
+var map_gatewayId;
 var mapInfoWinOpts = { width: 400, enableMessage: false };
 var mapRedIcon = new BMap.Icon("/images/red.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
 var mapBlueIcon = new BMap.Icon("/images/blue.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
@@ -98,19 +98,19 @@ var map;
 var displayMap = function(areaCode, id) {
     clearTimeout(map_timer);
 
-    map_init = (map_init && areaCode == map_areaCode && id == map_deviceId) ? true : false;
+    map_init = (map_init && areaCode == map_areaCode && id == map_gatewayId) ? true : false;
     map_areaCode = areaCode;
-    map_deviceId = id;
+    map_gatewayId = id;
 
     $.getJSON("/home/data?id=" + id + "&areaCode=" + areaCode, function(data) {
-        var devices = data.devices;
+        var gateways = data.gateways;
         var deviceAlarms = data.deviceAlarms;
 
-        for (var i = 0; i < devices.length; i++) {
-            if (devices[i].addressLocation == "") {
+        for (var i = 0; i < gateways.length; i++) {
+            if (gateways[i].addressLocation == "") {
                 continue;
             }
-            var lo = devices[i].addressLocation.split(",");
+            var lo = gateways[i].addressLocation.split(",");
             if (!map_init) {
                 map = new BMap.Map("mapContainer");
                 map.centerAndZoom(new BMap.Point(lo[0], lo[1]), 10);
@@ -119,29 +119,29 @@ var displayMap = function(areaCode, id) {
                 map_init = true;
                 $('.box-alarm').show();
             } else {
-                if (mapMarkers[devices[i].id]) {
-                    map.removeOverlay(mapMarkers[devices[i].id]);
+                if (mapMarkers[gateways[i].id]) {
+                    map.removeOverlay(mapMarkers[gateways[i].id]);
                 }
             }
-            mapMarkers[devices[i].id] = new BMap.Marker(new BMap.Point(lo[0], lo[1]));
-            if (deviceAlarms[devices[i].glId] && deviceAlarms[devices[i].glId].status == 1) {
-                mapMarkers[devices[i].id].setIcon(mapRedIcon);
+            mapMarkers[gateways[i].id] = new BMap.Marker(new BMap.Point(lo[0], lo[1]));
+            if (deviceAlarms[gateways[i].glId] && deviceAlarms[gateways[i].glId].status == 1) {
+                mapMarkers[gateways[i].id].setIcon(mapRedIcon);
             } else {
-                mapMarkers[devices[i].id].setIcon(mapBlueIcon);
+                mapMarkers[gateways[i].id].setIcon(mapBlueIcon);
             }
-            map.addOverlay(mapMarkers[devices[i].id]);
-            mapMarkers[devices[i].id].device_id = devices[i].id;
+            map.addOverlay(mapMarkers[gateways[i].id]);
+            mapMarkers[gateways[i].id].gateway_id = gateways[i].id;
 
             var infoWinContent = '<dl>' +
                 '<dt>地址</dt>' +
-                '<dd>' + areaCodeDict.init().getAreaName(devices[i].areaCode) + devices[i].address + '</dd>' +
+                '<dd>' + areaCodeDict.init().getAreaName(gateways[i].areaCode) + gateways[i].address + '</dd>' +
                 '<dt>联系人</dt>' +
-                '<dd>' + devices[i].userName + '</dd>' +
+                '<dd>' + gateways[i].userName + '</dd>' +
                 '<dt>联系电话</dt>' +
-                '<dd>' + JSON.parse(devices[i].userPhones).toString() + '</dd></dl>';
-            mapInfoWins[devices[i].id] = new BMap.InfoWindow(infoWinContent, mapInfoWinOpts);
-            mapMarkers[devices[i].id].addEventListener('click', function(evt) {
-                var id = evt.target.device_id;
+                '<dd>' + JSON.parse(gateways[i].userPhones).toString() + '</dd></dl>';
+            mapInfoWins[gateways[i].id] = new BMap.InfoWindow(infoWinContent, mapInfoWinOpts);
+            mapMarkers[gateways[i].id].addEventListener('click', function(evt) {
+                var id = evt.target.gateway_id;
                 mapMarkers[id].openInfoWindow(mapInfoWins[id]);
             });
         }
@@ -153,7 +153,7 @@ var displayMap = function(areaCode, id) {
             for (var glId in deviceAlarms) {
                 if (deviceAlarms[glId].status == 1) {
                     $(".list-group").prepend('<li class="list-group-item">' +
-                        '<b>' + (deviceAlarms[glId].device.glName ? deviceAlarms[glId].device.glName : deviceAlarms[glId].device.glImei) + '</b>' +
+                        '<b>' + (deviceAlarms[glId].gateway.glName ? deviceAlarms[glId].gateway.glName : deviceAlarms[glId].gateway.glImei) + '</b>' +
                         '<span class="pull-right">' + moment(deviceAlarms[glId].timestamp * 1000).format('YYYY-MM-DD HH:mm:ss') + '</span>' +
                         '<p>' + dict(deviceAlarms[glId].type, 'alarm_type') + '</p></li>');
                 }

@@ -2,7 +2,7 @@ package com.aiyolo.service.api.request;
 
 public class RequestObject {
 
-    private String action;
+    private String act;
     private String cid;
     private String session;
     private String system;
@@ -13,19 +13,27 @@ public class RequestObject {
     @Override
     public String toString() {
         return "RequestObject{" +
-                "action='" + action + '\'' +
+                "act='" + act + '\'' +
                 ", cid='" + cid + '\'' +
                 ", session='" + session + '\'' +
                 ", system='" + system + '\'' +
                 '}';
     }
 
+    public String getAct() {
+        return act;
+    }
+
+    public void setAct(String act) {
+        this.act = act;
+    }
+
     public String getAction() {
-        return action;
+        return this.getAct();
     }
 
     public void setAction(String action) {
-        this.action = action;
+        this.setAct(action);
     }
 
     public String getCid() {

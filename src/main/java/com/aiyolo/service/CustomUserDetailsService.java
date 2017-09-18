@@ -55,17 +55,17 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
         // 区域权限
-        String deviceAreaCodes = user.getDeviceAreaCodes();
+        String gatewayAreaCodes = user.getGatewayAreaCodes();
         if (RoleEnum.EMPLOYEE.equals(user.getRole())) {
             // 判断区域权限，不能大于渠道管理员
             User channelManager = userRepository.findFirstByChannelIdAndRoleOrderByIdDesc(user.getChannelId(), RoleEnum.AGENT);
             if (channelManager == null) {
-                deviceAreaCodes = null;
-            } else if (StringUtils.isEmpty(deviceAreaCodes)) {
-                deviceAreaCodes = channelManager.getDeviceAreaCodes();
-            } else if (StringUtils.isNotEmpty(channelManager.getDeviceAreaCodes())) {
-                List<String> channelAreaCodes = Arrays.asList(channelManager.getDeviceAreaCodes().split(","));
-                String[] userAreaCodes = deviceAreaCodes.split(",");
+                gatewayAreaCodes = null;
+            } else if (StringUtils.isEmpty(gatewayAreaCodes)) {
+                gatewayAreaCodes = channelManager.getGatewayAreaCodes();
+            } else if (StringUtils.isNotEmpty(channelManager.getGatewayAreaCodes())) {
+                List<String> channelAreaCodes = Arrays.asList(channelManager.getGatewayAreaCodes().split(","));
+                String[] userAreaCodes = gatewayAreaCodes.split(",");
                 List<String> newUserAreaCodes = new ArrayList<String>();
                 for (int i = 0; i < userAreaCodes.length; i++) {
                     if (areaCodeService.checkAreaCode(userAreaCodes[i]) &&
@@ -74,18 +74,18 @@ public class CustomUserDetailsService implements UserDetailsService {
                     }
                 }
                 if (newUserAreaCodes.size() > 0) {
-                    deviceAreaCodes = String.join(",", newUserAreaCodes);
+                    gatewayAreaCodes = String.join(",", newUserAreaCodes);
                 } else {
-                    deviceAreaCodes = null;
+                    gatewayAreaCodes = null;
                 }
             }
         }
 
-        if (deviceAreaCodes != null) {
-            if ("".equals(deviceAreaCodes)) {
+        if (gatewayAreaCodes != null) {
+            if ("".equals(gatewayAreaCodes)) {
                 authorities.add(new SimpleGrantedAuthority("AREA_0"));
             } else {
-                String[] areaCodeArray = deviceAreaCodes.split(",");
+                String[] areaCodeArray = gatewayAreaCodes.split(",");
                 for (int i = 0; i < areaCodeArray.length; i++) {
                     if (areaCodeService.checkAreaCode(areaCodeArray[i])) {
                         authorities.add(new SimpleGrantedAuthority("AREA_" + areaCodeArray[i]));

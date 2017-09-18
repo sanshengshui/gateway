@@ -1,53 +1,62 @@
 package com.aiyolo.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 @Entity
 public class DeviceAlarm extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String glId = "";
+    private String type = "";
+    private String imei = "";
     private String glImei = "";
     private Integer timestamp = 0;
-    private Integer type = 0;
+    private Integer value = 0;
     private Integer status = 0;
-    private Integer temperature = 0;
-    private Integer humidity = 0;
 
     @ManyToOne
-    @JoinColumn(name = "glId", referencedColumnName = "glId", insertable = false, updatable = false)
+    @JoinColumn(name = "imei", referencedColumnName = "imei", insertable = false, updatable = false)
     private Device device;
+
+    @ManyToOne
+    @JoinColumn(name = "glImei", referencedColumnName = "glImei", insertable = false, updatable = false)
+    private Gateway gateway;
 
     protected DeviceAlarm() {}
 
-    public DeviceAlarm(String glId, String glImei, Integer timestamp, Integer type, Integer status, Integer temperature, Integer humidity) {
-        this.glId = glId;
+    public DeviceAlarm(String type, String imei, String glImei, Integer timestamp, Integer value, Integer status) {
+        this.type = type;
+        this.imei = imei;
         this.glImei = glImei;
         this.timestamp = timestamp;
-        this.type = type;
+        this.value = value;
         this.status = status;
-        this.temperature = temperature;
-        this.humidity = humidity;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "DeviceAlarm[id=%d, gl_id='%s', gl_imei='%s', type=%d, status=%d]",
-                id, glId, glImei, type, status);
+                "DeviceAlarm[id=%d, type='%s', imei='%s', gl_imei='%s', timestamp=%d, value=%d, status=%d]",
+                id, type, imei, glImei, timestamp, value, status);
     }
 
-    public String getGlId() {
-        return glId;
+    public String getType() {
+        return type;
     }
 
-    public void setGlId(String glId) {
-        this.glId = glId;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getImei() {
+        return imei;
+    }
+
+    public void setImei(String imei) {
+        this.imei = imei;
     }
 
     public String getGlImei() {
@@ -66,12 +75,12 @@ public class DeviceAlarm extends BaseEntity implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public Integer getType() {
-        return type;
+    public Integer getValue() {
+        return value;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public void setValue(Integer value) {
+        this.value = value;
     }
 
     public Integer getStatus() {
@@ -80,22 +89,6 @@ public class DeviceAlarm extends BaseEntity implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public Integer getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(Integer temperature) {
-        this.temperature = temperature;
-    }
-
-    public Integer getHumidity() {
-        return humidity;
-    }
-
-    public void setHumidity(Integer humidity) {
-        this.humidity = humidity;
     }
 
     public Device getDevice() {

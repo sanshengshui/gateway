@@ -24,7 +24,7 @@ public class User extends BaseEntity {
     private RoleEnum role = RoleEnum.EMPLOYEE;
 
     private String productIds = "";
-    private String deviceAreaCodes = "";
+    private String gatewayAreaCodes = "";
     private Integer status = STATUS_ENABLE;
 
     @ManyToOne
@@ -33,7 +33,7 @@ public class User extends BaseEntity {
 
     public User() {}
 
-    public User(Long channelId, String username, String realname, String phone, String password, RoleEnum role, String productIds, String deviceAreaCodes) {
+    public User(Long channelId, String username, String realname, String phone, String password, RoleEnum role, String productIds, String gatewayAreaCodes) {
         this.channelId = channelId;
         this.username = username;
         this.realname = realname;
@@ -41,14 +41,14 @@ public class User extends BaseEntity {
         this.password = password;
         this.role = role;
         this.productIds = productIds;
-        this.deviceAreaCodes = deviceAreaCodes;
+        this.gatewayAreaCodes = gatewayAreaCodes;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "User[id=%d, channel_id=%d, username='%s', realname='%s', phone='%s', password='%s', role='%s', product_ids='%s', device_area_codes='%s', status=%d]",
-                id, channelId, username, realname, phone, password, role.getName(), productIds, deviceAreaCodes, status);
+                "User[id=%d, channel_id=%d, username='%s', realname='%s', phone='%s', password='%s', role='%s', product_ids='%s', gateway_area_codes='%s', status=%d]",
+                id, channelId, username, realname, phone, password, role.getName(), productIds, gatewayAreaCodes, status);
     }
 
     public Long getChannelId() {
@@ -107,12 +107,12 @@ public class User extends BaseEntity {
         this.productIds = productIds;
     }
 
-    public String getDeviceAreaCodes() {
-        return deviceAreaCodes;
+    public String getGatewayAreaCodes() {
+        return gatewayAreaCodes;
     }
 
-    public void setDeviceAreaCodes(String deviceAreaCodes) {
-        this.deviceAreaCodes = deviceAreaCodes;
+    public void setGatewayAreaCodes(String gatewayAreaCodes) {
+        this.gatewayAreaCodes = gatewayAreaCodes;
     }
 
     public Integer getStatus() {

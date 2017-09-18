@@ -2,7 +2,7 @@ package com.aiyolo.constant;
 
 public class SmsConsts {
 
-    public static final String API_KEY = "0e7fc436448449b2331100a966e2f2ee";
-    public static final String SMS_SIGN = "【维科安广】";
+    public static final String API_KEY = "d0fcd7539680ac43d8aff387dfb5f3d6";
+    public static final String SMS_SIGN = "【个联智能】";
 
 }

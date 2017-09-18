@@ -27,9 +27,9 @@ public class InputDataHelper {
                     "push_text".equals(headerJson.get("cmd"))) {
                 return InputDataTypeEnum.CHANNEL_RESPONSE;
             } else if (new Integer(702).equals(headerJson.get("code"))) {
-                return InputDataTypeEnum.DEVICE_BEAT; // 设备心跳
+                return InputDataTypeEnum.GATEWAY_BEAT; // 设备心跳
             } else if ("info".equals(headerJson.get("cmd"))) {
-                return InputDataTypeEnum.DEVICE_RESPONSE; // 设备信息查询结果
+                return InputDataTypeEnum.GATEWAY_RESPONSE; // 设备信息查询结果
             } else if ("user_login".equals(headerJson.get("cmd"))) {
                 return InputDataTypeEnum.CHANNEL_REQUEST; // 手机登录信息同步
             }

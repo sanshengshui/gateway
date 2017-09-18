@@ -6,38 +6,81 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class DeviceObject {
 
+    private String dev = "";
+    private String pid = "";
+    private String location = "";
+    private String name = "";
+    private Integer online = 0;
     private String imei = "";
-    private Integer netStatus = 0;
-    private Integer devStatus = 0;
-    private Integer alarmType = 0;
-    private String glName = "";
-    private String version = "";
-    private Integer admin = 0;
+    private Integer rssi = 0;
+    private Integer err = 0;
+    private Integer val = 0;
+    private Integer bat = 0;
 
     public DeviceObject() {
     }
 
-    public DeviceObject(String imei, Integer netStatus, Integer devStatus, Integer alarmType, String glName, String version, Integer admin) {
+    public DeviceObject(String dev, String pid, String location, String name, Integer online, String imei,
+                        Integer rssi, Integer err, Integer val, Integer bat) {
+        this.dev = dev;
+        this.pid = pid;
+        this.location = location;
+        this.name = name;
+        this.online = online;
         this.imei = imei;
-        this.netStatus = netStatus;
-        this.devStatus = devStatus;
-        this.alarmType = alarmType;
-        this.glName = glName;
-        this.version = version;
-        this.admin = admin;
+        this.rssi = rssi;
+        this.err = err;
+        this.val = val;
+        this.bat = bat;
     }
 
     @Override
     public String toString() {
         return "DeviceObject{" +
-                "imei='" + imei + '\'' +
-                ", net_status=" + netStatus +
-                ", dev_status=" + devStatus +
-                ", alarm_type=" + alarmType +
-                ", gl_name='" + glName + '\'' +
-                ", version='" + version + '\'' +
-                ", admin=" + admin +
+                "dev='" + dev + '\'' +
+                ", pid='" + pid + '\'' +
+                ", imei='" + imei + '\'' +
                 '}';
+    }
+
+    public String getDev() {
+        return dev;
+    }
+
+    public void setDev(String dev) {
+        this.dev = dev;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getOnline() {
+        return online;
+    }
+
+    public void setOnline(Integer online) {
+        this.online = online;
     }
 
     public String getImei() {
@@ -48,52 +91,36 @@ public class DeviceObject {
         this.imei = imei;
     }
 
-    public Integer getNetStatus() {
-        return netStatus;
+    public Integer getRssi() {
+        return rssi;
     }
 
-    public void setNetStatus(Integer netStatus) {
-        this.netStatus = netStatus;
+    public void setRssi(Integer rssi) {
+        this.rssi = rssi;
     }
 
-    public Integer getDevStatus() {
-        return devStatus;
+    public Integer getErr() {
+        return err;
     }
 
-    public void setDevStatus(Integer devStatus) {
-        this.devStatus = devStatus;
+    public void setErr(Integer err) {
+        this.err = err;
     }
 
-    public Integer getAlarmType() {
-        return alarmType;
+    public Integer getVal() {
+        return val;
     }
 
-    public void setAlarmType(Integer alarmType) {
-        this.alarmType = alarmType;
+    public void setVal(Integer val) {
+        this.val = val;
     }
 
-    public String getGlName() {
-        return glName;
+    public Integer getBat() {
+        return bat;
     }
 
-    public void setGlName(String glName) {
-        this.glName = glName;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public Integer getAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(Integer admin) {
-        this.admin = admin;
+    public void setBat(Integer bat) {
+        this.bat = bat;
     }
 
 }

@@ -2,8 +2,8 @@ package com.aiyolo.constant;
 
 public enum PushSettingLevelEnum {
 
-    CLEAR(0, "报警解除"),
-    ALARM(1, "报警");
+    CLEAR(0, "警报解除"),
+    ALARM(1, "警报");
 
     private Integer value;
     private String name;

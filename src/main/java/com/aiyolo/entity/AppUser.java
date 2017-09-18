@@ -1,10 +1,9 @@
 package com.aiyolo.entity;
 
-import java.io.Serializable;
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
 public class AppUser extends BaseEntity implements Serializable {
@@ -18,7 +17,7 @@ public class AppUser extends BaseEntity implements Serializable {
     private String mailAddress = "";
 
     @OneToMany(mappedBy = "appUser")
-    private List<AppUserDevice> appUserDevices;
+    private List<AppUserGateway> appUserGateways;
 
     protected AppUser() {}
 

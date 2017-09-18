@@ -1,11 +1,11 @@
 package com.aiyolo.controller;
 
-import com.aiyolo.entity.Device;
 import com.aiyolo.entity.DeviceAlarm;
+import com.aiyolo.entity.Gateway;
 import com.aiyolo.repository.DeviceAlarmRepository;
 import com.aiyolo.service.AreaCodeService;
 import com.aiyolo.service.DeviceAlarmService;
-import com.aiyolo.service.DeviceService;
+import com.aiyolo.service.GatewayService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -23,11 +23,15 @@ import java.util.Map;
 @RequestMapping("/alarm")
 public class DeviceAlarmRestController {
 
-    @Autowired DeviceAlarmRepository deviceAlarmRepository;
+    @Autowired
+    DeviceAlarmRepository deviceAlarmRepository;
 
-    @Autowired DeviceService deviceService;
-    @Autowired DeviceAlarmService deviceAlarmService;
-    @Autowired AreaCodeService areaCodeService;
+    @Autowired
+    GatewayService gatewayService;
+    @Autowired
+    DeviceAlarmService deviceAlarmService;
+    @Autowired
+    AreaCodeService areaCodeService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public Map<String, Object> list(
@@ -36,7 +40,7 @@ public class DeviceAlarmRestController {
             @RequestParam(value = "length", defaultValue = "20") Integer length,
             @RequestParam(value = "areaCode", defaultValue = "0") String areaCode,
             @RequestParam(value = "glImei", defaultValue = "") String glImei) {
-        if (! areaCodeService.checkAreaCode(areaCode, new String[] {"0"})) {
+        if (!areaCodeService.checkAreaCode(areaCode, new String[] {"0"})) {
             return null;
         }
 
@@ -47,8 +51,8 @@ public class DeviceAlarmRestController {
         Page<DeviceAlarm> page = new PageImpl<DeviceAlarm>(new ArrayList<DeviceAlarm>());
         if (StringUtils.isNotEmpty(glImei)) {
             // 权限判断
-            Device device = deviceService.getDeviceByGlImei(glImei);
-            if (device == null) {
+            Gateway gateway = gatewayService.getGatewayByGlImei(glImei);
+            if (gateway == null) {
                 return null;
             }
 

@@ -14,10 +14,10 @@ public class SmsPushService {
     private static final Log smsLogger = LogFactory.getLog("smsLog");
     private static final Log errorLogger = LogFactory.getLog("errorLog");
 
-    @Autowired DeviceService deviceService;
+    @Autowired GatewayService deviceService;
 
     public void pushSms(String glImei, String text) {
-        String[] phones = deviceService.getDeviceUserPhones(glImei);
+        String[] phones = deviceService.getGatewayUserPhones(glImei);
         if (phones != null && phones.length > 0) {
             pushSms(phones, text);
         }

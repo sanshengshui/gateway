@@ -72,7 +72,7 @@ public class ChannelController {
                 userRecord.setRealname(user.getRealname());
                 userRecord.setPhone(user.getPhone());
                 userRecord.setProductIds(user.getProductIds());
-                userRecord.setDeviceAreaCodes(user.getDeviceAreaCodes());
+                userRecord.setGatewayAreaCodes(user.getGatewayAreaCodes());
 
                 if (! StringUtils.isEmpty(user.getPassword())) {
                     String hashedPassword = passwordEncoder.encode(user.getPassword());
@@ -105,7 +105,7 @@ public class ChannelController {
                     hashedPassword,
                     RoleEnum.AGENT,
                     user.getProductIds(),
-                    user.getDeviceAreaCodes()));
+                    user.getGatewayAreaCodes()));
 
             return "redirect:/channel";
         }

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:include="fragments/head :: head"></th:block>
+    <link rel="stylesheet" href="/AdminLTE/plugins/datatables/dataTables.bootstrap.css"/>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <th:block th:include="fragments/header :: main-header"></th:block>
+    <th:block th:include="fragments/menu :: menu"></th:block>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <th:block th:include="fragments/header :: content-header"></th:block>
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">设备列表</h3>
+                            <div class="box-tools pull-right">
+                                <form class="form-inline">
+                                    <div id="distpicker" class="form-group form-group-sm">
+                                        <select id="province" name="province" class="form-control"></select>
+                                        <select id="city" name="city" class="form-control"></select>
+                                        <select id="district" name="district" class="form-control"></select>
+                                    </div>
+                                    <div class="form-group form-group-sm">
+                                        <input type="text" id="address" name="address" class="form-control"
+                                               placeholder="详细地址"/>
+                                    </div>
+                                    <button type="submit" class="btn btn-default btn-sm">查询</button>
+                                </form>
+                            </div><!-- /.box-tools -->
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table id="gateway" class="table table-striped" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>设备ID</th>
+                                    <th>设备名称</th>
+                                    <th>报警联系人</th>
+                                    <th>联系人手机</th>
+                                    <th>详细地址</th>
+                                    <th>上线时间</th>
+                                    <th sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_AGENT')">操作</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <th:block th:include="fragments/footer :: footer"></th:block>
+</div>
+
+<th:block th:include="fragments/footer :: js"></th:block>
+<script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/AdminLTE/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/js/moment.js"></script>
+<script src="/js/dict.js?area_code"></script>
+<script src="/js/distpicker.js"></script>
+<script src="/js/distpicker.init.js"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+fragment_polish("gateway");
+
+var authorities = [[${#authentication.getAuthorities()}]];
+distpickerInit(authorities);
+
+// 省市区联动
+$('#distpicker').distpicker({
+    valueType: "code"
+});
+
+$(document).ready(function() {
+    var columns = [
+        { "data": "glImei" },
+        { "data": "glName" },
+        { "data": "userName" },
+        { "data": "userPhones", "render": function(data, type, full, meta) {
+            return data ? JSON.parse(data).toString() : "";
+        } },
+        { "data": "address", "render": function(data, type, full, meta) {
+            return '<a href="/home?id=' + full.id + '">' + areaCodeDict.init().getAreaName(full.areaCode) + data + '</a>';
+        } },
+        { "data": "glLogintime", "render": function(data, type, full, meta) {
+            return data ? moment(data).format('YYYY-MM-DD') : "";
+        } }
+    ];
+    if ($("th").length > 6) {
+        columns[6] = { "data": "id", "render": function(data, type, full, meta) {
+            return '<a href="/gateway/edit/' + data + '">编辑</a> <a href="/gateway/view/' + data + '">查看</a>';
+        } };
+    }
+
+    var table = $('#gateway').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "searching": false,
+        "lengthChange": false,
+        "pageLength": 20,
+        "ordering": false,
+        "ajax": "/gateway/list",
+        "columns": columns,
+        "initComplete": function(settings, json) {
+            table.rows().every(function(rowIdx, tableLoop, rowLoop) {
+                var d = this.data();
+                if (d.locationAreaCode != d.areaCode) {
+                    $(this.node()).find("td").eq(4).addClass('bg-danger');
+                }
+            } );
+        }
+    } );
+
+    $('form').submit(function(e) {
+        e.preventDefault();
+        var province = $("#province").val();
+        var city = $("#city").val();
+        var district = $("#district").val();
+        var areaCode = district ? district : (city ? city : province);
+        var address = $("#address").val();
+        var url = "/gateway/list?areaCode=" + areaCode + "&address=" + encodeURI(address);
+        table.ajax.url(url).load();
+        return false;
+    });
+});
+/*]]>*/
+</script>
+</body>
+</html>

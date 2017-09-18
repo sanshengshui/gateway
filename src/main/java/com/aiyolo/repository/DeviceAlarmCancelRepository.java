@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface DeviceAlarmCancelRepository extends CrudRepository<DeviceAlarmCancel, Long> {
 
-    DeviceAlarmCancel findFirstByGlIdOrderByIdDesc(String glId);
+    DeviceAlarmCancel findFirstByImeiOrderByIdDesc(String imei);
 
     DeviceAlarmCancel findFirstByGlImeiOrderByIdDesc(String glImei);
 

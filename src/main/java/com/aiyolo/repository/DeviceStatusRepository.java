@@ -1,23 +1,19 @@
 package com.aiyolo.repository;
 
-import java.util.List;
-
 import com.aiyolo.entity.DeviceStatus;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.repository.CrudRepository;
 
 public interface DeviceStatusRepository extends CrudRepository<DeviceStatus, Long> {
 
-    List<DeviceStatus> findByGlImei(String glImei);
+    @Cacheable(value="deviceStatuses", unless="#result == null")
+    DeviceStatus findFirstByImeiOrderByIdDesc(String imei);
 
-    DeviceStatus findFirstByGlIdOrderByIdDesc(String glId);
-
-    DeviceStatus findFirstByGlImeiOrderByIdDesc(String glImei);
-
-    @Query("select s from DeviceStatus s where s.glImei = ?1 and s.date = ?2")
-    List<DeviceStatus> findByGlImeiDate(String glImei, String date);
-
-    @Query("select s from DeviceStatus s where s.glImei = ?1 and s.date = ?2 and s.hour in ?3")
-    List<DeviceStatus> findByGlImeiDateHours(String glImei, String date, String[] hours);
+    @Override
+    @SuppressWarnings("unchecked")
+    @Caching(put = { @CachePut(value="deviceStatuses", key="#p0.getImei()") })
+    DeviceStatus save(DeviceStatus deviceStatus);
 
 }
