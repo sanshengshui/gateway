@@ -4,17 +4,17 @@ import com.aiyolo.constant.ApiResponseStateEnum;
 import com.aiyolo.entity.AppVersion;
 import com.aiyolo.service.api.request.RequestObject;
 
-public class GetVerResponse extends Response {
+public class GetVersionResponse extends Response {
 
     private String ver = "";
     private String url = "";
     private String md5 = "";
     private Boolean force = false;
 
-    public GetVerResponse() {
+    public GetVersionResponse() {
     }
 
-    public GetVerResponse(RequestObject request, AppVersion appVersion) {
+    public GetVersionResponse(RequestObject request, AppVersion appVersion) {
         super(request.getAction(), appVersion == null ? ApiResponseStateEnum.ERROR_NONE_DATA : ApiResponseStateEnum.SUCCESS);
 
         if (appVersion != null) {
@@ -27,7 +27,7 @@ public class GetVerResponse extends Response {
 
     @Override
     public String toString() {
-        return super.toString() + ", GetVerResponse{" +
+        return super.toString() + ", GetVersionResponse{" +
                 "ver='" + ver + '\'' +
                 ", url='" + url + '\'' +
                 ", md5='" + md5 + '\'' +

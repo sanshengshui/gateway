@@ -5,6 +5,8 @@
 
     <cache name="appUsers" maxEntriesLocalHeap="10000" />
     <cache name="appUserSessions" maxEntriesLocalHeap="10000" />
+    <cache name="devices" maxEntriesLocalHeap="10000" />
+    <cache name="deviceStatuses" maxEntriesLocalHeap="10000" />
     <cache name="gateways" maxEntriesLocalHeap="10000" />
     <cache name="gatewayStatuses" maxEntriesLocalHeap="10000" />
     <cache name="gatewaySettings" maxEntriesLocalHeap="10000" />
