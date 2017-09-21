@@ -36,7 +36,7 @@ public class ListUserService extends BaseService {
 
         AppUserGateway appUserGateway = appUserGatewayRepository.findOneByUserIdAndGlImei(userId, imei);
         if (appUserGateway == null || appUserGateway.getGateway() == null) {
-            return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到设备");
+            return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
         } else if (!appUserGateway.getRole().equals(Role4GatewayEnum.MANAGER)) {
             return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_AUTHORITY.getResult(), "无权限");
         }

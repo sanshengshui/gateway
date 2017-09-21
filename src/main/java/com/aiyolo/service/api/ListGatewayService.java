@@ -1,8 +1,12 @@
 package com.aiyolo.service.api;
 
+import com.aiyolo.cache.GatewayLiveStatusCache;
 import com.aiyolo.entity.AppUserGateway;
+import com.aiyolo.entity.Device;
+import com.aiyolo.entity.GatewayStatus;
 import com.aiyolo.repository.AppUserGatewayRepository;
-import com.aiyolo.service.GatewayStatusService;
+import com.aiyolo.repository.DeviceRepository;
+import com.aiyolo.repository.GatewayStatusRepository;
 import com.aiyolo.service.api.request.RequestObject;
 import com.aiyolo.service.api.response.GatewayObject;
 import com.aiyolo.service.api.response.ListGatewayResponse;
@@ -16,9 +20,16 @@ import java.util.List;
 @Service
 public class ListGatewayService extends BaseService {
 
-    @Autowired AppUserGatewayRepository appUserGatewayRepository;
+    @Autowired
+    GatewayLiveStatusCache gatewayLiveStatusCache;
 
-    @Autowired GatewayStatusService gatewayStatusService;
+    @Autowired
+    DeviceRepository deviceRepository;
+    @Autowired
+    GatewayStatusRepository gatewayStatusRepository;
+    @Autowired
+    AppUserGatewayRepository appUserGatewayRepository;
+
 
     @Override
     @SuppressWarnings("unchecked")
@@ -33,9 +44,16 @@ public class ListGatewayService extends BaseService {
             gatewayObject.setImei(appUserGateways.get(i).getGlImei());
             gatewayObject.setAdmin(appUserGateways.get(i).getRole().getValue());
 
-            gatewayObject.setOnline(1);
-            gatewayObject.setDevNum(1);
-            gatewayObject.setVer("1");
+            int gatewayLiveStatus = gatewayLiveStatusCache.getByGlId(appUserGateways.get(i).getGateway().getGlId());
+            gatewayObject.setOnline(gatewayLiveStatus);
+
+            GatewayStatus gatewayStatus = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(appUserGateways.get(i).getGlImei());
+            if (gatewayStatus != null) {
+                gatewayObject.setVer(gatewayStatus.getVersion());
+            }
+
+            List<Device> devices = deviceRepository.findByGlImei(appUserGateways.get(i).getGlImei());
+            gatewayObject.setDevNum(devices.size());
 
             if (appUserGateways.get(i).getGateway() != null) {
                 gatewayObject.setGlName(appUserGateways.get(i).getGateway().getGlName());

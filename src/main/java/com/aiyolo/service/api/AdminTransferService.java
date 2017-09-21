@@ -18,8 +18,10 @@ import com.aiyolo.service.api.response.ResponseObject;
 @Service
 public class AdminTransferService extends BaseService {
 
-    @Autowired AppUserRepository appUserRepository;
-    @Autowired AppUserGatewayRepository appUserGatewayRepository;
+    @Autowired
+    AppUserRepository appUserRepository;
+    @Autowired
+    AppUserGatewayRepository appUserGatewayRepository;
 
     @Override
     @SuppressWarnings("unchecked")

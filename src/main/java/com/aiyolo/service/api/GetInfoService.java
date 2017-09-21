@@ -16,7 +16,8 @@ import org.springframework.util.StringUtils;
 @Service
 public class GetInfoService extends BaseService {
 
-    @Autowired AppUserGatewayRepository appUserGatewayRepository;
+    @Autowired
+    AppUserGatewayRepository appUserGatewayRepository;
 
     @Override
     @SuppressWarnings("unchecked")

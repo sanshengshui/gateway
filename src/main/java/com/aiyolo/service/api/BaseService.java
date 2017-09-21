@@ -13,7 +13,8 @@ import com.aiyolo.service.api.response.ResponseObject;
 @Service
 public class BaseService extends ApiService {
 
-    @Autowired AppUserSessionRepository appUserSessionRepository;
+    @Autowired
+    AppUserSessionRepository appUserSessionRepository;
 
     // 认证用户
     public <Req extends RequestObject> String authenticate(Req request) throws Exception {

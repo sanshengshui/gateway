@@ -27,7 +27,7 @@ public class AppNoticeDeviceRequest extends AppRequest {
             bodyMap.put("dev", data.get("dev"));
             bodyMap.put("pid", data.get("pid"));
             bodyMap.put("online", data.get("online"));
-            bodyMap.put("location", data.get("location"));
+            bodyMap.put("position", data.get("position"));
             bodyMap.put("name", data.get("name"));
             bodyMap.put("rssi", data.get("rssi"));
             bodyMap.put("val", data.get("val"));

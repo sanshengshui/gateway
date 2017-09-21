@@ -20,6 +20,10 @@ public class GatewayDetailResponse extends Response {
     private Integer atm = 0;
     private String ver = "";
 
+    public GatewayDetailResponse(RequestObject request) {
+        super(request.getAction(), ApiResponseStateEnum.SUCCESS);
+    }
+
     public GatewayDetailResponse(RequestObject request, Map<String, Object> gatewayDetail) {
         super(request.getAction(), ApiResponseStateEnum.SUCCESS);
 

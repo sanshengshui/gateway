@@ -17,7 +17,7 @@ public class GetVersionService extends BaseService {
     @Override
     @SuppressWarnings("unchecked")
     public <Req extends RequestObject, Res extends ResponseObject> Res doExecute(Req request) throws Exception {
-        authenticate(request);
+        // authenticate(request);
 
         AppVersion appVersion = appVersionRepository.findFirstBySystemOrderByIdDesc(request.getSystem());
         return (Res) new GetVersionResponse(request, appVersion);

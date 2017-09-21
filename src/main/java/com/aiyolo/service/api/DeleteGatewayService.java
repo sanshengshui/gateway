@@ -19,8 +19,10 @@ import java.util.List;
 @Service
 public class DeleteGatewayService extends BaseService {
 
-    @Autowired AppUserRepository appUserRepository;
-    @Autowired AppUserGatewayRepository appUserGatewayRepository;
+    @Autowired
+    AppUserRepository appUserRepository;
+    @Autowired
+    AppUserGatewayRepository appUserGatewayRepository;
 
     @Override
     @SuppressWarnings("unchecked")

@@ -18,9 +18,9 @@ import org.springframework.util.StringUtils;
 public class DeleteDevService extends BaseService {
 
     @Autowired
-    AppUserGatewayRepository appUserGatewayRepository;
-    @Autowired
     DeviceRepository deviceRepository;
+    @Autowired
+    AppUserGatewayRepository appUserGatewayRepository;
 
     @Override
     @SuppressWarnings("unchecked")

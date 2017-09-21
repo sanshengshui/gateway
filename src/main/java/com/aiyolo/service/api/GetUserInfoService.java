@@ -12,7 +12,8 @@ import com.aiyolo.service.api.response.ResponseObject;
 @Service
 public class GetUserInfoService extends BaseService {
 
-    @Autowired AppUserRepository appUserRepository;
+    @Autowired
+    AppUserRepository appUserRepository;
 
     @Override
     @SuppressWarnings("unchecked")

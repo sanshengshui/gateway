@@ -1,10 +1,13 @@
 package com.aiyolo.service;
 
+import com.aiyolo.cache.GatewayLiveStatusCache;
 import com.aiyolo.channel.data.request.AppNoticeGatewayRequest;
 import com.aiyolo.constant.AppNoticeTypeConsts;
+import com.aiyolo.entity.Device;
 import com.aiyolo.entity.Gateway;
 import com.aiyolo.entity.GatewayStatus;
 import com.aiyolo.queue.Sender;
+import com.aiyolo.repository.DeviceRepository;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.repository.GatewayStatusRepository;
 import org.apache.commons.logging.Log;
@@ -14,6 +17,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -22,12 +26,21 @@ public class GatewayStatusService {
     private static final Log errorLogger = LogFactory.getLog("errorLog");
     private static final Log taskLogger = LogFactory.getLog("taskLog");
 
-    @Autowired Sender sender;
+    @Autowired
+    Sender sender;
 
-    @Autowired GatewayRepository gatewayRepository;
-    @Autowired GatewayStatusRepository gatewayStatusRepository;
+    @Autowired
+    GatewayLiveStatusCache gatewayLiveStatusCache;
 
-    @Autowired GatewayService gatewayService;
+    @Autowired
+    DeviceRepository deviceRepository;
+    @Autowired
+    GatewayRepository gatewayRepository;
+    @Autowired
+    GatewayStatusRepository gatewayStatusRepository;
+
+    @Autowired
+    GatewayService gatewayService;
 
     public void pushGatewayStatus(Gateway gateway) {
         pushGatewayStatus(gateway, AppNoticeTypeConsts.MODIFY);
@@ -48,8 +61,12 @@ public class GatewayStatusService {
                 Map<String, Object> queryParamMap = new HashMap<String, Object>();
                 queryParamMap.put("imei", gateway.getGlImei());
                 queryParamMap.put("notice", noticeType);
-                queryParamMap.put("dev_num", 1);
-                queryParamMap.put("online", 1);
+
+                List<Device> devices = deviceRepository.findByGlImei(gateway.getGlImei());
+                queryParamMap.put("dev_num", devices.size());
+
+                int gatewayLiveStatus = gatewayLiveStatusCache.getByGlId(gateway.getGlId());
+                queryParamMap.put("online", gatewayLiveStatus);
 
                 GatewayStatus gatewayStatus = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(gateway.getGlImei());
                 queryParamMap.put("err", gatewayStatus.getStatus());

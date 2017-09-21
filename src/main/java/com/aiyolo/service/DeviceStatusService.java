@@ -62,7 +62,7 @@ public class DeviceStatusService {
 
                 DeviceStatus deviceStatus = deviceStatusRepository.findFirstByImeiOrderByIdDesc(device.getImei());
                 queryParamMap.put("online", deviceStatus.getOnline());
-                queryParamMap.put("location", device.getPosition());
+                queryParamMap.put("position", device.getPosition());
                 queryParamMap.put("name", device.getName());
                 queryParamMap.put("rssi", deviceStatus.getRssi());
                 if (deviceAlarm == null) {

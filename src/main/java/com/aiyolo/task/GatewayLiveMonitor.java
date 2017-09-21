@@ -20,11 +20,14 @@ public class GatewayLiveMonitor {
     private static final Log taskLogger = LogFactory.getLog("taskLog");
     private static final Log errorLogger = LogFactory.getLog("errorLog");
 
-    @Autowired CacheManager cacheManager;
+    @Autowired
+    CacheManager cacheManager;
 
-    @Autowired GatewayLiveStatusCache gatewayLiveStatusCache;
+    @Autowired
+    GatewayLiveStatusCache gatewayLiveStatusCache;
 
-    @Autowired GatewayStatusService gatewayStatusService;
+    @Autowired
+    GatewayStatusService gatewayStatusService;
 
     @Value("${gateway.live.beat.period}")
     private long gatewayLiveBeatPeriod;

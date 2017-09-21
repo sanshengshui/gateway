@@ -8,7 +8,7 @@ public class DeviceObject {
 
     private String dev = "";
     private String pid = "";
-    private String location = "";
+    private String position = "";
     private String name = "";
     private Integer online = 0;
     private String imei = "";
@@ -20,11 +20,11 @@ public class DeviceObject {
     public DeviceObject() {
     }
 
-    public DeviceObject(String dev, String pid, String location, String name, Integer online, String imei,
+    public DeviceObject(String dev, String pid, String position, String name, Integer online, String imei,
                         Integer rssi, Integer err, Integer val, Integer bat) {
         this.dev = dev;
         this.pid = pid;
-        this.location = location;
+        this.position = position;
         this.name = name;
         this.online = online;
         this.imei = imei;
@@ -59,12 +59,12 @@ public class DeviceObject {
         this.pid = pid;
     }
 
-    public String getLocation() {
-        return location;
+    public String getPosition() {
+        return position;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setPosition(String position) {
+        this.position = position;
     }
 
     public String getName() {

@@ -19,8 +19,10 @@ import org.springframework.util.StringUtils;
 @Service
 public class InputInfoService extends BaseService {
 
-    @Autowired GatewayRepository gatewayRepository;
-    @Autowired AppUserGatewayRepository appUserGatewayRepository;
+    @Autowired
+    GatewayRepository gatewayRepository;
+    @Autowired
+    AppUserGatewayRepository appUserGatewayRepository;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -45,7 +47,9 @@ public class InputInfoService extends BaseService {
             gateway.setUserPhones(JSONArray.fromObject(ArrayHelper.removeDuplicateElement(inputInfoRequest.getPhones())).toString());
             gateway.setAreaCode(inputInfoRequest.getAreaCode());
             gateway.setAddress(inputInfoRequest.getAddress());
+
             gatewayRepository.save(gateway);
+
             return (Res) responseSuccess(request.getAction());
         }
     }

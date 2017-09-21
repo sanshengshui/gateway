@@ -24,11 +24,11 @@ import java.util.List;
 public class ListAlarmService extends BaseService {
 
     @Autowired
-    AppUserGatewayRepository appUserGatewayRepository;
+    DeviceRepository deviceRepository;
     @Autowired
     DeviceAlarmRepository deviceAlarmRepository;
     @Autowired
-    DeviceRepository deviceRepository;
+    AppUserGatewayRepository appUserGatewayRepository;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -58,7 +58,9 @@ public class ListAlarmService extends BaseService {
             AlarmObject alarmObject = new AlarmObject();
             alarmObject.setTimeAlarm(deviceAlarms.get(i).getTimestamp() * 1000L);
             alarmObject.setTimeCut(0L);
-            alarmObject.setTimeRemove(deviceAlarms.get(i).getStatus() == 0 ? 0L : 0L);
+            if (deviceAlarms.get(i).getStatus() == 0) {
+                alarmObject.setTimeRemove(deviceAlarms.get(i).getUpdatedAt().getTime());
+            }
             alarmObject.setVal(deviceAlarms.get(i).getValue());
 
             alarms.add(alarmObject);
