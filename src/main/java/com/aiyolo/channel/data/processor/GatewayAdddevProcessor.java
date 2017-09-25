@@ -1,8 +1,10 @@
 package com.aiyolo.channel.data.processor;
 
 import com.aiyolo.common.SpringUtil;
+import com.aiyolo.constant.AppNoticeTypeConsts;
 import com.aiyolo.entity.Device;
 import com.aiyolo.repository.DeviceRepository;
+import com.aiyolo.service.DeviceStatusService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
@@ -18,17 +20,20 @@ public class GatewayAdddevProcessor extends Processor {
             init(message);
 
             DeviceRepository deviceRepository = (DeviceRepository) SpringUtil.getBean("deviceRepository");
+            DeviceStatusService deviceStatusService = (DeviceStatusService) SpringUtil.getBean("deviceStatusService");
 
-            JSONArray devices = messageBodyJson.getJSONArray("devs");
+            JSONArray devs = messageBodyJson.getJSONArray("devs");
 
-            for (int i = 0; i < devices.size(); i++) {
-                JSONObject device = devices.getJSONObject(i);
+            for (int i = 0; i < devs.size(); i++) {
+                JSONObject dev = devs.getJSONObject(i);
+                Device device = new Device(
+                        dev.getString("dev"),
+                        dev.getString("pid"),
+                        dev.getString("imei"),
+                        messageBodyJson.getString("imei"));
 
-                deviceRepository.save(new Device(
-                        device.getString("dev"),
-                        device.getString("pid"),
-                        device.getString("imei"),
-                        messageBodyJson.getString("imei")));
+                deviceRepository.save(device);
+                deviceStatusService.pushDeviceStatus(device, AppNoticeTypeConsts.ADD);
             }
 
             // 写入文件待后续处理

@@ -23,18 +23,22 @@ import java.util.Map;
 @Service
 public class GatewayService {
 
-//    @PersistenceContext
-//    private EntityManager em;
+    @Autowired
+    GatewayRepository gatewayRepository;
+    @Autowired
+    GatewayStaRepository gatewayStaRepository;
 
-    @Autowired GatewayRepository gatewayRepository;
-    @Autowired GatewayStaRepository gatewayStaRepository;
+    @Autowired
+    AppUserRepository appUserRepository;
+    @Autowired
+    AppUserGatewayRepository appUserGatewayRepository;
+    @Autowired
+    AppUserSessionRepository appUserSessionRepository;
 
-    @Autowired AppUserRepository appUserRepository;
-    @Autowired AppUserGatewayRepository appUserGatewayRepository;
-    @Autowired AppUserSessionRepository appUserSessionRepository;
-
-    @Autowired AreaCodeService areaCodeService;
-    @Autowired CustomUserDetailsService customUserDetailsService;
+    @Autowired
+    AreaCodeService areaCodeService;
+    @Autowired
+    CustomUserDetailsService customUserDetailsService;
 
     public List<Gateway> getAllGatewayByAreaCode(String areaCode) {
         List<Gateway> gateways = new ArrayList<Gateway>();

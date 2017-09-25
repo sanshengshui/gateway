@@ -21,10 +21,13 @@ public class AppUser extends BaseEntity implements Serializable {
 
     protected AppUser() {}
 
+    public AppUser(String userId) {
+        this.userId = userId;
+    }
+
     public AppUser(String userId, String avatar) {
         this.userId = userId;
         this.avatar = avatar;
-
     }
 
     public AppUser(String userId, String name, String phone, String avatar, String mailAddress) {

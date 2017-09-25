@@ -1,5 +1,7 @@
 package com.aiyolo.channel.data.request;
 
+import org.apache.commons.collections.MapUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,13 +26,13 @@ public class AppNoticeGatewayRequest extends AppRequest {
             bodyMap.put("act", ACTION);
             bodyMap.put("imei", data.get("imei"));
             bodyMap.put("notice", data.get("notice"));
-            bodyMap.put("dev_num", data.get("dev_num"));
-            bodyMap.put("err", data.get("err"));
-            bodyMap.put("online", data.get("online"));
-            bodyMap.put("temp", data.get("temp"));
-            bodyMap.put("hum", data.get("hum"));
-            bodyMap.put("atm", data.get("atm"));
-            bodyMap.put("ver", data.get("ver"));
+            bodyMap.put("dev_num", MapUtils.getInteger(data, "dev_num", 0));
+            bodyMap.put("err", MapUtils.getInteger(data, "err", 0));
+            bodyMap.put("online", MapUtils.getInteger(data, "online", 0));
+            bodyMap.put("temp", MapUtils.getInteger(data, "temp", 0));
+            bodyMap.put("hum", MapUtils.getInteger(data, "hum", 0));
+            bodyMap.put("atm", MapUtils.getInteger(data, "atm", 0));
+            bodyMap.put("ver", MapUtils.getString(data, "ver", ""));
 
             return bodyMap;
         } catch (Exception e) {

@@ -99,4 +99,12 @@ public class DeviceAlarm extends BaseEntity implements Serializable {
         this.device = device;
     }
 
+    public Gateway getGateway() {
+        return gateway;
+    }
+
+    public void setGateway(Gateway gateway) {
+        this.gateway = gateway;
+    }
+
 }

@@ -54,7 +54,7 @@ public class GatewayStatusService {
         try {
             String[] mobileIds = gatewayService.getGatewayUserMobileIds(gateway.getGlImei());
             if (mobileIds != null && mobileIds.length > 0) {
-                // 推送给app
+                // 推送给APP
                 Map<String, Object> headerMap = AppNoticeGatewayRequest.getInstance().requestHeader(mobileIds);
                 headerMap.put("cache_time", 24 * 60 * 60 * 1000L);
 
@@ -69,11 +69,13 @@ public class GatewayStatusService {
                 queryParamMap.put("online", gatewayLiveStatus);
 
                 GatewayStatus gatewayStatus = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(gateway.getGlImei());
-                queryParamMap.put("err", gatewayStatus.getStatus());
-                queryParamMap.put("temp", gatewayStatus.getTemperature());
-                queryParamMap.put("hum", gatewayStatus.getHumidity());
-                queryParamMap.put("atm", gatewayStatus.getAtmosphere());
-                queryParamMap.put("ver", gatewayStatus.getVersion());
+                if (gatewayStatus != null) {
+                    queryParamMap.put("err", gatewayStatus.getStatus());
+                    queryParamMap.put("temp", gatewayStatus.getTemperature());
+                    queryParamMap.put("hum", gatewayStatus.getHumidity());
+                    queryParamMap.put("atm", gatewayStatus.getAtmosphere());
+                    queryParamMap.put("ver", gatewayStatus.getVersion());
+                }
 
                 Map<String, Object> bodyMap = AppNoticeGatewayRequest.getInstance().requestBody(queryParamMap);
 

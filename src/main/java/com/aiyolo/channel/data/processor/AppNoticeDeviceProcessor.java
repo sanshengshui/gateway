@@ -1,6 +1,6 @@
 package com.aiyolo.channel.data.processor;
 
-public class AppNoticeDevProcessor extends Processor {
+public class AppNoticeDeviceProcessor extends Processor {
 
     @Override
     public void run(String message) {
@@ -8,7 +8,7 @@ public class AppNoticeDevProcessor extends Processor {
             // APP响应，不作处理
 
         } catch (Exception e) {
-            errorLogger.error("AppNoticeDevProcessor异常！message:" + message, e);
+            errorLogger.error("AppNoticeDeviceProcessor异常！message:" + message, e);
         }
     }
 

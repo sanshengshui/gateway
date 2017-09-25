@@ -1,14 +1,14 @@
 package com.aiyolo.repository;
 
-import java.util.List;
-
 import com.aiyolo.entity.PushSetting;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 public interface PushSettingRepository extends CrudRepository<PushSetting, Long> {
 
-    List<PushSetting> findByType(String type);
+    List<PushSetting> findByType(int type);
 
-    List<PushSetting> findByLevel(int level);
+    List<PushSetting> findByTarget(String target);
 
 }

@@ -16,9 +16,10 @@ public class GetInfoResponse extends Response {
     private String[] phones;
     private String imei;
     private String areaCode;
+    private String village;
     private String address;
 
-    public GetInfoResponse(RequestObject request, Gateway gateway) {
+    public  GetInfoResponse(RequestObject request, Gateway gateway) {
         super(request.getAction(), ApiResponseStateEnum.SUCCESS);
 
         this.glName = gateway.getGlName();
@@ -27,6 +28,7 @@ public class GetInfoResponse extends Response {
                 ArrayHelper.getStringArray(JSONArray.fromObject(gateway.getUserPhones())) : new String[0];
         this.imei = gateway.getGlImei();
         this.areaCode = gateway.getAreaCode();
+        this.village = gateway.getVillage();
         this.address = gateway.getAddress();
     }
 
@@ -38,6 +40,7 @@ public class GetInfoResponse extends Response {
                 ", phones=" + phones +
                 ", imei='" + imei + '\'' +
                 ", area_code='" + areaCode + '\'' +
+                ", village='" + village + '\'' +
                 ", address='" + address + '\'' +
                 '}';
     }
@@ -80,6 +83,14 @@ public class GetInfoResponse extends Response {
 
     public void setAreaCode(String areaCode) {
         this.areaCode = areaCode;
+    }
+
+    public String getVillage() {
+        return village;
+    }
+
+    public void setVillage(String village) {
+        this.village = village;
     }
 
     public String getAddress() {

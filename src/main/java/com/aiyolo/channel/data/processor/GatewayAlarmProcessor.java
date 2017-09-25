@@ -6,15 +6,16 @@ import com.aiyolo.entity.DeviceAlarm;
 import com.aiyolo.entity.DeviceAlarmCancel;
 import com.aiyolo.repository.DeviceAlarmCancelRepository;
 import com.aiyolo.repository.DeviceAlarmRepository;
+import com.aiyolo.service.DeviceAlarmService;
 import com.aiyolo.service.DeviceStatusService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class DeviceAlarmProcessor extends Processor {
+public class GatewayAlarmProcessor extends Processor {
 
-    private static Log deviceLogger = LogFactory.getLog("deviceLog");
+    private static Log gatewayLogger = LogFactory.getLog("gatewayLog");
 
     @Override
     public void run(String message) {
@@ -25,6 +26,7 @@ public class DeviceAlarmProcessor extends Processor {
             DeviceAlarmCancelRepository deviceAlarmCancelRepository = (DeviceAlarmCancelRepository) SpringUtil.getBean("deviceAlarmCancelRepository");
 
             DeviceStatusService deviceStatusService = (DeviceStatusService) SpringUtil.getBean("deviceStatusService");
+            DeviceAlarmService deviceAlarmService = (DeviceAlarmService) SpringUtil.getBean("deviceAlarmService");
 
             JSONArray deviceAlarms = messageBodyJson.getJSONArray("devs");
 
@@ -62,14 +64,17 @@ public class DeviceAlarmProcessor extends Processor {
                     deviceAlarmRepository.save(deviceAlarm);
                 }
 
-                // 推送给app&个推&发送短信
-                deviceStatusService.pushDeviceStatus(deviceAlarm);
+                // 推送设备状态变化
+                deviceStatusService.pushDeviceStatus(deviceAlarm.getDevice());
+
+                // 推送预报警通知给APP&个推&发送短信
+                deviceAlarmService.pushDeviceAlarm(deviceAlarm);
             }
 
             // 写入文件待后续处理
-            deviceLogger.info(message);
+            gatewayLogger.info(message);
         } catch (Exception e) {
-            errorLogger.error("DeviceAlarmProcessor异常！message:" + message, e);
+            errorLogger.error("GatewayAlarmProcessor异常！message:" + message, e);
         }
     }
 

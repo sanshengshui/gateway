@@ -7,23 +7,23 @@ public class PushSetting extends BaseEntity {
 
     private String title = "";
     private String content = "";
-    private String type = "app";
-    private Integer level = 0;
+    private Integer type = 1;
+    private String target = "";
 
     protected PushSetting() {}
 
-    public PushSetting(String title, String content, String type, Integer level) {
+    public PushSetting(String title, String content, Integer type, String target) {
         this.title = title;
         this.content = content;
         this.type = type;
-        this.level = level;
+        this.target = target;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "PushSetting[id=%d, title='%s', content='%s', type='%s', level=%d]",
-                id, title, content, type, level);
+                "PushSetting[id=%d, title='%s', content='%s', type=%d, target='%s']",
+                id, title, content, type, target);
     }
 
     public String getTitle() {
@@ -42,20 +42,20 @@ public class PushSetting extends BaseEntity {
         this.content = content;
     }
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
-    public Integer getLevel() {
-        return level;
+    public String getTarget() {
+        return target;
     }
 
-    public void setLevel(Integer level) {
-        this.level = level;
+    public void setTarget(String target) {
+        this.target = target;
     }
 
 }

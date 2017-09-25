@@ -46,6 +46,7 @@ public class InputInfoService extends BaseService {
             gateway.setUserName(inputInfoRequest.getUserName());
             gateway.setUserPhones(JSONArray.fromObject(ArrayHelper.removeDuplicateElement(inputInfoRequest.getPhones())).toString());
             gateway.setAreaCode(inputInfoRequest.getAreaCode());
+            gateway.setVillage(inputInfoRequest.getVillage());
             gateway.setAddress(inputInfoRequest.getAddress());
 
             gatewayRepository.save(gateway);

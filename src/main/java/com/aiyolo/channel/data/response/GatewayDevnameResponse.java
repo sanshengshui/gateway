@@ -1,21 +1,20 @@
 package com.aiyolo.channel.data.response;
 
-import com.aiyolo.constant.AlarmTemperatureConsts;
-import com.aiyolo.entity.GatewaySetting;
+import com.aiyolo.entity.DeviceCategory;
 import net.sf.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class GatewayUpstaResponse extends GatewayResponse {
+public class GatewayDevnameResponse extends GatewayResponse {
 
-    public static final String ACTION = "upsta";
+    public static final String ACTION = "devname";
 
-    private static GatewayUpstaResponse instance;
+    private static GatewayDevnameResponse instance;
 
-    public static GatewayUpstaResponse getInstance() {
+    public static GatewayDevnameResponse getInstance() {
         if (instance == null) {
-            instance = new GatewayUpstaResponse();
+            instance = new GatewayDevnameResponse();
         }
         return instance;
     }
@@ -30,18 +29,21 @@ public class GatewayUpstaResponse extends GatewayResponse {
             bodyMap.put("imei", request.getJSONObject("body").get("imei"));
             bodyMap.put("pin", request.getJSONObject("body").get("pin"));
             bodyMap.put("mid", request.getJSONObject("body").get("mid"));
-            bodyMap.put("ret", 0);
+            bodyMap.put("cat", request.getJSONObject("body").get("cat"));
+            bodyMap.put("type", request.getJSONObject("body").get("type"));
 
             if (data != null) {
-                GatewaySetting gatewaySetting = (GatewaySetting) data;
-                bodyMap.put("tmp", gatewaySetting.getAlarmTemperature());
+                DeviceCategory deviceCategory = (DeviceCategory) data;
+                bodyMap.put("name", deviceCategory.getCode());
+                bodyMap.put("ret", 0);
             } else {
-                bodyMap.put("tmp", AlarmTemperatureConsts.VALUE);
+                bodyMap.put("name", "");
+                bodyMap.put("ret", -1);
             }
 
             return bodyMap;
         } catch (Exception e) {
-            errorLogger.error("GatewayUpstaResponseBody异常！", e);
+            errorLogger.error("GatewayDevnameResponse异常！", e);
         }
         return null;
     }

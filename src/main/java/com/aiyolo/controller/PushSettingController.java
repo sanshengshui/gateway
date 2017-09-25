@@ -17,12 +17,12 @@ public class PushSettingController {
 
     @Autowired PushSettingRepository pushSettingRepository;
 
-    @RequestMapping("/push_setting/{type}")
-    public String setting(@PathVariable String type, Model model) {
-        List<PushSetting> pushSetting = pushSettingRepository.findByType(type);
+    @RequestMapping("/push_setting/{target}")
+    public String setting(@PathVariable String target, Model model) {
+        List<PushSetting> pushSetting = pushSettingRepository.findByTarget(target);
         if (pushSetting != null && pushSetting.size() > 0) {
             for (int i = 0; i < pushSetting.size(); i++) {
-                model.addAttribute("pushSetting" + pushSetting.get(i).getLevel(), pushSetting.get(i));
+                model.addAttribute("pushSetting" + pushSetting.get(i).getType(), pushSetting.get(i));
             }
 
             return "pushSetting";
@@ -45,7 +45,7 @@ public class PushSettingController {
                 redirectAttrs.addFlashAttribute("message_error", "设置失败！");
             }
 
-            return "redirect:/push_setting/" + pushSetting.getType() + "#" + pushSetting.getLevel();
+            return "redirect:/push_setting/" + pushSetting.getTarget() + "#" + pushSetting.getType();
         }
 
         return "redirect:/404";

@@ -15,6 +15,7 @@ public class InputInfoRequest extends Request {
     private String[] phones = new String[0];
     private String imei = "";
     private String areaCode = "";
+    private String village = "";
     private String address = "";
 
     public InputInfoRequest() {
@@ -28,6 +29,7 @@ public class InputInfoRequest extends Request {
                 ", phones=" + phones +
                 ", imei='" + imei + '\'' +
                 ", area_code='" + areaCode + '\'' +
+                ", village='" + village + '\'' +
                 ", address='" + address + '\'' +
                 '}';
     }
@@ -70,6 +72,14 @@ public class InputInfoRequest extends Request {
 
     public void setAreaCode(String areaCode) {
         this.areaCode = areaCode;
+    }
+
+    public String getVillage() {
+        return village;
+    }
+
+    public void setVillage(String village) {
+        this.village = village;
     }
 
     public String getAddress() {

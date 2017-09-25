@@ -21,6 +21,7 @@ public class Gateway extends BaseEntity implements Serializable {
     private String userPhones = "";
     private String areaCode = "";
     private String address = "";
+    private String village = "";
     private String locationAreaCode = "";
     private String locationAddress = "";
     private String addressLocation = "";
@@ -45,8 +46,8 @@ public class Gateway extends BaseEntity implements Serializable {
     @Override
     public String toString() {
         return String.format(
-                "Gateway[id=%d, gl_id='%s', gl_name='%s', gl_imei='%s', gl_pin='%s', user_name='%s', user_phones='%s', area_code='%s', address='%s']",
-                id, glId, glName, glImei, glPin, userName, userPhones, areaCode, address);
+                "Gateway[id=%d, gl_id='%s', gl_name='%s', gl_imei='%s', gl_pin='%s', user_name='%s', user_phones='%s', area_code='%s', village='%s', address='%s']",
+                id, glId, glName, glImei, glPin, userName, userPhones, areaCode, village, address);
     }
 
     public String getGlId() {
@@ -132,6 +133,14 @@ public class Gateway extends BaseEntity implements Serializable {
 
     public void setAreaCode(String areaCode) {
         this.areaCode = areaCode;
+    }
+
+    public String getVillage() {
+        return village;
+    }
+
+    public void setVillage(String village) {
+        this.village = village;
     }
 
     public String getAddress() {

@@ -1,8 +1,8 @@
 package com.aiyolo.service;
 
 import com.aiyolo.channel.data.request.AppNoticeDeviceRequest;
+import com.aiyolo.constant.AlarmStatusEnum;
 import com.aiyolo.constant.AppNoticeTypeConsts;
-import com.aiyolo.constant.SmsConsts;
 import com.aiyolo.entity.Device;
 import com.aiyolo.entity.DeviceAlarm;
 import com.aiyolo.entity.DeviceStatus;
@@ -23,26 +23,24 @@ public class DeviceStatusService {
 
     private static final Log errorLogger = LogFactory.getLog("errorLog");
 
-    @Autowired Sender sender;
+    @Autowired
+    Sender sender;
 
-    @Autowired DeviceRepository deviceRepository;
-    @Autowired DeviceStatusRepository deviceStatusRepository;
-    @Autowired DeviceAlarmRepository deviceAlarmRepository;
+    @Autowired
+    DeviceRepository deviceRepository;
+    @Autowired
+    DeviceStatusRepository deviceStatusRepository;
+    @Autowired
+    DeviceAlarmRepository deviceAlarmRepository;
 
-    @Autowired GatewayService gatewayService;
-    @Autowired PushSettingService pushSettingService;
-    @Autowired MessagePushService messagePushService;
-    @Autowired SmsPushService smsPushService;
+    @Autowired
+    GatewayService gatewayService;
 
     public void pushDeviceStatus(Device device) {
         pushDeviceStatus(device, AppNoticeTypeConsts.MODIFY);
     }
 
     public void pushDeviceStatus(Device device, Integer noticeType) {
-        pushDeviceStatus(device, noticeType, null);
-    }
-
-    public void pushDeviceStatus(Device device, Integer noticeType, DeviceAlarm deviceAlarm) {
         if (device == null) {
             return;
         }
@@ -50,55 +48,37 @@ public class DeviceStatusService {
         try {
             String[] mobileIds = gatewayService.getGatewayUserMobileIds(device.getGlImei());
             if (mobileIds != null && mobileIds.length > 0) {
-                // 推送给app
+                // 推送给APP
                 Map<String, Object> headerMap = AppNoticeDeviceRequest.getInstance().requestHeader(mobileIds);
                 headerMap.put("cache_time", 24 * 60 * 60 * 1000L);
 
                 Map<String, Object> queryParamMap = new HashMap<String, Object>();
+                queryParamMap.put("imeiGateway", device.getGlImei());
                 queryParamMap.put("imei", device.getImei());
                 queryParamMap.put("notice", noticeType);
                 queryParamMap.put("dev", device.getType());
                 queryParamMap.put("pid", device.getPid());
 
                 DeviceStatus deviceStatus = deviceStatusRepository.findFirstByImeiOrderByIdDesc(device.getImei());
-                queryParamMap.put("online", deviceStatus.getOnline());
-                queryParamMap.put("position", device.getPosition());
-                queryParamMap.put("name", device.getName());
-                queryParamMap.put("rssi", deviceStatus.getRssi());
-                if (deviceAlarm == null) {
-                    DeviceAlarm _deviceAlarm = deviceAlarmRepository.findFirstByImeiOrderByIdDesc(device.getImei());
-                    queryParamMap.put("val", _deviceAlarm.getValue());
-                } else {
-                    queryParamMap.put("val", deviceAlarm.getValue());
+                if (deviceStatus != null) {
+                    queryParamMap.put("online", deviceStatus.getOnline());
+                    queryParamMap.put("position", device.getPosition());
+                    queryParamMap.put("name", device.getName());
+                    queryParamMap.put("rssi", deviceStatus.getRssi());
+                    queryParamMap.put("bat", deviceStatus.getBat());
                 }
-                queryParamMap.put("bat", deviceStatus.getBat());
+
+                DeviceAlarm deviceAlarm = deviceAlarmRepository.findFirstByImeiOrderByIdDesc(device.getImei());
+                if (deviceAlarm != null) {
+                    queryParamMap.put("val", AlarmStatusEnum.CLEAR.getValue().equals(deviceAlarm.getStatus()) ? AlarmStatusEnum.CLEAR.getValue() : deviceAlarm.getValue());
+                }
 
                 Map<String, Object> bodyMap = AppNoticeDeviceRequest.getInstance().requestBody(queryParamMap);
 
                 sender.sendMessage(headerMap, bodyMap);
-
-                if (deviceAlarm != null) {
-                    // 推送给个推
-                    String msgTitle = "";
-                    String msgContent = "";
-                    String smsContent = "";
-
-                    Map<String, String> placeholderValues = pushSettingService.buildPlaceholderValues(device, deviceAlarm);
-                    Map<String, Map<String, String>> pushSetting = pushSettingService.getPushSettingByLevel(
-                            pushSettingService.getPushSettingLevel(deviceAlarm.getValue()),
-                            placeholderValues);
-                    msgTitle = pushSetting.get("app").get("title");
-                    msgContent = SmsConsts.SMS_SIGN + pushSetting.get("app").get("content");
-                    smsContent = SmsConsts.SMS_SIGN + pushSetting.get("sms").get("content");
-
-                    messagePushService.pushMessage(mobileIds, device.getGateway().getGlId(), msgTitle, msgContent);
-
-                    // 发送短信
-                    smsPushService.pushSms(device.getGlImei(), smsContent);
-                }
             }
         } catch (Exception e) {
-            errorLogger.error("pushDeviceStatus异常！device:" + device.toString() + ", deviceAlarm:" + (deviceAlarm != null ? deviceAlarm.toString() : "null"), e);
+            errorLogger.error("pushDeviceStatus异常！device:" + device.toString(), e);
         }
     }
 
@@ -109,15 +89,6 @@ public class DeviceStatusService {
         }
 
         pushDeviceStatus(device);
-    }
-
-    public void pushDeviceStatus(DeviceAlarm deviceAlarm) {
-        Device device = deviceRepository.findFirstByImeiOrderByIdDesc(deviceAlarm.getImei());
-        if (device == null) {
-            return;
-        }
-
-        pushDeviceStatus(device, AppNoticeTypeConsts.MODIFY, deviceAlarm);
     }
 
 }
