@@ -153,4 +153,13 @@ public class DeviceAlarmService {
         }
     }
 
+    public void pushDeviceAlarm(String imei) {
+        DeviceAlarm deviceAlarm = deviceAlarmRepository.findFirstByImeiOrderByIdDesc(imei);
+        if (deviceAlarm == null) {
+            return;
+        }
+
+        pushDeviceAlarm(deviceAlarm);
+    }
+
 }

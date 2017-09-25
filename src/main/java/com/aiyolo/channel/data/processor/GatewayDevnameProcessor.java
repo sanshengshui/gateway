@@ -1,6 +1,6 @@
 package com.aiyolo.channel.data.processor;
 
-import com.aiyolo.channel.data.response.GatewayDevlistResponse;
+import com.aiyolo.channel.data.response.GatewayDevnameResponse;
 import com.aiyolo.common.SpringUtil;
 import com.aiyolo.entity.DeviceCategory;
 import com.aiyolo.queue.Sender;
@@ -27,8 +27,8 @@ public class GatewayDevnameProcessor extends Processor {
                     messageBodyJson.getInt("cat"),
                     messageBodyJson.getInt("type"));
 
-            Map<String, Object> resHeaderMap = GatewayDevlistResponse.getInstance().responseHeader(messageHeaderJson.getString("gl_id"));
-            Map<String, Object> resBodyMap = GatewayDevlistResponse.getInstance().responseBody(messageJson, deviceCategory);
+            Map<String, Object> resHeaderMap = GatewayDevnameResponse.getInstance().responseHeader(messageHeaderJson.getString("gl_id"));
+            Map<String, Object> resBodyMap = GatewayDevnameResponse.getInstance().responseBody(messageJson, deviceCategory);
 
             sender.sendMessage(resHeaderMap, resBodyMap);
 

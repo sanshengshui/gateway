@@ -65,10 +65,10 @@ public class GatewayAlarmProcessor extends Processor {
                 }
 
                 // 推送设备状态变化
-                deviceStatusService.pushDeviceStatus(deviceAlarm.getDevice());
+                deviceStatusService.pushDeviceStatus(deviceAlarm.getImei());
 
                 // 推送预报警通知给APP&个推&发送短信
-                deviceAlarmService.pushDeviceAlarm(deviceAlarm);
+                deviceAlarmService.pushDeviceAlarm(deviceAlarm.getImei());
             }
 
             // 写入文件待后续处理
