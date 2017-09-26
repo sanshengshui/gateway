@@ -6,7 +6,7 @@ import com.aiyolo.entity.AppUserGateway;
 import com.aiyolo.entity.Device;
 import com.aiyolo.repository.AppUserGatewayRepository;
 import com.aiyolo.repository.DeviceRepository;
-import com.aiyolo.service.api.request.DeleteDevRequest;
+import com.aiyolo.service.api.request.DeleteDeviceRequest;
 import com.aiyolo.service.api.request.RequestObject;
 import com.aiyolo.service.api.response.Response;
 import com.aiyolo.service.api.response.ResponseObject;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
-public class DeleteDevService extends BaseService {
+public class DeleteDeviceService extends BaseService {
 
     @Autowired
     DeviceRepository deviceRepository;
@@ -27,9 +27,9 @@ public class DeleteDevService extends BaseService {
     public <Req extends RequestObject, Res extends ResponseObject> Res doExecute(Req request) throws Exception {
         String userId = authenticate(request);
 
-        DeleteDevRequest deleteDevRequest = (DeleteDevRequest) request;
-        String imeiGateway = deleteDevRequest.getImeiGateway();
-        String imeiDev = deleteDevRequest.getImeiDev();
+        DeleteDeviceRequest deleteDeviceRequest = (DeleteDeviceRequest) request;
+        String imeiGateway = deleteDeviceRequest.getImeiGateway();
+        String imeiDev = deleteDeviceRequest.getImeiDev();
         if (StringUtils.isEmpty(imeiGateway) || StringUtils.isEmpty(imeiDev)) {
             return (Res) responseRequestParameterError(request.getAction());
         }

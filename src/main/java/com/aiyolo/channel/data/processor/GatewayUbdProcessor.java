@@ -3,8 +3,10 @@ package com.aiyolo.channel.data.processor;
 import com.aiyolo.common.SpringUtil;
 import com.aiyolo.constant.AppNoticeTypeConsts;
 import com.aiyolo.entity.AppUserGateway;
+import com.aiyolo.entity.Device;
 import com.aiyolo.entity.Gateway;
 import com.aiyolo.repository.AppUserGatewayRepository;
+import com.aiyolo.repository.DeviceRepository;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.service.GatewayService;
 import com.aiyolo.service.GatewayStatusService;
@@ -44,6 +46,11 @@ public class GatewayUbdProcessor extends Processor {
                 gateway.setGlLatitude("");
                 gatewayRepository.save(gateway);
             }
+
+            // 删除网关绑定过的设备
+            DeviceRepository deviceRepository = (DeviceRepository) SpringUtil.getBean("deviceRepository");
+            List<Device> devices = deviceRepository.findByGlImei(imei);
+            deviceRepository.delete(devices);
 
             // 推送给app
             GatewayStatusService gatewayStatusService = (GatewayStatusService) SpringUtil.getBean("gatewayStatusService");

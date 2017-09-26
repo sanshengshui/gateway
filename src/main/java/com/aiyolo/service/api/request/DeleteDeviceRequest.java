@@ -5,17 +5,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DeleteDevRequest extends Request {
+public class DeleteDeviceRequest extends Request {
 
     private String imeiGateway;
     private String imeiDev = "";
 
-    public DeleteDevRequest() {
+    public DeleteDeviceRequest() {
     }
 
     @Override
     public String toString() {
-        return "DeleteDevRequest{" +
+        return "DeleteDeviceRequest{" +
                 "imeiGateway='" + imeiGateway + '\'' +
                 ", imeiDev='" + imeiDev + '\'' +
                 '}';
