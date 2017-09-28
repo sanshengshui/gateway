@@ -1,6 +1,7 @@
 package com.aiyolo.service.api;
 
 import com.aiyolo.cache.GatewayLiveStatusCache;
+import com.aiyolo.constant.AlarmStatusEnum;
 import com.aiyolo.constant.ApiResponseStateEnum;
 import com.aiyolo.entity.*;
 import com.aiyolo.repository.*;
@@ -85,7 +86,7 @@ public class GatewayDetailService extends BaseService {
 
             DeviceAlarm deviceAlarm = deviceAlarmRepository.findFirstByImeiOrderByIdDesc(devices.get(i).getImei());
             if (deviceAlarm != null) {
-                dev.setVal(deviceAlarm.getValue());
+                dev.setVal(AlarmStatusEnum.CLEAR.getValue().equals(deviceAlarm.getStatus()) ? AlarmStatusEnum.CLEAR.getValue() : deviceAlarm.getValue());
             }
 
             devs.add(dev);
