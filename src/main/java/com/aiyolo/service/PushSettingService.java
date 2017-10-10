@@ -23,6 +23,8 @@ public class PushSettingService {
 
     @Autowired
     GatewayService gatewayService;
+    @Autowired
+    DeviceCategoryService deviceCategoryService;
 
     public Map<String, Map<String, String>> getDefaultPushSetting(int type) {
         Map<String, Map<String, String>> defaultPushSetting = new HashMap<String, Map<String, String>>();
@@ -88,7 +90,7 @@ public class PushSettingService {
         placeholderValues.put("datetime", datetime);
 
         placeholderValues.put("address", gatewayService.getFullAddress(deviceAlarm.getGateway().getAddress(), deviceAlarm.getGateway().getAreaCode()));
-        placeholderValues.put("alarmType", deviceAlarm.getValue().toString());
+        placeholderValues.put("alarmType", deviceCategoryService.getDeviceValueDesc(deviceAlarm.getType(), deviceAlarm.getValue()));
 
         return placeholderValues;
     }

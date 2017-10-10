@@ -11,4 +11,6 @@ public interface DeviceCategoryRepository extends PagingAndSortingRepository<Dev
 
     DeviceCategory findOneByCategoryAndType(Integer category, Integer type);
 
+    DeviceCategory findOneByCode(String code);
+
 }

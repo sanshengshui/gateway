@@ -11,7 +11,8 @@ import com.aiyolo.repository.GatewaySettingRepository;
 @Service
 public class GatewaySettingService {
 
-    @Autowired GatewaySettingRepository gatewaySettingRepository;
+    @Autowired
+    GatewaySettingRepository gatewaySettingRepository;
 
     public GatewaySetting getGatewaySetting(Gateway gateway) {
         if (gateway != null && StringUtils.isNotEmpty(gateway.getGlImei()) && StringUtils.isNotEmpty(gateway.getAreaCode())) {
