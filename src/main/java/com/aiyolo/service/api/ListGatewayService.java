@@ -44,8 +44,12 @@ public class ListGatewayService extends BaseService {
             gatewayObject.setImei(appUserGateways.get(i).getGlImei());
             gatewayObject.setAdmin(appUserGateways.get(i).getRole().getValue());
 
-            int gatewayLiveStatus = gatewayLiveStatusCache.getByGlId(appUserGateways.get(i).getGateway().getGlId());
-            gatewayObject.setOnline(gatewayLiveStatus);
+            if (appUserGateways.get(i).getGateway() != null) {
+                int gatewayLiveStatus = gatewayLiveStatusCache.getByGlId(appUserGateways.get(i).getGateway().getGlId());
+                gatewayObject.setOnline(gatewayLiveStatus);
+
+                gatewayObject.setGlName(appUserGateways.get(i).getGateway().getGlName());
+            }
 
             GatewayStatus gatewayStatus = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(appUserGateways.get(i).getGlImei());
             if (gatewayStatus != null) {
@@ -54,10 +58,6 @@ public class ListGatewayService extends BaseService {
 
             List<Device> devices = deviceRepository.findByGlImei(appUserGateways.get(i).getGlImei());
             gatewayObject.setDevNum(devices.size());
-
-            if (appUserGateways.get(i).getGateway() != null) {
-                gatewayObject.setGlName(appUserGateways.get(i).getGateway().getGlName());
-            }
 
             gateways.add(gatewayObject);
         }

@@ -26,6 +26,12 @@ public class GatewayAdddevProcessor extends Processor {
 
             for (int i = 0; i < devs.size(); i++) {
                 JSONObject dev = devs.getJSONObject(i);
+
+                Device _device = deviceRepository.findFirstByImeiOrderByIdDesc(dev.getString("imei"));
+                if (_device != null) {
+                    deviceRepository.delete(_device);
+                }
+
                 Device device = new Device(
                         dev.getString("dev"),
                         dev.getString("pid"),
