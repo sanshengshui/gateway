@@ -30,7 +30,6 @@ public class ListGatewayService extends BaseService {
     @Autowired
     AppUserGatewayRepository appUserGatewayRepository;
 
-
     @Override
     @SuppressWarnings("unchecked")
     public <Req extends RequestObject, Res extends ResponseObject> Res doExecute(Req request) throws Exception {

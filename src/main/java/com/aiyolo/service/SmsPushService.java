@@ -16,7 +16,7 @@ public class SmsPushService {
     private static final Log errorLogger = LogFactory.getLog("errorLog");
 
     @Autowired
-    GatewayService deviceService;
+    GatewayService gatewayService;
 
     @Value("${sms.haotingyun.apikey}")
     private String smsHaotingyunApikey;
@@ -31,7 +31,7 @@ public class SmsPushService {
     private String smsNewExtno;
 
     public void pushSms(String glImei, String text) {
-        String[] phones = deviceService.getGatewayUserPhones(glImei);
+        String[] phones = gatewayService.getGatewayUserPhones(glImei);
         if (phones != null && phones.length > 0) {
             pushSms(phones, text);
         }
