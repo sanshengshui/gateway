@@ -86,6 +86,15 @@ public class GatewayStatusService {
         }
     }
 
+    public void pushGatewayStatus(String glImei) {
+        Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(glImei);
+        if (gateway == null) {
+            return;
+        }
+
+        pushGatewayStatus(gateway);
+    }
+
     @Async
     public void notifyGatewayLiveStatusChange(String glId) {
         try {

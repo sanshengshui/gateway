@@ -5,6 +5,7 @@ import com.aiyolo.constant.AppNoticeTypeConsts;
 import com.aiyolo.entity.Device;
 import com.aiyolo.repository.DeviceRepository;
 import com.aiyolo.service.DeviceStatusService;
+import com.aiyolo.service.GatewayStatusService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
@@ -37,10 +38,13 @@ public class GatewayAdddevProcessor extends Processor {
                         dev.getString("pid"),
                         dev.getString("imei"),
                         messageBodyJson.getString("imei"));
-
                 deviceRepository.save(device);
+
                 deviceStatusService.pushDeviceStatus(device, AppNoticeTypeConsts.ADD);
             }
+
+            GatewayStatusService gatewayStatusService = (GatewayStatusService) SpringUtil.getBean("gatewayStatusService");
+            gatewayStatusService.pushGatewayStatus(messageBodyJson.getString("imei"));
 
             // 写入文件待后续处理
             gatewayLogger.info(message);

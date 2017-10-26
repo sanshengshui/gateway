@@ -1,11 +1,12 @@
 package com.aiyolo.service;
 
-import com.aiyolo.common.SmsApi;
+import com.aiyolo.common.SmsNewApi;
 import com.aiyolo.constant.SmsConsts;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,7 +15,20 @@ public class SmsPushService {
     private static final Log smsLogger = LogFactory.getLog("smsLog");
     private static final Log errorLogger = LogFactory.getLog("errorLog");
 
-    @Autowired GatewayService deviceService;
+    @Autowired
+    GatewayService deviceService;
+
+    @Value("${sms.haotingyun.apikey}")
+    private String smsHaotingyunApikey;
+
+    @Value("${sms.new.account}")
+    private String smsNewAccount;
+
+    @Value("${sms.new.password}")
+    private String smsNewPassword;
+
+    @Value("${sms.new.extno}")
+    private String smsNewExtno;
 
     public void pushSms(String glImei, String text) {
         String[] phones = deviceService.getGatewayUserPhones(glImei);
@@ -35,7 +49,7 @@ public class SmsPushService {
                     text : (SmsConsts.SMS_SIGN + text);
 
             smsLogger.info("发送短信:(" + smsMobile + ")" + smsText);
-            String smsResult = SmsApi.sendBatchSms(SmsConsts.API_KEY, smsText, smsMobile);
+            String smsResult = SmsNewApi.sendSms(smsNewAccount, smsNewPassword, smsMobile, smsText, smsNewExtno);
             smsLogger.info("短信结果:(" + smsMobile + ")" + smsResult);
         } catch (Exception e) {
             errorLogger.error("pushSms异常！text:" + text, e);

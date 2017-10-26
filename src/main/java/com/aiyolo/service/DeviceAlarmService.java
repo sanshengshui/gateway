@@ -4,8 +4,10 @@ import com.aiyolo.channel.data.request.AppNoticeWarningRequest;
 import com.aiyolo.constant.SingleAlarmTypeEnum;
 import com.aiyolo.constant.SmsConsts;
 import com.aiyolo.entity.DeviceAlarm;
+import com.aiyolo.entity.Gateway;
 import com.aiyolo.queue.Sender;
 import com.aiyolo.repository.DeviceAlarmRepository;
+import com.aiyolo.repository.GatewayRepository;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,6 +30,8 @@ public class DeviceAlarmService {
     @Autowired
     Sender sender;
 
+    @Autowired
+    GatewayRepository gatewayRepository;
     @Autowired
     DeviceAlarmRepository deviceAlarmRepository;
 
@@ -110,6 +114,15 @@ public class DeviceAlarmService {
     public void pushDeviceAlarm(DeviceAlarm deviceAlarm) {
         if (deviceAlarm == null) {
             return;
+        }
+
+        if (deviceAlarm.getGateway() == null) {
+            Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(deviceAlarm.getGlImei());
+            if (gateway == null) {
+                return;
+            }
+
+            deviceAlarm.setGateway(gateway);
         }
 
         try {
