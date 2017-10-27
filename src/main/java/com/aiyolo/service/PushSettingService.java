@@ -73,7 +73,7 @@ public class PushSettingService {
 
     private String formatPlaceholder(String message, Map<String, String> placeholderValues) {
         for (PushSettingPlaceholderEnum placeholder : PushSettingPlaceholderEnum.values()) {
-            if (placeholderValues.keySet().contains(placeholder.getName())) {
+            if (placeholderValues.get(placeholder.getName()) != null) {
                 message = message.replace(placeholder.getPlaceholder(), placeholderValues.get(placeholder.getName()));
             }
         }
