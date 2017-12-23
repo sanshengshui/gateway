@@ -4,8 +4,10 @@ import com.aiyolo.common.SpringUtil;
 import com.aiyolo.constant.AlarmStatusEnum;
 import com.aiyolo.entity.DeviceAlarm;
 import com.aiyolo.entity.DeviceAlarmCancel;
+import com.aiyolo.entity.DeviceStatus;
 import com.aiyolo.repository.DeviceAlarmCancelRepository;
 import com.aiyolo.repository.DeviceAlarmRepository;
+import com.aiyolo.repository.DeviceStatusRepository;
 import com.aiyolo.service.DeviceAlarmService;
 import com.aiyolo.service.DeviceStatusService;
 import net.sf.json.JSONArray;
@@ -16,7 +18,6 @@ import org.apache.commons.logging.LogFactory;
 public class GatewayAlarmProcessor extends Processor {
 
     private static Log gatewayLogger = LogFactory.getLog("gatewayLog");
-
     @Override
     public void run(String message) {
         try {
@@ -27,6 +28,8 @@ public class GatewayAlarmProcessor extends Processor {
 
             DeviceStatusService deviceStatusService = (DeviceStatusService) SpringUtil.getBean("deviceStatusService");
             DeviceAlarmService deviceAlarmService = (DeviceAlarmService) SpringUtil.getBean("deviceAlarmService");
+
+            DeviceStatusRepository deviceStatusRepository = (DeviceStatusRepository) SpringUtil.getBean("deviceStatusRepository");
 
             JSONArray deviceAlarms = messageBodyJson.getJSONArray("devs");
 
@@ -63,6 +66,11 @@ public class GatewayAlarmProcessor extends Processor {
                     // 添加记录
                     deviceAlarmRepository.save(deviceAlarm);
                 }
+
+                //设备发生报警时候肯定在线，修改在线状态
+                DeviceStatus deviceStatus = deviceStatusRepository.findFirstByImeiOrderByIdDesc(deviceAlarm.getImei());
+                deviceStatus.setOnline(1);
+                deviceStatusRepository.save(deviceStatus);
 
                 // 推送设备状态变化
                 deviceStatusService.pushDeviceStatus(deviceAlarm.getImei());
