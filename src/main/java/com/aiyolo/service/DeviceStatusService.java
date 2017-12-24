@@ -37,10 +37,14 @@ public class DeviceStatusService {
     GatewayService gatewayService;
 
     public void pushDeviceStatus(Device device) {
-        pushDeviceStatus(device, AppNoticeTypeConsts.MODIFY);
+        pushDeviceStatus(device, AppNoticeTypeConsts.MODIFY, null);
     }
 
-    public void pushDeviceStatus(Device device, Integer noticeType) {
+    public void pushDeviceStatus(Device device, Integer onlineStatus) {
+        pushDeviceStatus(device, AppNoticeTypeConsts.MODIFY, onlineStatus);
+    }
+
+    public void pushDeviceStatus(Device device, Integer noticeType, Integer onlineStatus) {
         if (device == null) {
             return;
         }
@@ -67,6 +71,9 @@ public class DeviceStatusService {
                     queryParamMap.put("rssi", deviceStatus.getRssi());
                     queryParamMap.put("bat", deviceStatus.getBat());
                 }
+                if (onlineStatus != null) {
+                    queryParamMap.put("online", onlineStatus);
+                }
 
                 DeviceAlarm deviceAlarm = deviceAlarmRepository.findFirstByImeiOrderByIdDesc(device.getImei());
                 if (deviceAlarm != null) {
@@ -89,6 +96,15 @@ public class DeviceStatusService {
         }
 
         pushDeviceStatus(device);
+    }
+
+    public void pushDeviceStatus(String imei, Integer onlineStatus) {
+        Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imei);
+        if (device == null) {
+            return;
+        }
+
+        pushDeviceStatus(device, onlineStatus);
     }
 
 }

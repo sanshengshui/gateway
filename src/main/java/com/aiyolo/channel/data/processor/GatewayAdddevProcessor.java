@@ -2,10 +2,9 @@ package com.aiyolo.channel.data.processor;
 
 import com.aiyolo.common.SpringUtil;
 import com.aiyolo.constant.AppNoticeTypeConsts;
+import com.aiyolo.constant.DeviceOnlineStatusConsts;
 import com.aiyolo.entity.Device;
-import com.aiyolo.entity.DeviceStatus;
 import com.aiyolo.repository.DeviceRepository;
-import com.aiyolo.repository.DeviceStatusRepository;
 import com.aiyolo.service.DeviceStatusService;
 import com.aiyolo.service.GatewayStatusService;
 import net.sf.json.JSONArray;
@@ -16,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 public class GatewayAdddevProcessor extends Processor {
 
     private static Log gatewayLogger = LogFactory.getLog("gatewayLog");
+
     @Override
     public void run(String message) {
         try {
@@ -23,7 +23,6 @@ public class GatewayAdddevProcessor extends Processor {
 
             DeviceRepository deviceRepository = (DeviceRepository) SpringUtil.getBean("deviceRepository");
             DeviceStatusService deviceStatusService = (DeviceStatusService) SpringUtil.getBean("deviceStatusService");
-            DeviceStatusRepository deviceStatusRepository = (DeviceStatusRepository) SpringUtil.getBean("deviceStatusRepository");
 
             JSONArray devs = messageBodyJson.getJSONArray("devs");
 
@@ -42,13 +41,7 @@ public class GatewayAdddevProcessor extends Processor {
                         messageBodyJson.getString("imei"));
                 deviceRepository.save(device);
 
-
-                //设备配网时候肯定在线，修改在线状态
-                DeviceStatus deviceStatus = deviceStatusRepository.findFirstByImeiOrderByIdDesc(dev.getString("imei"));
-                deviceStatus.setOnline(1);
-                deviceStatusRepository.save(deviceStatus);
-
-                deviceStatusService.pushDeviceStatus(device, AppNoticeTypeConsts.ADD);
+                deviceStatusService.pushDeviceStatus(device, AppNoticeTypeConsts.ADD, DeviceOnlineStatusConsts.ONLINE);
             }
 
             GatewayStatusService gatewayStatusService = (GatewayStatusService) SpringUtil.getBean("gatewayStatusService");
