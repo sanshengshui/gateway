@@ -140,7 +140,6 @@ public class DeviceAlarmService {
                         placeholderValues);
                 msgTitle = pushSetting.get("app").get("title");
 
-
                 String deviceType = "";
                 //根据不同报警器设备显示不同的报警标题
                 switch (deviceAlarm.getType()) {
@@ -163,9 +162,9 @@ public class DeviceAlarmService {
                         deviceType = DeviceTypeConsts.DEVICE_NAME_VALVE;
                         break;
                 }
-                if (StringUtils.isNotEmpty(deviceType)){
-                    msgTitle.replace("智能报警器", deviceType);
-                    msgTitle.replace("警报解除通知", deviceType + "解除警报");
+                if (StringUtils.isNotEmpty(deviceType)) {
+                    msgTitle = msgTitle.replace("智能报警器", deviceType);
+                    msgTitle = msgTitle.replace("警报解除通知", deviceType + "解除警报");
                 }
                 //根据不同报警器设备显示不同的报警标题
 

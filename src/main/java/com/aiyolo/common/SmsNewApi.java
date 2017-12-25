@@ -44,7 +44,6 @@ public class SmsNewApi {
         params.put("content", content);
         params.put("extno", extno);
         params.put("rt", "json");
-        System.out.println(params);
         return post(URI_SEND_SMS, params);
     }
 
