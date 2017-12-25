@@ -1,6 +1,7 @@
 package com.aiyolo.service;
 
 import com.aiyolo.channel.data.request.AppNoticeWarningRequest;
+import com.aiyolo.constant.DeviceTypeConsts;
 import com.aiyolo.constant.SingleAlarmTypeEnum;
 import com.aiyolo.constant.SmsConsts;
 import com.aiyolo.entity.DeviceAlarm;
@@ -8,6 +9,7 @@ import com.aiyolo.entity.Gateway;
 import com.aiyolo.queue.Sender;
 import com.aiyolo.repository.DeviceAlarmRepository;
 import com.aiyolo.repository.GatewayRepository;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -137,6 +139,36 @@ public class DeviceAlarmService {
                         pushSettingService.getPushSettingType(deviceAlarm.getValue()),
                         placeholderValues);
                 msgTitle = pushSetting.get("app").get("title");
+
+
+                String deviceType = "";
+                //根据不同报警器设备显示不同的报警标题
+                switch (deviceAlarm.getType()) {
+                    case DeviceTypeConsts.DEV_TYPE_CG:
+                        deviceType = DeviceTypeConsts.DEVICE_NAME_CG;
+                        break;
+                    case DeviceTypeConsts.DEV_TYPE_CO:
+                        deviceType = DeviceTypeConsts.DEVICE_NAME_CO;
+                        break;
+                    case DeviceTypeConsts.DEV_TYPE_GAS:
+                        deviceType = DeviceTypeConsts.DEVICE_NAME_GAS;
+                        break;
+                    case DeviceTypeConsts.DEV_TYPE_SMOKE:
+                        deviceType = DeviceTypeConsts.DEVICE_NAME_SMOKE;
+                        break;
+                    case DeviceTypeConsts.DEV_TYPE_SOS:
+                        deviceType = DeviceTypeConsts.DEVICE_NAME_SOS;
+                        break;
+                    case DeviceTypeConsts.DEV_TYPE_VALVE:
+                        deviceType = DeviceTypeConsts.DEVICE_NAME_VALVE;
+                        break;
+                }
+                if (StringUtils.isNotEmpty(deviceType)){
+                    msgTitle.replace("智能报警器", deviceType);
+                    msgTitle.replace("警报解除通知", deviceType + "解除警报");
+                }
+                //根据不同报警器设备显示不同的报警标题
+
                 msgContent = SmsConsts.SMS_SIGN + pushSetting.get("app").get("content");
                 smsContent = SmsConsts.SMS_SIGN + pushSetting.get("sms").get("content");
 
