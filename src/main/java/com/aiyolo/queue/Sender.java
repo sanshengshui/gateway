@@ -25,6 +25,7 @@ public class Sender {
             Map<String, Object> data = new HashMap<String, Object>();
             data.put("header", headerMap);
             data.put("body", bodyMap);
+            data.put("time", System.currentTimeMillis());
             String messageString = JSONObject.fromObject(data).toString();
 
             rabbitTemplate.convertAndSend(QueueConsts.outputQueueName, messageString);
