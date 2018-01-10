@@ -3,14 +3,11 @@ package com.aiyolo.queue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.aiyolo.channel.data.processor.ProcessorFactory;
-
 import net.sf.json.JSONObject;
 
 public class Receiver {
 
-    private static Log dtimeLogger = LogFactory.getLog("dtimeLog");
     private static Log mqLogger = LogFactory.getLog("mqLog");
     private static Log errorLogger = LogFactory.getLog("errorLog");
 
@@ -22,18 +19,7 @@ public class Receiver {
             String messageString = new String(message, "UTF-8");
             mqLogger.info("读出队列:" + messageString);
 
-
             JSONObject messageJson = JSONObject.fromObject(messageString);
-            //-----------------------------查找延迟过高的队列--------------------------------
-            long time = Long.parseLong((String) messageJson.remove("time"));
-            messageString = messageJson.toString();
-            int dTime = (int) ((System.currentTimeMillis() - time) / 1000L);
-            if (dTime > 20) {
-                dtimeLogger.info("队列延迟" + dTime + "秒：" + messageString);
-            }
-            //-----------------------------查找延迟过高的队列--------------------------------
-
-
             JSONObject messageHeaderJson = messageJson.getJSONObject("header");
             JSONObject messageBodyJson = messageJson.getJSONObject("body");
 
