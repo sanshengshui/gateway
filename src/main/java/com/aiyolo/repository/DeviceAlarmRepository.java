@@ -3,6 +3,7 @@ package com.aiyolo.repository;
 import com.aiyolo.entity.DeviceAlarm;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -11,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface DeviceAlarmRepository extends PagingAndSortingRepository<DeviceAlarm, Long> {
+public interface DeviceAlarmRepository extends PagingAndSortingRepository<DeviceAlarm, Long>, JpaSpecificationExecutor<DeviceAlarm> {
 
     List<DeviceAlarm> findByImeiOrderByIdDesc(String imei);
 

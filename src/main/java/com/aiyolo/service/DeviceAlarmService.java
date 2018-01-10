@@ -1,28 +1,34 @@
 package com.aiyolo.service;
 
 import com.aiyolo.channel.data.request.AppNoticeWarningRequest;
+import com.aiyolo.common.SpringUtil;
+import com.aiyolo.common.StringHelper;
 import com.aiyolo.constant.DeviceTypeConsts;
-import com.aiyolo.constant.SingleAlarmTypeEnum;
 import com.aiyolo.constant.SmsConsts;
+import com.aiyolo.data.SimplePageRequest;
 import com.aiyolo.entity.DeviceAlarm;
+import com.aiyolo.entity.DeviceCategory;
 import com.aiyolo.entity.Gateway;
 import com.aiyolo.queue.Sender;
 import com.aiyolo.repository.DeviceAlarmRepository;
+import com.aiyolo.repository.DeviceAlarmSpecification;
+import com.aiyolo.repository.DeviceCategoryRepository;
 import com.aiyolo.repository.GatewayRepository;
-
+import com.aiyolo.service.alarm.AlarmService;
+import com.aiyolo.vo.DeviceAlarmSearchVo;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import java.util.*;
 
 @Service
 public class DeviceAlarmService {
@@ -36,6 +42,8 @@ public class DeviceAlarmService {
     GatewayRepository gatewayRepository;
     @Autowired
     DeviceAlarmRepository deviceAlarmRepository;
+    @Autowired
+    DeviceCategoryRepository deviceCategoryRepository;
 
     @Autowired
     GatewayService gatewayService;
@@ -50,67 +58,29 @@ public class DeviceAlarmService {
     @Autowired
     CustomUserDetailsService customUserDetailsService;
 
-    public Page<DeviceAlarm> getPageDeviceAlarmByAreaCode(Pageable pageable, String areaCode) {
+    public Page<DeviceAlarm> getPageDeviceAlarm(DeviceAlarmSearchVo deviceAlarmSearchVo) {
         Page<DeviceAlarm> alarms = new PageImpl<DeviceAlarm>(new ArrayList<DeviceAlarm>());
 
-        // 取有权限的区域
-        Map<String, List<String>> authorities = customUserDetailsService.getAuthorities();
-        if (authorities.get("areas").contains("0") && "0".equals(areaCode)) {
-            alarms = deviceAlarmRepository.findAll(pageable);
+        if (StringUtils.isNotEmpty(deviceAlarmSearchVo.getGlImei())) {
+            // 权限判断
+            Gateway gateway = gatewayService.getGatewayByGlImei(deviceAlarmSearchVo.getGlImei());
+            if (gateway != null) {
+                alarms = deviceAlarmRepository.findPageByGlImei(
+                        SimplePageRequest.getPageable(deviceAlarmSearchVo),
+                        deviceAlarmSearchVo.getGlImei());
+            }
         } else {
-            String areaCodeSearchPat = areaCodeService.getAreaCodeSearchPat(authorities, areaCode);
+            Map<String, List<String>> authorities = customUserDetailsService.getAuthorities();
+            String areaCodeSearchPat = areaCodeService.getAreaCodeSearchPat(authorities, deviceAlarmSearchVo.getAreaCode());
             if (StringUtils.isNotEmpty(areaCodeSearchPat)) {
-                alarms = deviceAlarmRepository.findPageByGatewayAreaCodeMatch(pageable, areaCodeSearchPat);
+                deviceAlarmSearchVo.setAreaCode(areaCodeSearchPat);
+                alarms = deviceAlarmRepository.findAll(
+                        DeviceAlarmSpecification.getSpec(deviceAlarmSearchVo),
+                        SimplePageRequest.getPageable(deviceAlarmSearchVo));
             }
         }
 
         return alarms;
-    }
-
-    public Map<Integer, String> getAllDeviceAlarmType() {
-        return getAllDeviceAlarmType(",");
-    }
-
-    public Map<Integer, String> getAllDeviceAlarmType(String separator) {
-        Integer maxTypeValue = 0;
-        for (SingleAlarmTypeEnum singleType : SingleAlarmTypeEnum.values()) {
-            maxTypeValue += singleType.getValue();
-        }
-
-        Map<Integer, String> alarmTypeMap = new HashMap<Integer, String>();
-        alarmTypeMap.put(0, SingleAlarmTypeEnum.CLEAR.getName());
-        for (int i = 1; i <= maxTypeValue; i++) {
-            String typeName = getDeviceAlarmTypeName(i, separator);
-            if (StringUtils.isNotEmpty(typeName)) {
-                alarmTypeMap.put(i, typeName);
-            }
-        }
-
-        return alarmTypeMap;
-    }
-
-    public String[] getDeviceAlarmTypeNameArray(int type) {
-        List<String> typeNameList = new ArrayList<String>();
-
-        if (type == 0) {
-            typeNameList.add(SingleAlarmTypeEnum.CLEAR.getName());
-        } else {
-            for (SingleAlarmTypeEnum singleType : SingleAlarmTypeEnum.values()) {
-                if ((singleType.getValue() & type) > 0) {
-                    typeNameList.add(singleType.getName());
-                }
-            }
-        }
-
-        return typeNameList.toArray(new String[0]);
-    }
-
-    public String getDeviceAlarmTypeName(int type) {
-        return getDeviceAlarmTypeName(type, ",");
-    }
-
-    public String getDeviceAlarmTypeName(int type, String separator) {
-        return StringUtils.join(getDeviceAlarmTypeNameArray(type), separator);
     }
 
     public void pushDeviceAlarm(DeviceAlarm deviceAlarm) {
@@ -204,6 +174,45 @@ public class DeviceAlarmService {
         }
 
         pushDeviceAlarm(deviceAlarm);
+    }
+
+    @Async
+    public <S extends AlarmService> void addDispose(DeviceAlarm deviceAlarm) {
+        try {
+            DeviceCategory deviceCategory = deviceCategoryRepository.findOneByCode(deviceAlarm.getType());
+            if (deviceCategory != null && StringUtils.isNotEmpty(deviceCategory.getExtra())) {
+                JSONObject extraJson = JSONObject.fromObject(deviceCategory.getExtra());
+                if (!extraJson.isNullObject()) {
+                    ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+                    ScriptEngine nashorn = scriptEngineManager.getEngineByName("nashorn");
+
+                    Iterator conditions = extraJson.keys();
+                    while (conditions.hasNext()) {
+                        String condition = (String) conditions.next();
+                        JSONObject content = extraJson.getJSONObject(condition);
+
+                        nashorn.put("val", deviceAlarm.getValue());
+                        Boolean result = (Boolean) nashorn.eval(condition);
+                        if (result && !content.isNullObject()) {
+                            Iterator content_cls = content.keys();
+                            while (content_cls.hasNext()) {
+                                String cls = (String) content_cls.next();
+                                Object params = content.get(cls);
+
+//                                String packageName = this.getClass().getPackage().getName() + ".alarm";
+//                                String className = cls.replace(cls.substring(0, 1), cls.substring(0, 1).toUpperCase()) + "AlarmService";
+//                                S service = (S) Class.forName(packageName + "." + className).newInstance();
+                                String serviceName = StringHelper.underline2Camel(cls) + "AlarmService";
+                                S service = (S) SpringUtil.getBean(serviceName);
+                                service.run(deviceAlarm, params);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            errorLogger.error("addDispose异常！deviceAlarm:" + deviceAlarm.toString(), e);
+        }
     }
 
 }

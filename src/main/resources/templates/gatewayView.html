@@ -184,7 +184,7 @@ $(document).ready(function() {
         "lengthChange": false,
         "pageLength": 10,
         "ordering": false,
-        "ajax": "/alarm/list?glImei=" + [[${device.glImei}]],
+        "ajax": "/alarm/list?glImei=" + [[${gateway.glImei}]],
         "columns": [
             { "data": "timestamp", "render": function(data, type, full, meta) {
                 return moment(data * 1000).format('YYYY-MM-DD HH:mm:ss');

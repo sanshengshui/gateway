@@ -40,7 +40,10 @@ public class GatewayUpstaProcessor extends Processor {
                     messageBodyJson.getInt("hum"),
                     messageBodyJson.getInt("atm"),
                     messageBodyJson.getString("ver"),
-                    messageBodyJson.getInt("err"));
+                    messageBodyJson.getInt("err"),
+                    messageBodyJson.getInt("sos"),
+                    messageBodyJson.getInt("check"),
+                    messageBodyJson.getInt("htmp"));
 
             GatewayStatusRepository gatewayStatusRepository = (GatewayStatusRepository) SpringUtil.getBean("gatewayStatusRepository");
             gatewayStatusRepository.save(gatewayStatus);
@@ -66,7 +69,7 @@ public class GatewayUpstaProcessor extends Processor {
             // 写入文件待后续处理
             gatewayLogger.info(message);
         } catch (Exception e) {
-            errorLogger.error("GatewayStatusProcessor异常！message:" + message, e);
+            errorLogger.error("GatewayUpstaProcessor异常！message:" + message, e);
         }
     }
 

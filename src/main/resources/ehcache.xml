@@ -14,4 +14,6 @@
     <cache name="gatewayBeat" maxEntriesLocalHeap="10000" />
     <cache name="gatewayLiveStatus" maxEntriesLocalHeap="10000" />
 
+    <cache name="deviceCategories" maxEntriesLocalHeap="1000" />
+
 </ehcache>

@@ -40,7 +40,7 @@ public class DataTablesRequest extends AbstractTableRequest {
 
     @Override
     public int getSize() {
-        return length;
+        return length > 0 ? length : 20;
     }
 
     @SuppressWarnings("unchecked")

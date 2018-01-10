@@ -11,22 +11,26 @@ public class DeviceCategory extends BaseEntity implements Serializable {
     private Integer category = 0;
     private Integer type = 0;
     private String code = "";
+    private String name = "";
     private String values = "";
+    private String extra = "";
 
     protected DeviceCategory() {}
 
-    public DeviceCategory(Integer category, Integer type, String code, String values) {
+    public DeviceCategory(Integer category, Integer type, String code, String name, String values, String extra) {
         this.category = category;
         this.type = type;
         this.code = code;
+        this.name = name;
         this.values = values;
+        this.extra = extra;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "DeviceCategory[id=%d, category=%d, type=%d, code='%s', values='%s']",
-                id, category, type, code, values);
+                "DeviceCategory[id=%d, category=%d, type=%d, code='%s', name='%s', values='%s', extra='%s']",
+                id, category, type, code, name, values, extra);
     }
 
     public Integer getCategory() {
@@ -53,12 +57,28 @@ public class DeviceCategory extends BaseEntity implements Serializable {
         this.code = code;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getValues() {
         return values;
     }
 
     public void setValues(String values) {
         this.values = values;
+    }
+
+    public String getExtra() {
+        return extra;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
     }
 
 }

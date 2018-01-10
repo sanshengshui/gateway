@@ -11,6 +11,12 @@ public interface DeviceCategoryRepository extends PagingAndSortingRepository<Dev
 
     DeviceCategory findOneByCategoryAndType(Integer category, Integer type);
 
+//    @Cacheable(value="deviceCategories", unless="#result == null")
     DeviceCategory findOneByCode(String code);
+
+//    @Override
+//    @SuppressWarnings("unchecked")
+//    @Caching(put = { @CachePut(value="deviceCategories", key="#p0.getCode()") })
+//    DeviceCategory save(DeviceCategory deviceCategory);
 
 }

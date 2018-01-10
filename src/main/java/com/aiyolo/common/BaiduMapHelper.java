@@ -1,9 +1,7 @@
 package com.aiyolo.common;
 
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.aiyolo.service.AreaCodeService;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,9 +11,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import com.aiyolo.service.AreaCodeService;
-
-import net.sf.json.JSONObject;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BaiduMapHelper {
 
@@ -101,7 +99,7 @@ public class BaiduMapHelper {
     public static Map<String, String> getLocationBySta(int mcc, int mnc, int lac, int ci) {
         try {
             StringBuilder url = new StringBuilder();
-            url.append("http://api.cellocation.com/cell/?output=json");
+            url.append("http://api.cellocation.com:81/cell/?output=json");
             url.append("&mcc=");
             url.append(mcc);
             url.append("&mnc=");

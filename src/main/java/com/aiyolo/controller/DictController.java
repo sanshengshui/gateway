@@ -2,16 +2,22 @@ package com.aiyolo.controller;
 
 import com.aiyolo.common.FileHelper;
 import com.aiyolo.common.SpringUtil;
-import com.aiyolo.constant.*;
+import com.aiyolo.constant.AlarmStatusEnum;
+import com.aiyolo.constant.ProductEnum;
+import com.aiyolo.constant.Role4GatewayEnum;
+import com.aiyolo.constant.RoleEnum;
 import com.aiyolo.entity.Channel;
+import com.aiyolo.entity.DeviceCategory;
 import com.aiyolo.repository.ChannelRepository;
+import com.aiyolo.repository.DeviceCategoryRepository;
 import com.aiyolo.service.AreaCodeService;
-import com.aiyolo.service.DeviceAlarmService;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,15 +50,27 @@ public class DictController {
 
     @RequestMapping(value = "/alarm_type", produces = "text/javascript; charset=UTF-8")
     public String alarmType() {
-        DeviceAlarmService deviceAlarmService = (DeviceAlarmService) SpringUtil.getBean("deviceAlarmService");
-        Map<Integer, String> alarmTypeMap = deviceAlarmService.getAllDeviceAlarmType();
+        DeviceCategoryRepository deviceCategoryRepository = (DeviceCategoryRepository) SpringUtil.getBean("deviceCategoryRepository");
+        List<DeviceCategory> deviceCategories = (List<DeviceCategory>) deviceCategoryRepository.findAll();
 
-        Map<String, String> _alarmTypeMap = new HashMap<String, String>();
-        for (int type : alarmTypeMap.keySet()) {
-            _alarmTypeMap.put(String.valueOf(type), alarmTypeMap.get(type));
+        Map<String, String> alarmTypeMap = new HashMap<String, String>();
+        for (int i = 0; i < deviceCategories.size(); i++) {
+            String code = deviceCategories.get(i).getCode();
+            String values = deviceCategories.get(i).getValues();
+            if (StringUtils.isNotEmpty(values)) {
+                JSONObject valuesJson = JSONObject.fromObject(values);
+                if (!valuesJson.isNullObject()) {
+                    Iterator vals = valuesJson.keys();
+                    while (vals.hasNext()) {
+                        String val = (String) vals.next();
+                        String desc = (String) valuesJson.get(val);
+                        alarmTypeMap.put(code + "_" + val, desc);
+                    }
+                }
+            }
         }
 
-        return "var dict_alarm_type = " + JSONObject.fromObject(_alarmTypeMap).toString();
+        return "var dict_alarm_type = " + JSONObject.fromObject(alarmTypeMap).toString();
     }
 
     @RequestMapping(value = "/alarm_status", produces = "text/javascript; charset=UTF-8")
