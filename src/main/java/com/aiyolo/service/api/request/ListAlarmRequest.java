@@ -9,6 +9,8 @@ public class ListAlarmRequest extends Request {
 
     private String imei;
 
+    private int type;
+
     public ListAlarmRequest() {
     }
 
@@ -16,7 +18,16 @@ public class ListAlarmRequest extends Request {
     public String toString() {
         return "ListAlarmRequest{" +
                 "imei='" + imei + '\'' +
+                "type='" + type + '\'' +
                 '}';
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public String getImei() {

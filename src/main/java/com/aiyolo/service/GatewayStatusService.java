@@ -75,6 +75,7 @@ public class GatewayStatusService {
                     queryParamMap.put("hum", gatewayStatus.getHumidity());
                     queryParamMap.put("atm", gatewayStatus.getAtmosphere());
                     queryParamMap.put("ver", gatewayStatus.getVersion());
+                    queryParamMap.put("check", gatewayStatus.getCheck());
                 }
 
                 Map<String, Object> bodyMap = AppNoticeGatewayRequest.getInstance().requestBody(queryParamMap);

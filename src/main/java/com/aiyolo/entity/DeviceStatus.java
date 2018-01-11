@@ -19,6 +19,7 @@ public class DeviceStatus extends BaseEntity implements Serializable {
     private Integer rssi = 0;
     private Integer bat = 0;
     private String info = "";
+    private Integer check = 0;
 
     @ManyToOne
     @JoinColumn(name = "imei", referencedColumnName = "imei", insertable = false, updatable = false)
@@ -27,7 +28,7 @@ public class DeviceStatus extends BaseEntity implements Serializable {
     protected DeviceStatus() {}
 
     public DeviceStatus(String type, String imei, String glImei, Integer timestamp, Integer online, Integer status, Integer rssi,
-                        Integer bat, String info) {
+                        Integer bat, String info, Integer check) {
         this.type = type;
         this.imei = imei;
         this.glImei = glImei;
@@ -37,6 +38,7 @@ public class DeviceStatus extends BaseEntity implements Serializable {
         this.rssi = rssi;
         this.bat = bat;
         this.info = info;
+        this.check = check;
     }
 
     @Override
@@ -46,6 +48,13 @@ public class DeviceStatus extends BaseEntity implements Serializable {
                 id, type, imei, glImei);
     }
 
+    public Integer getCheck() {
+        return check;
+    }
+
+    public void setCheck(Integer check) {
+        this.check = check;
+    }
     public String getType() {
         return type;
     }

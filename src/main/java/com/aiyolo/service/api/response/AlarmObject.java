@@ -10,25 +10,37 @@ public class AlarmObject {
     private Long timeCut = 0L;
     private Long timeRemove = 0L;
     private Integer val = 0;
+    private Integer type = 0;
 
     public AlarmObject() {
     }
 
-    public AlarmObject(Long timeAlarm, Long timeCut, Long timeRemove, Integer val) {
+    public AlarmObject(Long timeAlarm, Long timeCut, Long timeRemove, Integer val, Integer type) {
         this.timeAlarm = timeAlarm;
         this.timeCut = timeCut;
         this.timeRemove = timeRemove;
         this.val = val;
+        this.type = type;
     }
+
 
     @Override
     public String toString() {
         return "AlarmObject{" +
-                "time_alarm=" + timeAlarm +
-                ", time_cut=" + timeCut +
-                ", time_remove=" + timeRemove +
+                "timeAlarm=" + timeAlarm +
+                ", timeCut=" + timeCut +
+                ", timeRemove=" + timeRemove +
                 ", val=" + val +
+                ", type=" + type +
                 '}';
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public Long getTimeAlarm() {

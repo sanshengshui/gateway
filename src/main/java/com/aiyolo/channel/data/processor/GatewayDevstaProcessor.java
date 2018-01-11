@@ -36,7 +36,8 @@ public class GatewayDevstaProcessor extends Processor {
                         deviceStatus.getInt("err"),
                         deviceStatus.getInt("rssi"),
                         deviceStatus.getInt("bat"),
-                        deviceStatus.getString("info")));
+                        deviceStatus.getString("info"),
+                        deviceStatus.getInt("check")));
 
                 // 推送给app
                 deviceStatusService.pushDeviceStatus(deviceStatus.getString("imei"));
