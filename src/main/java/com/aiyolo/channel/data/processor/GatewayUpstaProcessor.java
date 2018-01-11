@@ -8,8 +8,11 @@ import com.aiyolo.entity.GatewayStatus;
 import com.aiyolo.queue.Sender;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.repository.GatewayStatusRepository;
+import com.aiyolo.service.GatewayAlarmService;
 import com.aiyolo.service.GatewaySettingService;
 import com.aiyolo.service.GatewayStatusService;
+import com.aiyolo.service.MessagePushService;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -26,13 +29,17 @@ public class GatewayUpstaProcessor extends Processor {
             init(message);
 
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd HH");
-            String _dh = format.format(messageBodyJson.getInt("mid") * 1000L);
+            int mid = messageBodyJson.getInt("mid");
+            String _dh = format.format(mid * 1000L);
             String[] _dhArray = _dh.split(" ");
 
+            int sos = messageBodyJson.getInt("sos");
+            int check = messageBodyJson.getInt("check");
+            String imei = messageBodyJson.getString("imei");
             GatewayStatus gatewayStatus = new GatewayStatus(
                     messageHeaderJson.getString("gl_id"),
-                    messageBodyJson.getString("imei"),
-                    messageBodyJson.getInt("mid"),
+                    imei,
+                    mid,
                     _dhArray[0],
                     _dhArray[1],
                     messageBodyJson.getInt("rssi"),
@@ -40,9 +47,25 @@ public class GatewayUpstaProcessor extends Processor {
                     messageBodyJson.getInt("hum"),
                     messageBodyJson.getInt("atm"),
                     messageBodyJson.getString("ver"),
-                    messageBodyJson.getInt("err"));
+                    messageBodyJson.getInt("err"),
+                    sos,
+                    check);
 
             GatewayStatusRepository gatewayStatusRepository = (GatewayStatusRepository) SpringUtil.getBean("gatewayStatusRepository");
+
+            //-------------------------增加网关报警和巡检---------------------------------
+
+            GatewayStatus load = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(gatewayStatus.getGlImei());
+            if (load != null) {
+                if (load.getSos() != sos) {
+                    //触发网关报警或者解除网关报警
+                    GatewayAlarmService gatewayAlarmService = (GatewayAlarmService) SpringUtil.getBean("gatewayAlarmService");
+                    gatewayAlarmService.gatewayAlarm(imei,sos,mid);
+                }
+            }
+            //-------------------------增加网关报警和巡检---------------------------------
+
+
             gatewayStatusRepository.save(gatewayStatus);
 
             // 应答
