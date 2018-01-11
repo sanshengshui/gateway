@@ -51,20 +51,16 @@ public class ListAlarmService extends BaseService {
             return (Res) responseRequestParameterError(request.getAction());
         }
         String glImei;
-        List<Check> checks;
-
         List<AlarmObject> alarms = new ArrayList<AlarmObject>();
+
         if (listAlarmRequest.getType() == 0) {
-            //返回设备的日志
+            //返回设备的报警日志
             Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imei);
             if (device == null) {
                 return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到设备");
             }
             glImei = device.getGlImei();
-            AppUserGateway appUserGateway = appUserGatewayRepository.findOneByUserIdAndGlImei(userId, glImei);
-            if (appUserGateway == null || appUserGateway.getGateway() == null) {
-                return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
-            }
+
 
             //报警日志
             List<DeviceAlarm> deviceAlarms = deviceAlarmRepository.findByImeiOrderByIdDesc(imei);
@@ -80,31 +76,31 @@ public class ListAlarmService extends BaseService {
                 alarms.add(alarmObject);
             }
 
-            //巡检日志
-            checks = checkRepository.findByImeiOrderByIdDesc(imei);
-            for (Check check : checks) {
-                AlarmObject alarmObject = new AlarmObject();
-                alarmObject.setTimeAlarm(check.getTimestamp() * 1000L);
-                alarmObject.setType(1);//0代表报警,1代表巡检
-                alarms.add(alarmObject);
-            }
-
 
         } else if (listAlarmRequest.getType() == 1) {
-            //返回网关报警和巡检日志
-            //            Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(imei);
-            //            if (gateway == null) {
-            //                return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
-            //            }
-            //            glImei = imei;
-            //            AppUserGateway appUserGateway = appUserGatewayRepository.findOneByUserIdAndGlImei(userId, glImei);
-            //            if (appUserGateway == null || appUserGateway.getGateway() == null) {
-            //                return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
-            //            }
-
+            //返回网关的报警日志
+            Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(imei);
+            if (gateway == null) {
+                return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
+            }
+            glImei = imei;
 
         } else {
             return (Res) responseRequestParameterError(request.getAction());
+        }
+        AppUserGateway appUserGateway = appUserGatewayRepository.findOneByUserIdAndGlImei(userId, glImei);
+        if (appUserGateway == null || appUserGateway.getGateway() == null) {
+            return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
+        }
+
+
+        //巡检日志
+        List<Check> checks = checkRepository.findByImeiOrderByIdDesc(imei);
+        for (Check check : checks) {
+            AlarmObject alarmObject = new AlarmObject();
+            alarmObject.setTimeAlarm(check.getTimestamp() * 1000L);
+            alarmObject.setType(1);//0代表报警,1代表巡检
+            alarms.add(alarmObject);
         }
 
         return (Res) new ListAlarmResponse(request, alarms);
