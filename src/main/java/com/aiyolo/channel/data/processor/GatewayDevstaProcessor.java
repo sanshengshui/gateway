@@ -1,11 +1,17 @@
 package com.aiyolo.channel.data.processor;
 
 import com.aiyolo.common.SpringUtil;
+import com.aiyolo.entity.Checked;
 import com.aiyolo.entity.DeviceStatus;
+import com.aiyolo.entity.GatewayStatus;
+import com.aiyolo.repository.CheckedRepository;
 import com.aiyolo.repository.DeviceStatusRepository;
 import com.aiyolo.service.DeviceStatusService;
+import com.aiyolo.service.GatewayAlarmService;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,6 +47,14 @@ public class GatewayDevstaProcessor extends Processor {
 
                 // 推送给app
                 deviceStatusService.pushDeviceStatus(deviceStatus.getString("imei"));
+
+
+                //-------------------------增加巡检---------------------------------
+                CheckedRepository checkedRepository = (CheckedRepository) SpringUtil.getBean("checkedRepository");
+                checkedRepository.save(new Checked(messageBodyJson.getString("imei"), messageBodyJson.getInt("mid")));
+                //-------------------------增加巡检---------------------------------
+
+
             }
 
             // 写入文件待后续处理

@@ -2,10 +2,12 @@ package com.aiyolo.channel.data.processor;
 
 import com.aiyolo.channel.data.response.GatewayUpstaResponse;
 import com.aiyolo.common.SpringUtil;
+import com.aiyolo.entity.Checked;
 import com.aiyolo.entity.Gateway;
 import com.aiyolo.entity.GatewaySetting;
 import com.aiyolo.entity.GatewayStatus;
 import com.aiyolo.queue.Sender;
+import com.aiyolo.repository.CheckedRepository;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.repository.GatewayStatusRepository;
 import com.aiyolo.service.GatewayAlarmService;
@@ -51,6 +53,8 @@ public class GatewayUpstaProcessor extends Processor {
 
 
             //-------------------------增加网关报警和巡检---------------------------------
+            CheckedRepository checkedRepository = (CheckedRepository) SpringUtil.getBean("checkedRepository");
+            checkedRepository.save(new Checked(messageBodyJson.getString("imei"),messageBodyJson.getInt("mid")));
 
             GatewayStatus load = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(gatewayStatus.getGlImei());
             if (load != null) {

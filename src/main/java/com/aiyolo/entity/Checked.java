@@ -8,19 +8,27 @@ public class Checked extends BaseEntity {
 
     private String imei = "";
 
-    private Integer timestamp = 0;
+    private Integer mid = 0;
 
-    public Checked(String imei, Integer timestamp) {
+    public Checked(String imei, Integer mid) {
         this.imei = imei;
-        this.timestamp = timestamp;
+        this.mid = mid;
     }
 
     @Override
     public String toString() {
         return "Checked{" +
                 "imei='" + imei + '\'' +
-                ", timestamp=" + timestamp +
+                ", mid=" + mid +
                 "} " + super.toString();
+    }
+
+    public Integer getMid() {
+        return mid;
+    }
+
+    public void setMid(Integer mid) {
+        this.mid = mid;
     }
 
     public String getImei() {
@@ -29,13 +37,5 @@ public class Checked extends BaseEntity {
 
     public void setImei(String imei) {
         this.imei = imei;
-    }
-
-    public Integer getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Integer timestamp) {
-        this.timestamp = timestamp;
     }
 }

@@ -98,7 +98,7 @@ public class ListAlarmService extends BaseService {
         List<Checked> checkeds = checkedRepository.findByImeiOrderByIdDesc(imei);
         for (Checked checked : checkeds) {
             AlarmObject alarmObject = new AlarmObject();
-            alarmObject.setTimeAlarm(checked.getTimestamp() * 1000L);
+            alarmObject.setTimeAlarm(checked.getMid() * 1000L);
             alarmObject.setType(1);//0代表报警,1代表巡检
             alarms.add(alarmObject);
         }
