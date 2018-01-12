@@ -6,10 +6,12 @@ import com.aiyolo.entity.Checked;
 import com.aiyolo.entity.Device;
 import com.aiyolo.entity.DeviceAlarm;
 import com.aiyolo.entity.Gateway;
+import com.aiyolo.entity.GatewayAlarm;
 import com.aiyolo.repository.AppUserGatewayRepository;
 import com.aiyolo.repository.CheckedRepository;
 import com.aiyolo.repository.DeviceAlarmRepository;
 import com.aiyolo.repository.DeviceRepository;
+import com.aiyolo.repository.GatewayAlarmRepository;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.service.api.request.ListAlarmRequest;
 import com.aiyolo.service.api.request.RequestObject;
@@ -32,6 +34,8 @@ public class ListAlarmService extends BaseService {
     DeviceRepository deviceRepository;
     @Autowired
     DeviceAlarmRepository deviceAlarmRepository;
+    @Autowired
+    GatewayAlarmRepository gatewayAlarmRepository;
     @Autowired
     AppUserGatewayRepository appUserGatewayRepository;
 
@@ -84,6 +88,15 @@ public class ListAlarmService extends BaseService {
                 return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
             }
             glImei = imei;
+
+            List<GatewayAlarm> gatewayAlarms = gatewayAlarmRepository.findByImeiOrderByIdDesc(imei);
+            for (int i = 0; i < gatewayAlarms.size(); i++) {
+                AlarmObject alarmObject = new AlarmObject();
+                alarmObject.setTimeAlarm(gatewayAlarms.get(i).getTimestamp() * 1000L);
+                alarmObject.setVal(gatewayAlarms.get(i).getValue());
+                alarmObject.setType(0);//0代表报警,1代表巡检
+                alarms.add(alarmObject);
+            }
 
         } else {
             return (Res) responseRequestParameterError(request.getAction());
