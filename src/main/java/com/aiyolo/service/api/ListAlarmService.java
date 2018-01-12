@@ -54,17 +54,18 @@ public class ListAlarmService extends BaseService {
         if (StringUtils.isEmpty(imei)) {
             return (Res) responseRequestParameterError(request.getAction());
         }
-        String glImei;
-        List<AlarmObject> alarms = new ArrayList<AlarmObject>();
 
+        List<AlarmObject> alarms = new ArrayList<AlarmObject>();
         if (listAlarmRequest.getType() == 0) {
             //返回设备的报警日志
             Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imei);
             if (device == null) {
                 return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到设备");
             }
-            glImei = device.getGlImei();
-
+            AppUserGateway appUserGateway = appUserGatewayRepository.findOneByUserIdAndGlImei(userId, device.getGlImei());
+            if (appUserGateway == null || appUserGateway.getGateway() == null) {
+                return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
+            }
 
             //报警日志
             List<DeviceAlarm> deviceAlarms = deviceAlarmRepository.findByImeiOrderByIdDesc(imei);
@@ -79,15 +80,16 @@ public class ListAlarmService extends BaseService {
                 alarmObject.setType(0);//0代表报警,1代表巡检
                 alarms.add(alarmObject);
             }
-
-
         } else if (listAlarmRequest.getType() == 1) {
             //返回网关的报警日志
             Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(imei);
             if (gateway == null) {
                 return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
             }
-            glImei = imei;
+            AppUserGateway appUserGateway = appUserGatewayRepository.findOneByUserIdAndGlImei(userId, imei);
+            if (appUserGateway == null || appUserGateway.getGateway() == null) {
+                return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
+            }
 
             List<GatewayAlarm> gatewayAlarms = gatewayAlarmRepository.findByImeiOrderByIdDesc(imei);
             for (int i = 0; i < gatewayAlarms.size(); i++) {
@@ -97,15 +99,9 @@ public class ListAlarmService extends BaseService {
                 alarmObject.setType(0);//0代表报警,1代表巡检
                 alarms.add(alarmObject);
             }
-
         } else {
             return (Res) responseRequestParameterError(request.getAction());
         }
-        AppUserGateway appUserGateway = appUserGatewayRepository.findOneByUserIdAndGlImei(userId, glImei);
-        if (appUserGateway == null || appUserGateway.getGateway() == null) {
-            return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
-        }
-
 
         //巡检日志
         List<Checked> checkeds = checkedRepository.findByImeiOrderByIdDesc(imei);

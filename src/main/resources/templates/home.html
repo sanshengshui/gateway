@@ -410,7 +410,7 @@ $(document).ready(function() {
             axisLine: { show: false },
             axisTick: { show: false },
             splitLine: { show: false },
-            data: ["", "", "", "", ""]
+            data: []
         }],
         yAxis: [{
             type: 'value',
@@ -418,7 +418,7 @@ $(document).ready(function() {
         }],
         series: [{
             type: 'bar',
-            data: [0, 0, 0, 0, 0],
+            data: [],
             itemStyle: {
                 normal: {
                     label: {
@@ -457,22 +457,20 @@ $(document).ready(function() {
             orient: 'vertical',
             x: document.getElementById('areaBar').offsetWidth / 4 * 3,
             y: 'center',
-            data: ['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+            itemGap: 5,
+            data: []
         },
         series: [{
             type: 'pie',
             radius: ['28%', '65%'],
             center: ['35%', '50%'],
-            data: [
-                {value:335, name:'直接访问'},
-                {value:310, name:'邮件营销'},
-                {value:234, name:'联盟广告'},
-                {value:135, name:'视频广告'},
-                {value:1548, name:'搜索引擎'}
-            ],
+            data: [],
             itemStyle: {
                 normal: {
                     label: {
+                        show: false
+                    },
+                    labelLine: {
                         show: false
                     }
                 }
@@ -500,12 +498,6 @@ $(document).ready(function() {
                 chartTypeBar = ec.init(document.getElementById('typeBar'), 'macarons');
                 chartAreaPie = ec.init(document.getElementById('areaPie'), 'macarons');
                 chartTypePie = ec.init(document.getElementById('typePie'), 'macarons');
-
-                chartAreaBar.setOption(option_bar);
-                chartTypeBar.setOption(option_bar);
-
-                chartAreaPie.setOption(option_pie);
-                chartTypePie.setOption(option_pie);
             }
         );
     }
@@ -561,13 +553,13 @@ $(document).ready(function() {
         var option_areaBar = $.extend({}, option_bar);
         option_areaBar.xAxis[0].data = $.map(_yearAreaWarning, function(val, i) { return i; });
         option_areaBar.series[0].data = $.map(_yearAreaWarning, function(val, i) { return val; });
-        chartAreaBar.setOption(option_areaBar, true);
-        if (option_areaBar.series[0].data.length == 0) {
-            $("#areaBar").width("100%");
-        } else {
-            $("#areaBar").width(option_areaBar.series[0].data.length * 33);
-        }
+        chartAreaBar.hideLoading();
+
+        var chartWidth = option_areaBar.series[0].data.length * 33;
+        $("#areaBar").width(chartWidth > 0 ? chartWidth : "100%");
+
         chartAreaBar.resize();
+        chartAreaBar.setOption(option_areaBar, true);
     }
 
     var drawTypeBar = function() {
@@ -575,23 +567,28 @@ $(document).ready(function() {
         //option_typeBar.xAxis[0].data = $.map(_yearTypeWarning, function(val, i) { return i; });
         option_typeBar.xAxis[0].data = ["预警", "火警", "烟雾", "燃气", "电气"];
         option_typeBar.series[0].data = $.map(_yearTypeWarning, function(val, i) { return val; });
-        chartTypeBar.setOption(option_typeBar, true);
+        chartTypeBar.hideLoading();
         chartTypeBar.resize();
+        chartTypeBar.setOption(option_typeBar, true);
     }
 
     var drawAreaPie = function() {
         var option_areaPie = $.extend({}, option_pie);
+        option_areaPie.title.x = document.getElementById('areaPie').offsetWidth * 0.35 - 18;
+        option_areaPie.legend.x = document.getElementById('areaPie').offsetWidth / 4 * 3;
 
         var data_legend = [];
         var data_series = [];
         $.each(_yearAreaWarning, function(key, val) {
+            if (data_legend.length == 6) return;
             data_legend.push(key);
             data_series.push({value:val, name:key});
         });
         option_areaPie.legend.data = data_legend;
         option_areaPie.series[0].data = data_series;
-        chartAreaPie.setOption(option_areaPie, true);
+        chartAreaPie.hideLoading();
         chartAreaPie.resize();
+        chartAreaPie.setOption(option_areaPie, true);
     }
 
     var drawTypePie = function() {

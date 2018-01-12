@@ -1,7 +1,9 @@
 package com.aiyolo;
 
-import java.util.concurrent.Executor;
-
+import com.aiyolo.constant.QueueConsts;
+import com.aiyolo.queue.Receiver;
+import com.aiyolo.queue.Sender;
+import com.aiyolo.service.storage.StorageProperties;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
@@ -15,10 +17,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.aiyolo.constant.QueueConsts;
-import com.aiyolo.queue.Receiver;
-import com.aiyolo.queue.Sender;
-import com.aiyolo.service.storage.StorageProperties;
+import java.util.concurrent.Executor;
 
 @SpringBootApplication
 @EnableAsync
@@ -26,6 +25,9 @@ import com.aiyolo.service.storage.StorageProperties;
 @EnableScheduling
 @EnableConfigurationProperties(StorageProperties.class)
 public class Application extends AsyncConfigurerSupport {
+
+    public static final int concurrentConsumers = 2;
+    public static final int maxConcurrentConsumers = 10;
 
 //    @Bean
 //    Queue inputQueue() {
@@ -53,6 +55,8 @@ public class Application extends AsyncConfigurerSupport {
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(QueueConsts.inputQueueName);
         container.setMessageListener(listenerAdapter);
+        container.setConcurrentConsumers(concurrentConsumers);
+        container.setMaxConcurrentConsumers(maxConcurrentConsumers);
         return container;
     }
 
