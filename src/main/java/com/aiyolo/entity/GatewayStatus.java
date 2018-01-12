@@ -21,9 +21,9 @@ public class GatewayStatus extends BaseEntity implements Serializable {
     private Integer atmosphere = 0;
     private String version = "";
     private Integer status = 0;
-
     private Integer sos = 0;
-    private Integer check = 0;
+    private Integer checked = 0;
+    private Integer htmp = 0;
 
     @ManyToOne
     @JoinColumn(name = "glId", referencedColumnName = "glId", insertable = false, updatable = false)
@@ -32,7 +32,7 @@ public class GatewayStatus extends BaseEntity implements Serializable {
     protected GatewayStatus() {}
 
     public GatewayStatus(String glId, String glImei, Integer timestamp, String date, String hour, Integer rssi, Integer temperature, Integer humidity,
-            Integer atmosphere, String version, Integer status, Integer sos, Integer check) {
+            Integer atmosphere, String version, Integer status, Integer sos, Integer checked, Integer htmp) {
         this.glId = glId;
         this.glImei = glImei;
         this.timestamp = timestamp;
@@ -45,7 +45,8 @@ public class GatewayStatus extends BaseEntity implements Serializable {
         this.version = version;
         this.status = status;
         this.sos = sos;
-        this.check = check;
+        this.checked = checked;
+        this.htmp = htmp;
     }
 
     @Override
@@ -53,22 +54,6 @@ public class GatewayStatus extends BaseEntity implements Serializable {
         return String.format(
                 "GatewayStatus[id=%d, gl_id='%s', gl_imei='%s', date='%s', hour='%s']",
                 id, glId, glImei, date, hour);
-    }
-
-    public Integer getSos() {
-        return sos;
-    }
-
-    public void setSos(Integer sos) {
-        this.sos = sos;
-    }
-
-    public Integer getCheck() {
-        return check;
-    }
-
-    public void setCheck(Integer check) {
-        this.check = check;
     }
 
     public String getGlId() {
@@ -157,6 +142,30 @@ public class GatewayStatus extends BaseEntity implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getSos() {
+        return sos;
+    }
+
+    public void setSos(Integer sos) {
+        this.sos = sos;
+    }
+
+    public Integer getChecked() {
+        return checked;
+    }
+
+    public void setChecked(Integer checked) {
+        this.checked = checked;
+    }
+
+    public Integer getHtmp() {
+        return htmp;
+    }
+
+    public void setHtmp(Integer htmp) {
+        this.htmp = htmp;
     }
 
     public Gateway getGateway() {

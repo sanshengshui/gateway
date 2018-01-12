@@ -32,7 +32,7 @@
                     <a href="/gateway"><i class="fa fa-hdd-o"></i> <span>设备管理</span></a>
                 </li>
                 <li id="menu-alarm">
-                    <a href="/alarm"><i class="fa fa-warning"></i> <span>警报记录</span></a>
+                    <a href="/alarm"><i class="fa fa-warning"></i> <span>报警记录</span></a>
                 </li>
                 <li id="menu-gateway-setting" sec:authorize="hasRole('ROLE_MANAGER')">
                     <a href="/gateway/setting"><i class="fa fa-gear"></i> <span>设备参数设置</span></a>
@@ -43,9 +43,9 @@
                 <li id="menu-push-setting-sms" sec:authorize="hasRole('ROLE_MANAGER')">
                     <a href="/push_setting/sms"><i class="fa fa-comment"></i> <span>短信推送设置</span></a>
                 </li>
-                <li id="menu-news" sec:authorize="hasRole('ROLE_MANAGER')">
-                    <a href="/news"><i class="fa fa-newspaper-o"></i> <span>新闻资讯</span></a>
-                </li>
+                <!--<li id="menu-news" sec:authorize="hasRole('ROLE_MANAGER')">-->
+                    <!--<a href="/news"><i class="fa fa-newspaper-o"></i> <span>新闻资讯</span></a>-->
+                <!--</li>-->
                 <li id="menu-user" sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_AGENT')">
                     <a href="/user"><i class="fa fa-users"></i> <span>用户帐号管理</span></a>
                 </li>

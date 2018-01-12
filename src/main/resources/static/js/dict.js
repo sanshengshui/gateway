@@ -52,7 +52,7 @@ var areaCodeDict = {
                 }
             }
 
-            return province + city + district;
+            return [province, city, district];
         };
         return dict;
     }

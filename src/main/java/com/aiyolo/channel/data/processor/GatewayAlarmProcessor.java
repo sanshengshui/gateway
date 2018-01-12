@@ -70,6 +70,9 @@ public class GatewayAlarmProcessor extends Processor {
 
                 // 推送预报警通知给APP&个推&发送短信
                 deviceAlarmService.pushDeviceAlarm(deviceAlarm);
+
+                // 额外处理
+                deviceAlarmService.addDispose(deviceAlarm);
             }
 
             // 写入文件待后续处理
