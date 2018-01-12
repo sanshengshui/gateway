@@ -2,7 +2,6 @@ package com.aiyolo.service;
 
 import com.aiyolo.channel.data.request.AppNoticeWarningRequest;
 import com.aiyolo.constant.AlarmStatusEnum;
-import com.aiyolo.constant.SingleAlarmTypeEnum;
 import com.aiyolo.constant.SmsConsts;
 import com.aiyolo.entity.DeviceAlarm;
 import com.aiyolo.entity.Gateway;

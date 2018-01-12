@@ -2,12 +2,12 @@ package com.aiyolo.service.api;
 
 import com.aiyolo.constant.ApiResponseStateEnum;
 import com.aiyolo.entity.AppUserGateway;
-import com.aiyolo.entity.Check;
+import com.aiyolo.entity.Checked;
 import com.aiyolo.entity.Device;
 import com.aiyolo.entity.DeviceAlarm;
 import com.aiyolo.entity.Gateway;
 import com.aiyolo.repository.AppUserGatewayRepository;
-import com.aiyolo.repository.CheckRepository;
+import com.aiyolo.repository.CheckedRepository;
 import com.aiyolo.repository.DeviceAlarmRepository;
 import com.aiyolo.repository.DeviceRepository;
 import com.aiyolo.repository.GatewayRepository;
@@ -36,7 +36,7 @@ public class ListAlarmService extends BaseService {
     AppUserGatewayRepository appUserGatewayRepository;
 
     @Autowired
-    CheckRepository checkRepository;
+    CheckedRepository checkedRepository;
     @Autowired
     GatewayRepository gatewayRepository;
 
@@ -95,10 +95,10 @@ public class ListAlarmService extends BaseService {
 
 
         //巡检日志
-        List<Check> checks = checkRepository.findByImeiOrderByIdDesc(imei);
-        for (Check check : checks) {
+        List<Checked> checkeds = checkedRepository.findByImeiOrderByIdDesc(imei);
+        for (Checked checked : checkeds) {
             AlarmObject alarmObject = new AlarmObject();
-            alarmObject.setTimeAlarm(check.getTimestamp() * 1000L);
+            alarmObject.setTimeAlarm(checked.getTimestamp() * 1000L);
             alarmObject.setType(1);//0代表报警,1代表巡检
             alarms.add(alarmObject);
         }

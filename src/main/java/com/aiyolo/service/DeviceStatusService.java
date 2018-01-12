@@ -70,7 +70,7 @@ public class DeviceStatusService {
                     queryParamMap.put("name", device.getName());
                     queryParamMap.put("rssi", deviceStatus.getRssi());
                     queryParamMap.put("bat", deviceStatus.getBat());
-                    queryParamMap.put("check", deviceStatus.getCheck());
+                    queryParamMap.put("check", deviceStatus.getChecked());
                 }
                 if (onlineStatus != null) {
                     queryParamMap.put("online", onlineStatus);

@@ -8,8 +8,10 @@ import com.aiyolo.entity.GatewayStatus;
 import com.aiyolo.queue.Sender;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.repository.GatewayStatusRepository;
+import com.aiyolo.service.GatewayAlarmService;
 import com.aiyolo.service.GatewaySettingService;
 import com.aiyolo.service.GatewayStatusService;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,6 +48,23 @@ public class GatewayUpstaProcessor extends Processor {
                     messageBodyJson.getInt("htmp"));
 
             GatewayStatusRepository gatewayStatusRepository = (GatewayStatusRepository) SpringUtil.getBean("gatewayStatusRepository");
+
+
+            //-------------------------增加网关报警和巡检---------------------------------
+
+            GatewayStatus load = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(gatewayStatus.getGlImei());
+            if (load != null) {
+                if (load.getSos() != messageBodyJson.getInt("sos")) {
+                    //触发网关报警或者解除网关报警
+                    GatewayAlarmService gatewayAlarmService = (GatewayAlarmService) SpringUtil.getBean("gatewayAlarmService");
+                    gatewayAlarmService.gatewayAlarm(messageBodyJson.getString("imei")
+                            , messageBodyJson.getInt("sos")
+                            , messageBodyJson.getInt("mid"));
+                }
+            }
+            //-------------------------增加网关报警和巡检---------------------------------
+
+
             gatewayStatusRepository.save(gatewayStatus);
 
             // 应答
