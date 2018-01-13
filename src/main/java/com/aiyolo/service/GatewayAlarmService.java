@@ -3,6 +3,7 @@ package com.aiyolo.service;
 import com.aiyolo.channel.data.request.AppNoticeWarningRequest;
 import com.aiyolo.constant.AlarmMessageTemplateConsts;
 import com.aiyolo.constant.AlarmStatusEnum;
+import com.aiyolo.constant.PushConsts;
 import com.aiyolo.constant.SmsConsts;
 import com.aiyolo.entity.Gateway;
 import com.aiyolo.entity.GatewayAlarm;
@@ -17,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -91,41 +93,33 @@ public class GatewayAlarmService {
         try {
             String[] mobileIds = gatewayService.getGatewayUserMobileIds(imei);
             if (mobileIds != null && mobileIds.length > 0) {
-                String msgTitle = "智能网关" + gateway.getGlName() + "报警";
-                String content = AlarmMessageTemplateConsts.CONTENT_ALARM;
+                String msgTitle = "智能网关报警";
+
+                long timestamp = gatewayAlarm.getTimestamp() * 1000L;
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                String address = gatewayService.getFullAddress(gateway.getAddress(), gateway.getAreaCode());
+                String contentBase = gateway.getGlName() + "在" + format.format(timestamp);
+
+                String content = contentBase + "监测到" + address + "出现火警，请尽快处理。";
                 if (val == 0) {
-                    msgTitle = "智能网关" + gateway.getGlName() + "解除警报";
-                    content = AlarmMessageTemplateConsts.CONTENT_CLEAR;
+                    msgTitle = "智能网关解除警报";
+                    content = contentBase + "监测发现" + address + "警报已解除。";
                 }
-//                String msgContent = "";
-//                String smsContent = "";
 
-                //                Map<String, String> placeholderValues = pushSettingService.buildPlaceholderValues(deviceAlarm);
-                //                Map<String, Map<String, String>> pushSetting = pushSettingService.getPushSettingByType(
-                //                        pushSettingService.getPushSettingType(deviceAlarm.getValue()),
-                //                        placeholderValues);
-                //                msgTitle = pushSetting.get("app").get("title");
-
-                //                String deviceType = "";
-                //                if (StringUtils.isNotEmpty(deviceType)) {
-                //                    msgTitle = msgTitle.replace("智能报警器", deviceType);
-                //                    msgTitle = msgTitle.replace("警报解除通知", deviceType + "解除警报");
-                //                }
-                //根据不同报警器设备显示不同的报警标题
-
-                String   msgContent = SmsConsts.SMS_SIGN + content;
-                String  smsContent = SmsConsts.SMS_SIGN + content;
+                String msgContent = content;
+                String smsContent = SmsConsts.SMS_SIGN + content;
 
                 // 推送给APP
                 Map<String, Object> headerMap = AppNoticeWarningRequest.getInstance().requestHeader(mobileIds);
-                headerMap.put("cache_time", 24 * 60 * 60 * 1000L);
+                headerMap.put("cache_time", PushConsts.CACHE_TIME);
 
                 Map<String, Object> queryParamMap = new HashMap<String, Object>();
                 queryParamMap.put("imeiGateway", imei);
                 queryParamMap.put("imei", imei);
                 queryParamMap.put("title", msgTitle);
                 queryParamMap.put("text", msgContent);
-                queryParamMap.put("timestamp", gatewayAlarm.getTimestamp() * 1000L);
+                queryParamMap.put("timestamp", timestamp);
 
                 Map<String, Object> bodyMap = AppNoticeWarningRequest.getInstance().requestBody(queryParamMap);
 
