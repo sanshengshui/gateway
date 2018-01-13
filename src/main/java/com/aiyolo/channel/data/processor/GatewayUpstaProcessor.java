@@ -49,21 +49,29 @@ public class GatewayUpstaProcessor extends Processor {
                     messageBodyJson.getInt("check"),
                     messageBodyJson.getInt("htmp"));
 
-            GatewayStatusRepository gatewayStatusRepository = (GatewayStatusRepository) SpringUtil.getBean("gatewayStatusRepository");
+            GatewayStatusRepository gatewayStatusRepository = (GatewayStatusRepository)
+                    SpringUtil.getBean("gatewayStatusRepository");
 
 
             //-------------------------增加网关报警和巡检---------------------------------
-            CheckedRepository checkedRepository = (CheckedRepository) SpringUtil.getBean("checkedRepository");
-            checkedRepository.save(new Checked(messageBodyJson.getString("imei"),messageBodyJson.getInt("mid")));
+
+            int mid = messageBodyJson.getInt("mid");
+            String imei = messageBodyJson.getString("imei");
+            GatewayAlarmService gatewayAlarmService = (GatewayAlarmService)
+                    SpringUtil.getBean("gatewayAlarmService");
+            if (messageBodyJson.getInt("check") == 1) {
+                CheckedRepository checkedRepository = (CheckedRepository) SpringUtil.getBean("checkedRepository");
+                checkedRepository.save(new Checked(imei, mid));
+                gatewayAlarmService.pushChecked(imei,mid);
+            }
 
             GatewayStatus load = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(gatewayStatus.getGlImei());
             if (load != null) {
-                if (load.getSos() != messageBodyJson.getInt("sos")) {
+                int sos = messageBodyJson.getInt("sos");
+                if (load.getSos() != sos) {
                     //触发网关报警或者解除网关报警
-                    GatewayAlarmService gatewayAlarmService = (GatewayAlarmService) SpringUtil.getBean("gatewayAlarmService");
-                    gatewayAlarmService.gatewayAlarm(messageBodyJson.getString("imei")
-                            , messageBodyJson.getInt("sos")
-                            , messageBodyJson.getInt("mid"));
+
+                    gatewayAlarmService.gatewayAlarm(imei, sos, mid);
                 }
             }
             //-------------------------增加网关报警和巡检---------------------------------

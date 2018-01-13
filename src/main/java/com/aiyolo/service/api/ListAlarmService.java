@@ -95,6 +95,11 @@ public class ListAlarmService extends BaseService {
             for (int i = 0; i < gatewayAlarms.size(); i++) {
                 AlarmObject alarmObject = new AlarmObject();
                 alarmObject.setTimeAlarm(gatewayAlarms.get(i).getTimestamp() * 1000L);
+
+                if (gatewayAlarms.get(i).getStatus() == 0) {
+                    alarmObject.setTimeRemove(gatewayAlarms.get(i).getUpdatedAt().getTime());
+                }
+
                 alarmObject.setVal(gatewayAlarms.get(i).getValue());
                 alarmObject.setType(0);//0代表报警,1代表巡检
                 alarms.add(alarmObject);

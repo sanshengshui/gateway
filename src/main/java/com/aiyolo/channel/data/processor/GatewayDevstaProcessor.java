@@ -50,8 +50,15 @@ public class GatewayDevstaProcessor extends Processor {
 
 
                 //-------------------------增加巡检---------------------------------
-                CheckedRepository checkedRepository = (CheckedRepository) SpringUtil.getBean("checkedRepository");
-                checkedRepository.save(new Checked(messageBodyJson.getString("imei"), messageBodyJson.getInt("mid")));
+                String imei = messageBodyJson.getString("imei");
+                int mid = messageBodyJson.getInt("mid");
+                if (messageBodyJson.getInt("check") == 1) {
+                    CheckedRepository checkedRepository = (CheckedRepository)
+                            SpringUtil.getBean("checkedRepository");
+                    checkedRepository.save(new Checked(imei, mid));
+                    deviceStatusService.pushChecked(imei, mid);
+
+                }
                 //-------------------------增加巡检---------------------------------
 
 

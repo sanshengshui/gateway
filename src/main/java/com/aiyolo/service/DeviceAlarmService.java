@@ -3,7 +3,6 @@ package com.aiyolo.service;
 import com.aiyolo.channel.data.request.AppNoticeWarningRequest;
 import com.aiyolo.common.SpringUtil;
 import com.aiyolo.common.StringHelper;
-import com.aiyolo.constant.DeviceTypeConsts;
 import com.aiyolo.constant.PushConsts;
 import com.aiyolo.constant.SmsConsts;
 import com.aiyolo.data.SimplePageRequest;
@@ -17,7 +16,9 @@ import com.aiyolo.repository.DeviceCategoryRepository;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.service.alarm.AlarmService;
 import com.aiyolo.vo.DeviceAlarmSearchVo;
+
 import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+
 import java.util.*;
 
 @Service
@@ -113,26 +115,8 @@ public class DeviceAlarmService {
 
                 String deviceType = "";
                 //根据不同报警器设备显示不同的报警标题
-                switch (deviceAlarm.getType()) {
-                    case DeviceTypeConsts.DEV_TYPE_CG:
-                        deviceType = DeviceTypeConsts.DEVICE_NAME_CG;
-                        break;
-                    case DeviceTypeConsts.DEV_TYPE_CO:
-                        deviceType = DeviceTypeConsts.DEVICE_NAME_CO;
-                        break;
-                    case DeviceTypeConsts.DEV_TYPE_GAS:
-                        deviceType = DeviceTypeConsts.DEVICE_NAME_GAS;
-                        break;
-                    case DeviceTypeConsts.DEV_TYPE_SMOKE:
-                        deviceType = DeviceTypeConsts.DEVICE_NAME_SMOKE;
-                        break;
-                    case DeviceTypeConsts.DEV_TYPE_SOS:
-                        deviceType = DeviceTypeConsts.DEVICE_NAME_SOS;
-                        break;
-                    case DeviceTypeConsts.DEV_TYPE_VALVE:
-                        deviceType = DeviceTypeConsts.DEVICE_NAME_VALVE;
-                        break;
-                }
+                deviceType = DeviceStatusService.deviceTypeToName(deviceType);
+
                 if (StringUtils.isNotEmpty(deviceType)) {
                     msgTitle = msgTitle.replace("智能报警器", deviceType);
                     msgTitle = msgTitle.replace("警报解除通知", deviceType + "解除警报");
@@ -200,9 +184,9 @@ public class DeviceAlarmService {
                                 String cls = (String) content_cls.next();
                                 Object params = content.get(cls);
 
-//                                String packageName = this.getClass().getPackage().getName() + ".alarm";
-//                                String className = cls.replace(cls.substring(0, 1), cls.substring(0, 1).toUpperCase()) + "AlarmService";
-//                                S service = (S) Class.forName(packageName + "." + className).newInstance();
+                                //                                String packageName = this.getClass().getPackage().getName() + ".alarm";
+                                //                                String className = cls.replace(cls.substring(0, 1), cls.substring(0, 1).toUpperCase()) + "AlarmService";
+                                //                                S service = (S) Class.forName(packageName + "." + className).newInstance();
                                 String serviceName = StringHelper.underline2Camel(cls) + "AlarmService";
                                 S service = (S) SpringUtil.getBean(serviceName);
                                 service.run(deviceAlarm, params);

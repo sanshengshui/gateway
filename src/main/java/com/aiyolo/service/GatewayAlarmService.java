@@ -45,23 +45,24 @@ public class GatewayAlarmService {
     SmsPushService smsPushService;
 
     public void gatewayAlarm(String imei, int val, int mid) {
+        Integer lifeValue = AlarmStatusEnum.LIFE.getValue();
         GatewayAlarm gatewayAlarm = new GatewayAlarm(
                 "智能网关",
                 imei,
                 imei,
                 mid,
                 val,
-                AlarmStatusEnum.LIFE.getValue());
+                lifeValue);
 
         if (AlarmStatusEnum.CLEAR.getValue().equals(val)) {
             //解除
-            // 先查询是否有未解除的报警
-            GatewayAlarm _gatewayAlarm = gatewayAlarmRepository.findFirstByImeiAndStatusOrderByIdDesc(
-                    imei, AlarmStatusEnum.LIFE.getValue());
-            if (_gatewayAlarm == null) {
-                // 如果没有未解除的报警，直接返回
-                return;
-            }
+//            // 先查询是否有未解除的报警
+//            GatewayAlarm _gatewayAlarm = gatewayAlarmRepository.findFirstByImeiAndStatusOrderByIdDesc(
+//                    imei, lifeValue);
+//            if (_gatewayAlarm == null) {
+//                // 如果没有未解除的报警，直接返回
+//                return;
+//            }
             // 报警解除
             gatewayAlarmRepository.updateStatusByImei(imei, val);
 
@@ -134,6 +135,23 @@ public class GatewayAlarmService {
         } catch (Exception e) {
             errorLogger.error("pushGatewayAlarm异常！gatewayAlarm:" + gatewayAlarm.toString(), e);
         }
+    }
+
+
+    public void pushChecked(String imei, int mid) {
+        Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(imei);
+        if (gateway == null) {
+            return;
+        }
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        String[] mobileIds = gatewayService.getGatewayUserMobileIds(imei);
+        // 推送给个推
+        messagePushService.pushMessage(mobileIds, gateway.getGlId()
+                , "巡检通知"
+                , "智能网关" + gateway.getGlName()
+                        + "在" + format.format(mid * 1000L) + "完成巡检");
     }
 
 
