@@ -10,6 +10,9 @@ public class Checked extends BaseEntity {
 
     private Integer mid = 0;
 
+    public Checked() {
+    }
+
     public Checked(String imei, Integer mid) {
         this.imei = imei;
         this.mid = mid;

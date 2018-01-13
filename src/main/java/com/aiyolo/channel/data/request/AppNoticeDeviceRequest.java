@@ -35,6 +35,7 @@ public class AppNoticeDeviceRequest extends AppRequest {
             bodyMap.put("rssi", MapUtils.getInteger(data, "rssi", 0));
             bodyMap.put("val", MapUtils.getInteger(data, "val", 0));
             bodyMap.put("bat", MapUtils.getInteger(data, "bat", 0));
+            bodyMap.put("check", MapUtils.getInteger(data, "check", 0));
 
             return bodyMap;
         } catch (Exception e) {
