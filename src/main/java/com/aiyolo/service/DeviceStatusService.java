@@ -3,6 +3,7 @@ package com.aiyolo.service;
 import com.aiyolo.channel.data.request.AppNoticeDeviceRequest;
 import com.aiyolo.constant.AlarmStatusEnum;
 import com.aiyolo.constant.AppNoticeTypeConsts;
+import com.aiyolo.constant.PushConsts;
 import com.aiyolo.entity.Device;
 import com.aiyolo.entity.DeviceAlarm;
 import com.aiyolo.entity.DeviceStatus;
@@ -54,7 +55,7 @@ public class DeviceStatusService {
             if (mobileIds != null && mobileIds.length > 0) {
                 // 推送给APP
                 Map<String, Object> headerMap = AppNoticeDeviceRequest.getInstance().requestHeader(mobileIds);
-                headerMap.put("cache_time", 24 * 60 * 60 * 1000L);
+                headerMap.put("cache_time", PushConsts.CACHE_TIME);
 
                 Map<String, Object> queryParamMap = new HashMap<String, Object>();
                 queryParamMap.put("imeiGateway", device.getGlImei());

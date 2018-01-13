@@ -4,6 +4,7 @@ import com.aiyolo.channel.data.request.AppNoticeWarningRequest;
 import com.aiyolo.common.SpringUtil;
 import com.aiyolo.common.StringHelper;
 import com.aiyolo.constant.DeviceTypeConsts;
+import com.aiyolo.constant.PushConsts;
 import com.aiyolo.constant.SmsConsts;
 import com.aiyolo.data.SimplePageRequest;
 import com.aiyolo.entity.DeviceAlarm;
@@ -143,7 +144,7 @@ public class DeviceAlarmService {
 
                 // 推送给APP
                 Map<String, Object> headerMap = AppNoticeWarningRequest.getInstance().requestHeader(mobileIds);
-                headerMap.put("cache_time", 24 * 60 * 60 * 1000L);
+                headerMap.put("cache_time", PushConsts.CACHE_TIME);
 
                 Map<String, Object> queryParamMap = new HashMap<String, Object>();
                 queryParamMap.put("imeiGateway", deviceAlarm.getGlImei());

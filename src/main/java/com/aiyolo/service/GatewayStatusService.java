@@ -3,6 +3,7 @@ package com.aiyolo.service;
 import com.aiyolo.cache.GatewayLiveStatusCache;
 import com.aiyolo.channel.data.request.AppNoticeGatewayRequest;
 import com.aiyolo.constant.AppNoticeTypeConsts;
+import com.aiyolo.constant.PushConsts;
 import com.aiyolo.entity.Device;
 import com.aiyolo.entity.Gateway;
 import com.aiyolo.entity.GatewayStatus;
@@ -56,7 +57,7 @@ public class GatewayStatusService {
             if (mobileIds != null && mobileIds.length > 0) {
                 // 推送给APP
                 Map<String, Object> headerMap = AppNoticeGatewayRequest.getInstance().requestHeader(mobileIds);
-                headerMap.put("cache_time", 24 * 60 * 60 * 1000L);
+                headerMap.put("cache_time", PushConsts.CACHE_TIME);
 
                 Map<String, Object> queryParamMap = new HashMap<String, Object>();
                 queryParamMap.put("imei", gateway.getGlImei());
