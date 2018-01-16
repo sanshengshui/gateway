@@ -50,11 +50,12 @@ public class GatewayDevstaProcessor extends Processor {
 
 
                 //-------------------------增加巡检---------------------------------
-                String imei = messageBodyJson.getString("imei");
+//                String glimei = messageBodyJson.getString("imei");
                 int mid = messageBodyJson.getInt("mid");
-                if (messageBodyJson.getInt("check") == 1) {
+                if (deviceStatus.getInt("check") == 1) {
                     CheckedRepository checkedRepository = (CheckedRepository)
                             SpringUtil.getBean("checkedRepository");
+                    String imei = deviceStatus.getString("imei");
                     checkedRepository.save(new Checked(imei, mid));
                     deviceStatusService.pushChecked(imei, mid);
 
