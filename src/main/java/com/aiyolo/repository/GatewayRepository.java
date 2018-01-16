@@ -21,6 +21,13 @@ public interface GatewayRepository extends PagingAndSortingRepository<Gateway, L
     @Query("select d from Gateway d where regexp(areaCode, :areaCodePat)=1")
     List<Gateway> findByAreaCodeMatch(@Param("areaCodePat") String areaCodePat);
 
+    List<Gateway> findByVillageLike(String village);
+
+    @Query("select d from Gateway d where regexp(areaCode, :areaCodePat)=1 and village like %:village%")
+    List<Gateway> findByAreaCodeAndVillageMatch(
+            @Param("areaCodePat") String areaCodePat,
+            @Param("village") String village);
+
     Page<Gateway> findPageByAddressLike(Pageable pageable, String address);
 
     @Query(
