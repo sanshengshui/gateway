@@ -84,8 +84,17 @@
                                     <span class="help-block" th:if="${#fields.hasErrors('address')}"
                                           th:errors="*{address}">Address Error</span>
                                 </div>
+                                <div th:class="${#fields.hasErrors('village')} ? 'form-group has-error' : 'form-group'">
+                                    <label for="village" class="col-sm-2 control-label">小区名称：</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" id="village" class="form-control" th:field="*{village}"
+                                               required="true"/>
+                                    </div>
+                                    <span class="help-block" th:if="${#fields.hasErrors('village')}"
+                                          th:errors="*{village}">Village Error</span>
+                                </div>
                                 <div class="form-group" th:if="*{#strings.length(locationAddress) > 0}">
-                                    <label for="locationAddress" class="col-sm-2 control-label">自动定位的地址：</label>
+                                    <label for="locationAddress" class="col-sm-2 control-label">设备定位地址：</label>
                                     <div class="col-sm-6">
                                         <input type="hidden" th:field="*{locationAreaCode}"/>
                                         <input type="text" id="locationAddress" class="form-control"

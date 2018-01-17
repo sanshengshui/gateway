@@ -31,7 +31,7 @@ var areaCodeDict = {
 
         dict.getAreaName = function(areaCode) {
             if (areaCode.length < 6) {
-                return '';
+                return ['', '', ''];
             }
 
             var _p = areaCode.substring(0, 2);

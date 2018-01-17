@@ -37,11 +37,13 @@
                                     <th>警报时间</th>
                                     <th>设备ID</th>
                                     <th>设备名称</th>
-                                    <th>用户姓名</th>
-                                    <th>手机号码</th>
+                                    <th>联系人姓名</th>
+                                    <th>联系人电话</th>
+                                    <th>小区名称</th>
                                     <th>详细地址</th>
                                     <th>警报类型</th>
-                                    <th>状态</th>
+                                    <th>报警状态</th>
+                                    <th>报警解除时间</th>
                                 </tr>
                                 </thead>
                             </table>
@@ -81,6 +83,7 @@ $('#distpicker').distpicker({
 });
 
 $(document).ready(function() {
+    $.fn.dataTable.ext.errMode = 'none';
     var table = $('#alarm').DataTable( {
         "processing": true,
         "serverSide": true,
@@ -91,22 +94,26 @@ $(document).ready(function() {
         "ajax": "/alarm/list",
         "columns": [
             { "data": "timestamp", "render": function(data, type, full, meta) {
-                return moment(data * 1000).format('YYYY-MM-DD HH:mm:ss');
+                return moment(data * 1000).format('YYYY-MM-DD<br />HH:mm:ss');
             } },
             { "data": "glImei" },
             { "data": "gateway.glName" },
             { "data": "gateway.userName" },
             { "data": "gateway.userPhones", "render": function(data, type, full, meta) {
-                return data ? JSON.parse(data).toString() : "";
+                return data ? JSON.parse(data).join("<br />") : "";
             } },
+            { "data": "gateway.village" },
             { "data": "gateway.address", "render": function(data, type, full, meta) {
-                return areaCodeDict.init().getAreaName(full.gateway.areaCode) + data;
+                return areaCodeDict.init().getAreaName(full.gateway.areaCode).join('') + data;
             } },
             { "data": "type", "render": function(data, type, full, meta) {
                 return dict(data, 'alarm_type');
             } },
             { "data": "status", "render": function(data, type, full, meta) {
                 return dict(data, 'alarm_status');
+            } },
+            { "data": "updatedAt", "render": function(data, type, full, meta) {
+                return full.status == 0 ? moment(data).format('YYYY-MM-DD<br />HH:mm:ss') : '';
             } }
         ]
     } );
