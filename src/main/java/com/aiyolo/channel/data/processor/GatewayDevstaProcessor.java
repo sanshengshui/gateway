@@ -5,6 +5,7 @@ import com.aiyolo.entity.Checked;
 import com.aiyolo.entity.DeviceStatus;
 import com.aiyolo.entity.GatewayStatus;
 import com.aiyolo.repository.CheckedRepository;
+import com.aiyolo.repository.DeviceRepository;
 import com.aiyolo.repository.DeviceStatusRepository;
 import com.aiyolo.service.DeviceStatusService;
 import com.aiyolo.service.GatewayAlarmService;
@@ -28,16 +29,24 @@ public class GatewayDevstaProcessor extends Processor {
 
             DeviceStatusService deviceStatusService = (DeviceStatusService) SpringUtil.getBean("deviceStatusService");
 
+            DeviceRepository deviceRepository = (DeviceRepository) SpringUtil.getBean("deviceRepository");
             JSONArray deviceStatuses = messageBodyJson.getJSONArray("devs");
 
+            String glImei = messageBodyJson.getString("imei");
+            int mid = messageBodyJson.getInt("mid");
             for (int i = 0; i < deviceStatuses.size(); i++) {
                 JSONObject deviceStatus = deviceStatuses.getJSONObject(i);
 
+                String imei = deviceStatus.getString("imei");
+                if (!glImei.equals(deviceRepository.findFirstByImeiOrderByIdDesc(imei).getGlImei())){
+                    //不是所属网关汇报的状态忽略掉
+                    continue;
+                }
                 deviceStatusRepository.save(new DeviceStatus(
                         deviceStatus.getString("dev"),
-                        deviceStatus.getString("imei"),
-                        messageBodyJson.getString("imei"),
-                        messageBodyJson.getInt("mid"),
+                        imei,
+                        glImei,
+                        mid,
                         deviceStatus.getInt("online"),
                         deviceStatus.getInt("err"),
                         deviceStatus.getInt("rssi"),
@@ -50,9 +59,7 @@ public class GatewayDevstaProcessor extends Processor {
 
 
                 //-------------------------增加巡检---------------------------------
-                String imei = messageBodyJson.getString("imei");
-                int mid = messageBodyJson.getInt("mid");
-                if (messageBodyJson.getInt("check") == 1) {
+                if (deviceStatus.getInt("check") == 1) {
                     CheckedRepository checkedRepository = (CheckedRepository)
                             SpringUtil.getBean("checkedRepository");
                     checkedRepository.save(new Checked(imei, mid));

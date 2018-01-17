@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:include="fragments/head :: head"></th:block>
+    <link rel="stylesheet" href="/AdminLTE/plugins/datatables/dataTables.bootstrap.css"/>
+    <script type="text/javascript" src="/echarts/echarts.min.js"></script>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&amp;ak=aKIjifPRabvI63HVtjCOhN4fOFCvDVgB"></script>
+    <style>
+    body {
+        color: #fff;
+    }
+    .wrapper {
+        background-color: rgb(18,20,24) !important;
+    }
+    h1.title {
+        margin-top: 10px;
+        font-size: 32px;
+        font-weight: bold;
+    }
+    .h1,
+    .h2,
+    .h3 {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    div#earlyWarning,
+    div#warning {
+        padding: 5px 0;
+    }
+    table#yearWarning>thead>tr>th {
+        padding: 0;
+        font-size: 24px;
+        font-weight: bold;
+        border-bottom: 0;
+    }
+    table#yearWarning>tbody>tr>td {
+        padding: 0;
+        border-top: 0;
+    }
+    table#yearWarning>tbody>tr>td>span {
+        color: rgb(237,126,58);
+        font-size: 52px;
+        font-weight: bold;
+        line-height: 60px;
+    }
+    table.dataTable {
+        margin-top: 0 !important;
+    }
+    .table-striped>tbody>tr:nth-of-type(odd) {
+        background-color: rgb(25,29,35);
+    }
+
+    .box {
+        background-color: rgb(18,20,24);
+        border-radius: 10px;
+    }
+    .box.box-solid.box-default {
+        border-top: 1px solid rgb(51,58,73);
+        border-right: 1px solid rgb(28,31,39);
+        border-bottom: 1px solid rgb(15,17,20);
+        border-left: 1px solid rgb(28,31,39);
+    }
+    .box.box-solid.box-default>.box-header {
+        color: #fff;
+        background-color: rgb(28,31,39);
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+    .box-body {
+        background-color: rgb(28,31,39);
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+    </style>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+            <div class="">
+                <div class="col-xs-12">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <h1 class="title">智能消防系统</h1>
+                                </div>
+                                <div class="col-md-5">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="box box-solid box-default">
+                                                <div class="box-body" style="background-color: rgb(237,126,58); border-radius: 10px;">
+                                                    <div class="pull-left h3">
+                                                        当日预警<br />(次)
+                                                    </div>
+                                                    <div class="pull-right h1" id="earlyWarning">
+                                                        0
+                                                    </div>
+                                                </div>
+                                                <!-- /.box-body -->
+                                            </div>
+                                            <!-- /.box -->
+                                        </div>
+                                        <!-- /.col -->
+                                        <div class="col-md-6">
+                                            <div class="box box-solid box-default">
+                                                <div class="box-body" style="background-color: rgb(229,48,79); border-radius: 10px;">
+                                                    <div class="pull-left h3">
+                                                        当日报警<br />(次)
+                                                    </div>
+                                                    <div class="pull-right h1" id="warning">
+                                                        0
+                                                    </div>
+                                                </div>
+                                                <!-- /.box-body -->
+                                            </div>
+                                            <!-- /.box -->
+                                        </div>
+                                        <!-- /.col -->
+                                    </div>
+                                    <!-- /.row -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="box box-solid box-default">
+                                                <div class="box-header">
+                                                    <h3 class="box-title">行政区划图</h3>
+                                                    <div class="box-tools">
+                                                        <form class="form-inline">
+                                                            <div id="distpicker" class="form-group form-group-sm">
+                                                                <select id="province" name="province" class="form-control"></select>
+                                                                <select id="city" name="city" class="form-control"></select>
+                                                                <select id="district" name="district" class="form-control"></select>
+                                                            </div>
+                                                            <button type="submit" class="btn btn-warning btn-sm">查询</button>
+                                                        </form>
+                                                    </div><!-- /.box-tools -->
+                                                </div>
+                                                <!-- /.box-header -->
+                                                <div class="box-body">
+                                                    <div id="mapContainer" style="width: 100%; height: 545px;"></div>
+                                                </div>
+                                                <!-- /.box-body -->
+                                            </div>
+                                            <!-- /.box -->
+                                        </div>
+                                        <!-- /.col -->
+                                    </div>
+                                    <!-- /.row -->
+                                </div>
+                                <!-- /.col -->
+                                <div class="col-md-5">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="box box-solid box-default">
+                                                <div class="box-body" style="border-radius: 10px;">
+                                                    <table class="table text-center" id="yearWarning">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>火灾报警</th>
+                                                            <th>烟雾报警</th>
+                                                            <th>燃气报警</th>
+                                                            <th>电气报警</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tr>
+                                                            <td><span id="fire">0</span>次</td>
+                                                            <td><span id="smoke">0</span>次</td>
+                                                            <td><span id="gas">0</span>次</td>
+                                                            <td><span id="electric">0</span>次</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <!-- /.box-body -->
+                                            </div>
+                                            <!-- /.box -->
+                                        </div>
+                                        <!-- /.col -->
+                                    </div>
+                                    <!-- /.row -->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="box box-solid box-default">
+                                                <div class="box-header">
+                                                    <h3 class="box-title">区域报警统计</h3><span id="areaUnit">（年/次）</span>
+                                                    <div class="box-tools">
+                                                        <button type="button" class="btn btn-warning btn-sm"
+                                                                onclick="changeAreaChart(this)">饼图
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <!-- /.box-header -->
+                                                <div class="box-body" style="overflow: auto;">
+                                                    <div id="areaBar" style="height: 180px;"></div>
+                                                    <div id="areaPie" style="height: 180px; display: none;"></div>
+                                                </div>
+                                                <!-- /.box-body -->
+                                            </div>
+                                            <!-- /.box -->
+                                        </div>
+                                        <!-- /.col -->
+                                        <div class="col-md-6">
+                                            <div class="box box-solid box-default">
+                                                <div class="box-header">
+                                                    <h3 class="box-title">分类报警统计</h3><span id="typeUnit">（年/次）</span>
+                                                    <div class="box-tools">
+                                                        <button type="button" class="btn btn-warning btn-sm"
+                                                                onclick="changeTypeChart(this)">饼图
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <!-- /.box-header -->
+                                                <div class="box-body">
+                                                    <div id="typeBar" style="height: 180px"></div>
+                                                    <div id="typePie" style="height: 180px; display: none;"></div>
+                                                </div>
+                                                <!-- /.box-body -->
+                                            </div>
+                                            <!-- /.box -->
+                                        </div>
+                                        <!-- /.col -->
+                                    </div>
+                                    <!-- /.row -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="box box-solid box-default">
+                                                <div class="box-header">
+                                                    <h3 class="box-title">报警信息</h3>
+                                                    <div class="box-tools" id="today">
+                                                    </div>
+                                                </div>
+                                                <!-- /.box-header -->
+                                                <div class="box-body">
+                                                    <table id="alarmList" class="table table-striped" width="100%">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>触发报警时间</th>
+                                                            <th>报警所在区域</th>
+                                                            <th>报警类型</th>
+                                                        </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                                <!-- /.box-body -->
+                                            </div>
+                                            <!-- /.box -->
+                                        </div>
+                                        <!-- /.col -->
+                                    </div>
+                                    <!-- /.row -->
+                                </div>
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+</div>
+
+<th:block th:include="fragments/footer :: js"></th:block>
+<script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/AdminLTE/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/js/moment.js"></script>
+<script src="/js/dict.js?alarm_type,area_code"></script>
+<script src="/js/distpicker.js"></script>
+<script src="/js/distpicker.init.js"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+fragment_polish("home");
+
+var authorities = [[${#authentication.getAuthorities()}]];
+distpickerInit(authorities);
+
+// 省市区联动
+var distpicker_params = {valueType: "code"};
+var adcode = getUrlParam("adcode");
+if (adcode) {
+    var _p = adcode.substring(0, 2);
+    var _c = adcode.substring(2, 4);
+    var _d = adcode.substring(4);
+    if (_p != '10') distpicker_params.province = _p + '0000';
+    if (_c != '00') distpicker_params.city = _p + _c + '00';
+    if (_d != '00') distpicker_params.district = _p + _c + _d;
+}
+$('#distpicker').distpicker(distpicker_params);
+
+var map_init = false;
+var map_timer;
+var map_areaCode;
+var map_gatewayId;
+var mapInfoWinOpts = { width: 400, enableMessage: false };
+//var mapRedIcon = new BMap.Icon("/images/red.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
+//var mapBlueIcon = new BMap.Icon("/images/blue.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
+
+var mapMarkers = [];
+var mapInfoWins = [];
+
+var map;
+var displayMap = function(areaCode, id) {
+    clearTimeout(map_timer);
+
+    map_init = (map_init && areaCode == map_areaCode && id == map_gatewayId) ? true : false;
+    map_areaCode = areaCode;
+    map_gatewayId = id;
+
+    $.getJSON("/home/data?id=" + id + "&areaCode=" + areaCode, function(data) {
+        var gateways = data.gateways;
+        var deviceAlarms = data.deviceAlarms;
+
+        for (var i = 0; i < gateways.length; i++) {
+            if (gateways[i].addressLocation == "") {
+                continue;
+            }
+            var lo = gateways[i].addressLocation.split(",");
+            if (!map_init) {
+                map = new BMap.Map("mapContainer");
+                map.centerAndZoom(new BMap.Point(lo[0], lo[1]), 10);
+                map.enableScrollWheelZoom();
+                map.addControl(new BMap.NavigationControl()); //添加默认缩放平移控件
+                map_init = true;
+                $('.box-alarm').show();
+            } else {
+                if (mapMarkers[gateways[i].id]) {
+                    map.removeOverlay(mapMarkers[gateways[i].id]);
+                }
+            }
+            mapMarkers[gateways[i].id] = new BMap.Marker(new BMap.Point(lo[0], lo[1]));
+            if (deviceAlarms[gateways[i].glId] && deviceAlarms[gateways[i].glId].status == 1) {
+                mapMarkers[gateways[i].id].setIcon(mapRedIcon);
+            } else {
+                mapMarkers[gateways[i].id].setIcon(mapBlueIcon);
+            }
+            map.addOverlay(mapMarkers[gateways[i].id]);
+            mapMarkers[gateways[i].id].gateway_id = gateways[i].id;
+
+            var infoWinContent = '<dl>' +
+                '<dt>地址</dt>' +
+                '<dd>' + areaCodeDict.init().getAreaName(gateways[i].areaCode).join("") + gateways[i].address + '</dd>' +
+                '<dt>联系人</dt>' +
+                '<dd>' + gateways[i].userName + '</dd>' +
+                '<dt>联系电话</dt>' +
+                '<dd>' + JSON.parse(gateways[i].userPhones).toString() + '</dd></dl>';
+            mapInfoWins[gateways[i].id] = new BMap.InfoWindow(infoWinContent, mapInfoWinOpts);
+            mapMarkers[gateways[i].id].addEventListener('click', function(evt) {
+                var id = evt.target.gateway_id;
+                mapMarkers[id].openInfoWindow(mapInfoWins[id]);
+            });
+        }
+
+        if (!map_init) {
+            alert("无地图数据！");
+        } else {
+            map_timer = setTimeout("displayMap(" + areaCode + ", " + id + ")", 5000);
+        }
+    }).error(function() {
+        // alert("无数据！");
+    });
+}
+
+
+
+
+
+var changeAreaChart, changeTypeChart;
+$(document).ready(function() {
+    // 调整地图容器尺寸
+    //var maxHeight = $(window).height();
+    //$('#mapContainer').height(maxHeight - 230);
+
+    //displayMap(0);
+
+
+
+    changeAreaChart = function(o) {
+        if ($("#areaBar").is(":hidden")) {
+            $("#areaPie").hide();
+            $("#areaBar").show();
+            chartAreaBar.resize();
+            drawAreaBar();
+            $("#areaUnit").text("（年/次）");
+            $(o).text("饼图");
+        } else {
+            $("#areaBar").hide();
+            $("#areaPie").show();
+            chartAreaPie.resize();
+            drawAreaPie();
+            $("#areaUnit").text("（年/%）");
+            $(o).text("柱图");
+        }
+    }
+
+    changeTypeChart = function(o) {
+        if ($("#typeBar").is(":hidden")) {
+            $("#typePie").hide();
+            $("#typeBar").show();
+            chartTypeBar.resize();
+            drawTypeBar();
+            $("#typeUnit").text("（年/次）");
+            $(o).text("饼图");
+        } else {
+            $("#typeBar").hide();
+            $("#typePie").show();
+            chartTypePie.resize();
+            drawTypePie();
+            $("#typeUnit").text("（年/%）");
+            $(o).text("柱图");
+        }
+    }
+
+    var province, city, district, areaCode;
+    var loadParams = function() {
+        province = $("#province").val();
+        city = $("#city").val();
+        district = $("#district").val();
+        areaCode = district ? district : (city ? city : province);
+    }
+
+    $('form').submit(function(e) {
+        e.preventDefault();
+        loadParams();
+        loadPage();
+        return false;
+    });
+
+    var option_bar = {
+        tooltip: {
+            show: false
+        },
+        legend: {
+            data: ['次数'],
+            show: false
+        },
+        grid: {
+            left: 0,
+            top: 20,
+            right: 0,
+            bottom: 25,
+            borderWidth: 0
+        },
+        xAxis: {
+            type: 'category',
+            axisLine: { show: false },
+            axisTick: { show: false },
+            splitLine: { show: false },
+            axisLabel: {
+                color: '#fff'
+            },
+            data: []
+        },
+        yAxis: {
+            type: 'value',
+            show: false
+        },
+        series: [{
+            type: 'bar',
+            data: [],
+            label: {
+                normal: {
+                    show: true,
+                    position: 'top',
+                    formatter: function(params, ticket, callback) {
+                        if (params.data > 10000) {
+                            return (params.data / 10000).toFixed(2) + '万';
+                        } else {
+                            return params.data;
+                        }
+                    },
+                    color: '#fff'
+                }
+            },
+            itemStyle: {
+                normal: {
+                    barBorderRadius: 5,
+                    color: new echarts.graphic.LinearGradient(
+                        0, 0, 0, 1,
+                        [
+                            {offset: 0, color: 'rgb(230,75,82)'},
+                            {offset: 1, color: 'rgb(240,145,78)'}
+                        ]
+                    )
+                }
+            },
+            silent: true
+        }]
+    };
+
+    var option_pie = {
+        title: {
+            text: '',
+            left: 'center',
+            top: 'middle',
+            textStyle : {
+                color: '#444',
+                fontSize: 14,
+                fontWeight: 'bolder'
+            }
+        },
+        tooltip: {
+            show: false
+        },
+        color: ['rgb(65,166,206)', 'rgb(231,75,81)', 'rgb(81,81,250)', 'rgb(79,188,71)', 'rgb(237,126,58)', 'rgb(139,44,174)'],
+        legend: {
+            orient: 'vertical',
+            right: 0,
+            top: 'middle',
+            itemGap: 5,
+            itemWidth: 8,
+            itemHeight: 8,
+            selectedMode: false,
+            textStyle: {
+                color: '#fff'
+            },
+            data: []
+        },
+        series: [{
+            type: 'pie',
+            radius: ['28%', '70%'],
+            center: ['35%', '50%'],
+            data: [],
+            label: {
+                normal: {
+                    show: false
+                }
+            },
+            silent: true
+        }]
+    };
+
+    var option_map = {
+        silent: true,
+        tooltip: {
+            show: false
+        },
+        color: ['rgb(151,50,225)', 'rgb(251,209,40)', 'rgb(79,188,71)', 'rgb(193,193,193)'],
+        legend: {
+            orient: 'vertical',
+            right: 0,
+            top: 0,
+            itemGap: 10,
+            itemWidth: 14,
+            itemHeight: 14,
+            selectedMode: false,
+            textStyle: {
+                color: '#fff',
+                fontSize: 14
+            },
+            data: ['报警设备(台)', '预警设备(台)', '正常设备(台)', '故障设备(台)']
+        },
+        visualMap: {
+            min: 0,
+            max: 1000,
+            left: 'left',
+            top: 'bottom',
+            calculable: true,
+            textStyle: {
+                color: '#fff'
+            }
+        },
+        series: [
+            {
+                name: '报警设备(台)',
+                type: 'map',
+                map: 'china',
+                showLegendSymbol: false,
+                label: {
+                    normal: {
+                        show: true,
+                        formatter: function (params) {
+                            if (params.value > 0) {
+                                return '{W|' + params.value + '} {EW|123}'
+                                    + '\n' + '{NAME|' + params.name + '}';
+                            } else {
+                                return '';
+                            }
+                        },
+                        color: '#fff',
+                        rich: {
+                            W: {
+                                backgroundColor: 'rgb(151,50,225)',
+                                borderRadius: 4,
+                                padding: [2, 5, 2, 5],
+                                fontWeight: 'bold',
+                                lineHeight: 20
+                            },
+                            EW: {
+                                backgroundColor: 'rgb(251,209,40)',
+                                borderRadius: 4,
+                                padding: [2, 5, 2, 5],
+                                fontWeight: 'bold',
+                                lineHeight: 20
+                            },
+                            Y: {
+                                backgroundColor: 'rgb(79,188,71)',
+                                borderRadius: 4,
+                                padding: [2, 5, 2, 5],
+                                fontWeight: 'bold',
+                                lineHeight: 20
+                            },
+                            N: {
+                                backgroundColor: 'rgb(193,193,193)',
+                                borderRadius: 4,
+                                padding: [2, 5, 2, 5],
+                                fontWeight: 'bold',
+                                lineHeight: 20
+                            },
+                            NAME: {
+                                backgroundColor: 'rgba(0,0,0,0.4)',
+                                borderRadius: 4,
+                                padding: [2, 5, 2, 5],
+                                align: 'center'
+                            }
+                        }
+                    }
+                },
+                data: [
+                    {name: '广东', value: 100}
+                ]
+            },
+            {
+                name: '预警设备(台)',
+                type: 'map',
+                map: 'china',
+                showLegendSymbol: false,
+                label: {
+                    normal: {
+                        show: true
+                    }
+                },
+                data: []
+            },
+            {
+                name: '正常设备(台)',
+                type: 'map',
+                map: 'china',
+                showLegendSymbol: false,
+                label: {
+                    normal: {
+                        show: true
+                    }
+                },
+                data: []
+            },
+            {
+                name: '故障设备(台)',
+                type: 'map',
+                map: 'china',
+                showLegendSymbol: false,
+                label: {
+                    normal: {
+                        show: true
+                    }
+                },
+                data: []
+            }
+        ]
+    };
+
+    // 初始化柱状图&饼图&地图
+    var chartAreaBar, chartTypeBar, chartAreaPie, chartTypePie, chartAreaMap;
+    var initAlarmStatCharts = function() {
+        chartAreaBar = echarts.init(document.getElementById('areaBar'));
+        chartTypeBar = echarts.init(document.getElementById('typeBar'));
+        chartAreaPie = echarts.init(document.getElementById('areaPie'));
+        chartTypePie = echarts.init(document.getElementById('typePie'));
+        chartAreaMap = echarts.init(document.getElementById('mapContainer'));
+
+        loadAlarmStat();
+    }
+
+    // 报警统计数据
+    var _yearAreaWarning, _yearTypeWarning, _mapData;
+    var _warningType = {"EW": "预警", "W-F": "火警", "W-S": "烟雾", "W-G": "燃气", "W-E": "电气"};
+    var loadAlarmStat = function() {
+        $.getJSON("/alarm/stat/data?areaCode=" + areaCode, function(data) {
+            var todayWarning = data.today;
+            var yearWarning = data.year;
+
+            var _todayWarning = {EW: 0, W: 0};
+            for (var i = 0; i < todayWarning.length; i++) {
+                if (todayWarning[i][0] == "EW") {
+                    _todayWarning.EW += todayWarning[i][1];
+                } else {
+                    _todayWarning.W += todayWarning[i][1];
+                }
+            }
+            $("#earlyWarning").text(_todayWarning.EW);
+            $("#warning").text(_todayWarning.W);
+
+            _yearAreaWarning = {};
+            _yearTypeWarning = {"EW": 0, "W-F": 0, "W-S": 0, "W-G": 0, "W-E": 0};
+            for (var i = 0; i < yearWarning.length; i++) {
+                _yearTypeWarning[yearWarning[i][1]] += yearWarning[i][2];
+
+                var _areaName = areaCodeDict.init().getAreaName(yearWarning[i][0]);
+                var _key = city ? _areaName[2] : (province ? _areaName[1] : _areaName[0].substring(0, 2));
+                if (typeof _yearAreaWarning[_key] !== 'undefined') {
+                    _yearAreaWarning[_key] += yearWarning[i][2];
+                } else {
+                    _yearAreaWarning[_key] = yearWarning[i][2];
+                }
+            }
+            $("#fire").text(_yearTypeWarning["W-F"]);
+            $("#smoke").text(_yearTypeWarning["W-S"]);
+            $("#gas").text(_yearTypeWarning["W-G"]);
+            $("#electric").text(_yearTypeWarning["W-E"]);
+
+            // 地图数据
+            var warningGateways = data.warningGateways;
+            var statusGateways = data.statusGateways;
+
+            _mapData = {"EW": {}, "W": {}, "Y": {}, "N": {}};
+            for (var i = 0; i < warningGateways.length; i++) {
+                var _type = warningGateways[i][1] == "E" ? "EW" : "W";
+
+                var _areaName = areaCodeDict.init().getAreaName(warningGateways[i][0]);
+                var _area = city ? _areaName[2] : (province ? _areaName[1] : _areaName[0].substring(0, 2));
+
+                if (typeof _mapData[_type][_area] !== 'undefined') {
+                    _mapData[_type][_area] += warningGateways[i][2];
+                } else {
+                    _mapData[_type][_area] = warningGateways[i][2];
+                }
+            }
+            for (var i = 0; i < statusGateways.length; i++) {
+                var _type = statusGateways[i][1];
+
+                var _areaName = areaCodeDict.init().getAreaName(statusGateways[i][0]);
+                var _area = city ? _areaName[2] : (province ? _areaName[1] : _areaName[0].substring(0, 2));
+
+                if (typeof _mapData[_type][_area] !== 'undefined') {
+                    _mapData[_type][_area] += statusGateways[i][2];
+                } else {
+                    _mapData[_type][_area] = statusGateways[i][2];
+                }
+            }
+
+            drawCharts();
+        }).error(function() {
+        });
+    }
+
+    var drawCharts = function() {
+        $("#areaPie").is(":hidden") ? drawAreaBar() : drawAreaPie();
+        $("#typePie").is(":hidden") ? drawTypeBar() : drawTypePie();
+        drawAreaMap();
+    }
+
+    var drawAreaBar = function() {
+        var option_areaBar = $.extend(true, {}, option_bar);
+        option_areaBar.xAxis.data = $.map(_yearAreaWarning, function(val, i) { return i.substring(0, 2); });
+        option_areaBar.series[0].data = $.map(_yearAreaWarning, function(val, i) { return val; });
+        chartAreaBar.hideLoading();
+
+        var chartWidth = option_areaBar.series[0].data.length * 34;
+        $("#areaBar").width(chartWidth > 0 ? chartWidth : "100%");
+
+        chartAreaBar.resize();
+        chartAreaBar.setOption(option_areaBar, true);
+    }
+
+    var drawTypeBar = function() {
+        var option_typeBar = $.extend(true, {}, option_bar);
+        option_typeBar.xAxis.data = $.map(_yearTypeWarning, function(val, i) { return _warningType[i]; });
+        option_typeBar.series[0].data = $.map(_yearTypeWarning, function(val, i) { return val; });
+        chartTypeBar.hideLoading();
+        chartTypeBar.resize();
+        chartTypeBar.setOption(option_typeBar, true);
+    }
+
+    var drawAreaPie = function() {
+        var option_areaPie = $.extend(true, {}, option_pie);
+        option_areaPie.title.text = "TOP6";
+        option_areaPie.title.left = document.getElementById('areaPie').offsetWidth * 0.35 - 22;
+
+        var data_legend = [];
+        var data_series = [];
+        $.each(_yearAreaWarning, function(key, val) {
+            if (data_legend.length == 6) return;
+            data_legend.push({name:key.substring(0, 2), icon:'circle'});
+            data_series.push({value:val, name:key.substring(0, 2)});
+        });
+        option_areaPie.legend.data = data_legend;
+        option_areaPie.series[0].data = data_series;
+        chartAreaPie.hideLoading();
+        chartAreaPie.resize();
+        chartAreaPie.setOption(option_areaPie, true);
+    }
+
+    var drawTypePie = function() {
+        var option_typePie = $.extend(true, {}, option_pie);
+
+        var data_legend = [];
+        var data_series = [];
+        $.each(_yearTypeWarning, function(key, val) {
+            data_legend.push({name:_warningType[key], icon:'circle'});
+            data_series.push({value:val, name:_warningType[key]});
+        });
+        option_typePie.legend.data = data_legend;
+        option_typePie.series[0].data = data_series;
+        chartTypePie.hideLoading();
+        chartTypePie.resize();
+        chartTypePie.setOption(option_typePie, true);
+    }
+
+    var drawAreaMap = function() {
+        var option_areaMap = $.extend(true, {}, option_map);
+
+        var mapName = city ? city : (province ? province : 'china');
+        $.getJSON('./echarts/mapData/json/' + mapName + '.json', function (data) {
+            echarts.registerMap(mapName, data);
+            option_areaMap.series[0].map = option_areaMap.series[1].map = option_areaMap.series[2].map = option_areaMap.series[3].map = mapName;
+
+            var data_series = [];
+            var maxData = 10;
+            $.each(_yearAreaWarning, function(key, val) {
+                data_series.push({value:val, name:key});
+                if (val > maxData) {
+                    maxData = val;
+                }
+            });
+            option_areaMap.visualMap.max = maxData;
+            option_areaMap.series[0].data = data_series;
+            option_areaMap.series[0].label.normal.formatter = function (params) {
+                var result = [];
+                if (typeof _mapData['W'][params.name] !== 'undefined') {
+                    result.push('{W|' + _mapData['W'][params.name] + '}');
+                }
+                if (typeof _mapData['EW'][params.name] !== 'undefined') {
+                    result.push('{EW|' + _mapData['EW'][params.name] + '}');
+                }
+                if (typeof _mapData['Y'][params.name] !== 'undefined') {
+                    result.push('{Y|' + _mapData['Y'][params.name] + '}');
+                }
+                if (typeof _mapData['N'][params.name] !== 'undefined') {
+                    result.push('{N|' + _mapData['N'][params.name] + '}');
+                }
+
+                if (result.length > 0) {
+                    return result.join(' ') + '\n' + '{NAME|' + params.name + '}';
+                } else {
+                    return '';
+                }
+            };
+
+            chartAreaMap.hideLoading();
+            chartAreaMap.resize();
+            chartAreaMap.setOption(option_areaMap, true);
+        });
+    }
+
+    // 报警信息
+    var alarmTable;
+    var loadAlarmList = function() {
+        $("#today").text(moment().format('YYYY-MM-DD'));
+        if (alarmTable) {
+            var url = "/alarm/list?status=0&areaCode=" + areaCode;
+            alarmTable.ajax.url(url).load();
+        } else {
+            alarmTable = $('#alarmList').DataTable({
+                "processing": false,
+                "serverSide": true,
+                "searching": false,
+                "lengthChange": false,
+                "ordering": false,
+                "ajax": "/alarm/list?status=0&areaCode=" + areaCode,
+                "scrollY": 210,
+                "paging": false,
+                "info": false,
+                "columns": [
+                    { "data": "timestamp", "render": function(data, type, full, meta) {
+                        if (moment(data * 1000).format('YYYY-MM-DD') == moment().format('YYYY-MM-DD')) {
+                            return moment(data * 1000).format('HH:mm');
+                        } else {
+                            return moment(data * 1000).format('MM-DD HH:mm');
+                        }
+                    } },
+                    { "data": "gateway.address", "render": function(data, type, full, meta) {
+                        var areaName = areaCodeDict.init().getAreaName(full.gateway.areaCode);
+                        if (district) {
+                            return data;
+                        } else if (city) {
+                            return areaName[2] + data;
+                        } else if (province) {
+                            return areaName[1] + areaName[2] + data;
+                        } else {
+                            return areaName.join("") + data;
+                        }
+                    } },
+                    { "data": "type", "render": function(data, type, full, meta) {
+                        return dict(data + "_" + full.value, 'alarm_type');
+                    } }
+                ]
+            });
+        }
+    }
+
+    loadParams();
+    initAlarmStatCharts();
+    loadAlarmList();
+
+    var loadPage = function() {
+        loadAlarmStat();
+        loadAlarmList();
+    }
+    setInterval(function() {
+        loadPage();
+    }, 1000000);
+});
+/*]]>*/
+</script>
+</body>
+</html>

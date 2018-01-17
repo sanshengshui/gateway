@@ -56,14 +56,15 @@ public class GatewayAlarmService {
 
         if (AlarmStatusEnum.CLEAR.getValue().equals(val)) {
             //解除
-            //            // 先查询是否有未解除的报警
-            //            GatewayAlarm _gatewayAlarm = gatewayAlarmRepository.findFirstByImeiAndStatusOrderByIdDesc(
-            //                    imei, lifeValue);
-            //            if (_gatewayAlarm == null) {
-            //                // 如果没有未解除的报警，直接返回
-            //                return;
-            //            }
+            // 先查询是否有未解除的报警
+            GatewayAlarm _gatewayAlarm = gatewayAlarmRepository.findFirstByImeiAndStatusOrderByIdDesc(
+                    imei, lifeValue);
+            if (_gatewayAlarm == null) {
+                // 如果没有未解除的报警，直接返回
+                return;
+            }
             // 报警解除
+
             gatewayAlarmRepository.updateStatusByImei(imei, val);
 
         } else {

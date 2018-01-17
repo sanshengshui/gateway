@@ -31,8 +31,9 @@ public class GatewayStatus extends BaseEntity implements Serializable {
 
     protected GatewayStatus() {}
 
-    public GatewayStatus(String glId, String glImei, Integer timestamp, String date, String hour, Integer rssi, Integer temperature, Integer humidity,
-            Integer atmosphere, String version, Integer status, Integer sos, Integer checked, Integer htmp) {
+    public GatewayStatus(String glId, String glImei, Integer timestamp, String date, String hour
+            , Integer rssi, Integer temperature, Integer humidity, Integer atmosphere, String version
+            , Integer status, Integer sos, Integer checked, Integer htmp) {
         this.glId = glId;
         this.glImei = glImei;
         this.timestamp = timestamp;

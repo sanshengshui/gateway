@@ -3,8 +3,38 @@
 <head>
     <th:block th:include="fragments/head :: head"></th:block>
     <link rel="stylesheet" href="/AdminLTE/plugins/datatables/dataTables.bootstrap.css"/>
+    <script type="text/javascript" src="/echarts/echarts.min.js"></script>
     <script type="text/javascript"
             src="http://api.map.baidu.com/api?v=2.0&amp;ak=aKIjifPRabvI63HVtjCOhN4fOFCvDVgB"></script>
+    <style>
+    .h1,
+    .h2,
+    .h3 {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    div#earlyWarning,
+    div#warning {
+        padding: 5px 0;
+    }
+    table#yearWarning>thead>tr>th {
+        padding: 0;
+        font-size: 22px;
+        font-weight: bold;
+        border-bottom: 0;
+    }
+    table#yearWarning>tbody>tr>td {
+        padding: 0;
+        border-top: 0;
+    }
+    table#yearWarning>tbody>tr>td>span {
+        font-size: 52px;
+        line-height: 60px;
+    }
+    table.dataTable {
+        margin-top: 0 !important;
+    }
+    </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -26,11 +56,8 @@
                                         <select id="city" name="city" class="form-control"></select>
                                         <select id="district" name="district" class="form-control"></select>
                                     </div>
-                                    <div class="form-group form-group-sm">
-                                        <input type="text" id="village" name="village" class="form-control"
-                                               placeholder="小区名称"/>
-                                    </div>
                                     <button type="submit" class="btn btn-default btn-sm">查询</button>
+                                    <button type="button" class="btn btn-success btn-sm" onclick="launch()">演示链接</button>
                                 </form>
                             </div><!-- /.box-tools -->
                         </div>
@@ -38,15 +65,14 @@
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-md-7">
-
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="box box-solid box-default">
                                                 <div class="box-body">
-                                                    <div class="pull-left">
+                                                    <div class="pull-left h3">
                                                         当日预警<br />(次)
                                                     </div>
-                                                    <div class="pull-right" id="earlyWarning">
+                                                    <div class="pull-right h1" id="earlyWarning">
                                                         0
                                                     </div>
                                                 </div>
@@ -58,10 +84,10 @@
                                         <div class="col-md-6">
                                             <div class="box box-solid box-default">
                                                 <div class="box-body">
-                                                    <div class="pull-left">
+                                                    <div class="pull-left h3">
                                                         当日报警<br />(次)
                                                     </div>
-                                                    <div class="pull-right" id="warning">
+                                                    <div class="pull-right h1" id="warning">
                                                         0
                                                     </div>
                                                 </div>
@@ -74,21 +100,13 @@
                                     <!-- /.row -->
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div id="mapContainer" style="width: 100%; height: 1000px;"></div>
-                                            <div class="box box-primary box-alarm">
+                                            <div class="box box-solid box-default">
                                                 <div class="box-header with-border">
-                                                    <h3 class="box-title">报警信息</h3>
-                                                    <div class="box-tools pull-right">
-                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                                                class="fa fa-minus"></i></button>
-                                                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i
-                                                                class="fa fa-times"></i></button>
-                                                    </div>
+                                                    <h3 class="box-title">行政区划图</h3>
                                                 </div>
                                                 <!-- /.box-header -->
                                                 <div class="box-body">
-                                                    <ul class="list-group list-group-unbordered">
-                                                    </ul>
+                                                    <div id="mapContainer" style="width: 100%; height: 545px;"></div>
                                                 </div>
                                                 <!-- /.box-body -->
                                             </div>
@@ -97,16 +115,14 @@
                                         <!-- /.col -->
                                     </div>
                                     <!-- /.row -->
-
                                 </div>
                                 <!-- /.col -->
                                 <div class="col-md-5">
-
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="box box-solid box-default">
                                                 <div class="box-body">
-                                                    <table class="table text-center">
+                                                    <table class="table text-center" id="yearWarning">
                                                         <thead>
                                                         <tr>
                                                             <th>火灾报警</th>
@@ -116,10 +132,10 @@
                                                         </tr>
                                                         </thead>
                                                         <tr>
-                                                            <td id="fire">0</td>
-                                                            <td id="smoke">0</td>
-                                                            <td id="gas">0</td>
-                                                            <td id="electric">0</td>
+                                                            <td><span id="fire">0</span>次</td>
+                                                            <td><span id="smoke">0</span>次</td>
+                                                            <td><span id="gas">0</span>次</td>
+                                                            <td><span id="electric">0</span>次</td>
                                                         </tr>
                                                     </table>
                                                 </div>
@@ -143,8 +159,8 @@
                                                 </div>
                                                 <!-- /.box-header -->
                                                 <div class="box-body" style="overflow: auto;">
-                                                    <div id="areaBar" style="height: 200px;"></div>
-                                                    <div id="areaPie" style="height: 200px; display: none;"></div>
+                                                    <div id="areaBar" style="height: 180px;"></div>
+                                                    <div id="areaPie" style="height: 180px; display: none;"></div>
                                                 </div>
                                                 <!-- /.box-body -->
                                             </div>
@@ -163,8 +179,8 @@
                                                 </div>
                                                 <!-- /.box-header -->
                                                 <div class="box-body">
-                                                    <div id="typeBar" style="height: 200px"></div>
-                                                    <div id="typePie" style="height: 200px; display: none;"></div>
+                                                    <div id="typeBar" style="height: 180px"></div>
+                                                    <div id="typePie" style="height: 180px; display: none;"></div>
                                                 </div>
                                                 <!-- /.box-body -->
                                             </div>
@@ -200,7 +216,6 @@
                                         <!-- /.col -->
                                     </div>
                                     <!-- /.row -->
-
                                 </div>
                                 <!-- /.col -->
                             </div>
@@ -227,7 +242,6 @@
 <script src="/js/dict.js?alarm_type,area_code"></script>
 <script src="/js/distpicker.js"></script>
 <script src="/js/distpicker.init.js"></script>
-<script src="/echarts/echarts.js"></script>
 
 <script th:inline="javascript">
 /*<![CDATA[*/
@@ -237,17 +251,25 @@ var authorities = [[${#authentication.getAuthorities()}]];
 distpickerInit(authorities);
 
 // 省市区联动
-$('#distpicker').distpicker({
-    valueType: "code"
-});
+var distpicker_params = {valueType: "code"};
+var adcode = getUrlParam("adcode");
+if (adcode) {
+    var _p = adcode.substring(0, 2);
+    var _c = adcode.substring(2, 4);
+    var _d = adcode.substring(4);
+    if (_p != '10') distpicker_params.province = _p + '0000';
+    if (_c != '00') distpicker_params.city = _p + _c + '00';
+    if (_d != '00') distpicker_params.district = _p + _c + _d;
+}
+$('#distpicker').distpicker(distpicker_params);
 
 var map_init = false;
 var map_timer;
 var map_areaCode;
 var map_gatewayId;
 var mapInfoWinOpts = { width: 400, enableMessage: false };
-var mapRedIcon = new BMap.Icon("/images/red.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
-var mapBlueIcon = new BMap.Icon("/images/blue.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
+//var mapRedIcon = new BMap.Icon("/images/red.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
+//var mapBlueIcon = new BMap.Icon("/images/blue.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
 
 var mapMarkers = [];
 var mapInfoWins = [];
@@ -307,16 +329,6 @@ var displayMap = function(areaCode, id) {
         if (!map_init) {
             alert("无地图数据！");
         } else {
-            $(".list-group").empty();
-            for (var glId in deviceAlarms) {
-                if (deviceAlarms[glId].status == 1) {
-                    $(".list-group").prepend('<li class="list-group-item">' +
-                        '<b>' + (deviceAlarms[glId].gateway.glName ? deviceAlarms[glId].gateway.glName : deviceAlarms[glId].gateway.glImei) + '</b>' +
-                        '<span class="pull-right">' + moment(deviceAlarms[glId].timestamp * 1000).format('YYYY-MM-DD HH:mm:ss') + '</span>' +
-                        '<p>' + dict(deviceAlarms[glId].type, 'alarm_type') + '</p></li>');
-                }
-            }
-
             map_timer = setTimeout("displayMap(" + areaCode + ", " + id + ")", 5000);
         }
     }).error(function() {
@@ -328,13 +340,13 @@ var displayMap = function(areaCode, id) {
 
 
 
-var changeAreaChart, changeTypeChart;
+var launch, changeAreaChart, changeTypeChart;
 $(document).ready(function() {
     // 调整地图容器尺寸
-    var maxHeight = $(window).height();
-    $('#mapContainer').height(maxHeight - 230);
+    //var maxHeight = $(window).height();
+    //$('#mapContainer').height(maxHeight - 230);
 
-    displayMap(0);
+    //displayMap(0);
 
 
 
@@ -374,13 +386,12 @@ $(document).ready(function() {
         }
     }
 
-    var province, city, district, areaCode, village;
+    var province, city, district, areaCode;
     var loadParams = function() {
         province = $("#province").val();
         city = $("#city").val();
         district = $("#district").val();
         areaCode = district ? district : (city ? city : province);
-        village = $("#village").val();
     }
 
     $('form').submit(function(e) {
@@ -389,6 +400,12 @@ $(document).ready(function() {
         loadPage();
         return false;
     });
+
+    launch = function() {
+        loadParams();
+        loadPage();
+        window.open('/launch?adcode=' + (areaCode ? areaCode : 0), '_blank');
+    }
 
     var option_bar = {
         tooltip: {
@@ -399,51 +416,61 @@ $(document).ready(function() {
             show: false
         },
         grid: {
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 25,
+            left: 0,
+            top: 20,
+            right: 0,
+            bottom: 25,
             borderWidth: 0
         },
-        xAxis: [{
+        xAxis: {
             type: 'category',
             axisLine: { show: false },
             axisTick: { show: false },
             splitLine: { show: false },
             data: []
-        }],
-        yAxis: [{
+        },
+        yAxis: {
             type: 'value',
             show: false
-        }],
+        },
         series: [{
             type: 'bar',
             data: [],
+            label: {
+                normal: {
+                    show: true,
+                    position: 'top',
+                    formatter: function(params, ticket, callback) {
+                        if (params.data > 10000) {
+                            return (params.data / 10000).toFixed(2) + '万';
+                        } else {
+                            return params.data;
+                        }
+                    },
+                    color: '#000'
+                }
+            },
             itemStyle: {
                 normal: {
-                    label: {
-                        show: true,
-                        formatter: function(params, ticket, callback) {
-                            if (params.data > 10000) {
-                                return (params.data / 10000).toFixed(2) + "万";
-                            } else {
-                                return params.data;
-                            }
-                        },
-                        textStyle: {
-                            color: 'black'
-                        }
-                    }
+                    barBorderRadius: 5,
+                    color: new echarts.graphic.LinearGradient(
+                        0, 0, 0, 1,
+                        [
+                            {offset: 0, color: 'rgb(230,75,82)'},
+                            {offset: 1, color: 'rgb(240,145,78)'}
+                        ]
+                    )
                 }
-            }
+            },
+            silent: true
         }]
     };
 
     var option_pie = {
         title: {
-            text: 'TOP6',
-            x: document.getElementById('areaBar').offsetWidth * 0.35 - 18,
-            y: 'center',
+            text: '',
+            left: 'center',
+            top: 'middle',
             textStyle : {
                 color: '#444',
                 fontSize: 14,
@@ -453,60 +480,173 @@ $(document).ready(function() {
         tooltip: {
             show: false
         },
+        color: ['rgb(65,166,206)', 'rgb(231,75,81)', 'rgb(81,81,250)', 'rgb(79,188,71)', 'rgb(237,126,58)', 'rgb(139,44,174)'],
         legend: {
             orient: 'vertical',
-            x: document.getElementById('areaBar').offsetWidth / 4 * 3,
-            y: 'center',
+            right: 0,
+            top: 'middle',
             itemGap: 5,
+            itemWidth: 8,
+            itemHeight: 8,
+            selectedMode: false,
             data: []
         },
         series: [{
             type: 'pie',
-            radius: ['28%', '65%'],
+            radius: ['28%', '70%'],
             center: ['35%', '50%'],
             data: [],
-            itemStyle: {
+            label: {
                 normal: {
-                    label: {
-                        show: false
-                    },
-                    labelLine: {
-                        show: false
-                    }
+                    show: false
                 }
-            }
+            },
+            silent: true
         }]
     };
 
-    // 初始化柱状图&饼图
-    var chartAreaBar, chartTypeBar, chartAreaPie, chartTypePie;
-    var initAlarmStatCharts = function() {
-        require.config({
-            paths: {
-                echarts: '/echarts'
+    var option_map = {
+        silent: true,
+        tooltip: {
+            show: false
+        },
+        color: ['rgb(151,50,225)', 'rgb(251,209,40)', 'rgb(79,188,71)', 'rgb(193,193,193)'],
+        legend: {
+            orient: 'vertical',
+            right: 0,
+            top: 0,
+            itemGap: 10,
+            itemWidth: 14,
+            itemHeight: 14,
+            selectedMode: false,
+            textStyle: {
+                fontSize: 14
+            },
+            data: ['报警设备(台)', '预警设备(台)', '正常设备(台)', '故障设备(台)']
+        },
+        visualMap: {
+            min: 0,
+            max: 1000,
+            left: 'left',
+            top: 'bottom',
+            calculable: true
+        },
+        series: [
+            {
+                name: '报警设备(台)',
+                type: 'map',
+                map: 'china',
+                showLegendSymbol: false,
+                label: {
+                    normal: {
+                        show: true,
+                        formatter: function (params) {
+                            if (params.value > 0) {
+                                return '{W|' + params.value + '} {EW|123}'
+                                    + '\n' + '{NAME|' + params.name + '}';
+                            } else {
+                                return '';
+                            }
+                        },
+                        color: '#fff',
+                        rich: {
+                            W: {
+                                backgroundColor: 'rgb(151,50,225)',
+                                borderRadius: 4,
+                                padding: [2, 5, 2, 5],
+                                fontWeight: 'bold',
+                                lineHeight: 20
+                            },
+                            EW: {
+                                backgroundColor: 'rgb(251,209,40)',
+                                borderRadius: 4,
+                                padding: [2, 5, 2, 5],
+                                fontWeight: 'bold',
+                                lineHeight: 20
+                            },
+                            Y: {
+                                backgroundColor: 'rgb(79,188,71)',
+                                borderRadius: 4,
+                                padding: [2, 5, 2, 5],
+                                fontWeight: 'bold',
+                                lineHeight: 20
+                            },
+                            N: {
+                                backgroundColor: 'rgb(193,193,193)',
+                                borderRadius: 4,
+                                padding: [2, 5, 2, 5],
+                                fontWeight: 'bold',
+                                lineHeight: 20
+                            },
+                            NAME: {
+                                backgroundColor: 'rgba(0,0,0,0.4)',
+                                borderRadius: 4,
+                                padding: [2, 5, 2, 5],
+                                align: 'center'
+                            }
+                        }
+                    }
+                },
+                data: [
+                    {name: '广东', value: 100}
+                ]
+            },
+            {
+                name: '预警设备(台)',
+                type: 'map',
+                map: 'china',
+                showLegendSymbol: false,
+                label: {
+                    normal: {
+                        show: true
+                    }
+                },
+                data: []
+            },
+            {
+                name: '正常设备(台)',
+                type: 'map',
+                map: 'china',
+                showLegendSymbol: false,
+                label: {
+                    normal: {
+                        show: true
+                    }
+                },
+                data: []
+            },
+            {
+                name: '故障设备(台)',
+                type: 'map',
+                map: 'china',
+                showLegendSymbol: false,
+                label: {
+                    normal: {
+                        show: true
+                    }
+                },
+                data: []
             }
-        });
+        ]
+    };
 
-        require(
-            [
-                'echarts',
-                'echarts/chart/bar',
-                'echarts/chart/pie'
-            ],
-            function (ec) {
-                chartAreaBar = ec.init(document.getElementById('areaBar'), 'macarons');
-                chartTypeBar = ec.init(document.getElementById('typeBar'), 'macarons');
-                chartAreaPie = ec.init(document.getElementById('areaPie'), 'macarons');
-                chartTypePie = ec.init(document.getElementById('typePie'), 'macarons');
-            }
-        );
+    // 初始化柱状图&饼图&地图
+    var chartAreaBar, chartTypeBar, chartAreaPie, chartTypePie, chartAreaMap;
+    var initAlarmStatCharts = function() {
+        chartAreaBar = echarts.init(document.getElementById('areaBar'));
+        chartTypeBar = echarts.init(document.getElementById('typeBar'));
+        chartAreaPie = echarts.init(document.getElementById('areaPie'));
+        chartTypePie = echarts.init(document.getElementById('typePie'));
+        chartAreaMap = echarts.init(document.getElementById('mapContainer'));
+
+        loadAlarmStat();
     }
-    initAlarmStatCharts();
 
     // 报警统计数据
-    var _yearAreaWarning, _yearTypeWarning;
+    var _yearAreaWarning, _yearTypeWarning, _mapData;
+    var _warningType = {"EW": "预警", "W-F": "火警", "W-S": "烟雾", "W-G": "燃气", "W-E": "电气"};
     var loadAlarmStat = function() {
-        $.getJSON("/alarm/stat/data?areaCode=" + areaCode + "&village=" + village, function(data) {
+        $.getJSON("/alarm/stat/data?areaCode=" + areaCode, function(data) {
             var todayWarning = data.today;
             var yearWarning = data.year;
 
@@ -527,7 +667,7 @@ $(document).ready(function() {
                 _yearTypeWarning[yearWarning[i][1]] += yearWarning[i][2];
 
                 var _areaName = areaCodeDict.init().getAreaName(yearWarning[i][0]);
-                var _key = city ? _areaName[2].substring(0, 2) : (province ? _areaName[1].substring(0, 2) : _areaName[0].substring(0, 2));
+                var _key = city ? _areaName[2] : (province ? _areaName[1] : _areaName[0].substring(0, 2));
                 if (typeof _yearAreaWarning[_key] !== 'undefined') {
                     _yearAreaWarning[_key] += yearWarning[i][2];
                 } else {
@@ -539,6 +679,36 @@ $(document).ready(function() {
             $("#gas").text(_yearTypeWarning["W-G"]);
             $("#electric").text(_yearTypeWarning["W-E"]);
 
+            // 地图数据
+            var warningGateways = data.warningGateways;
+            var statusGateways = data.statusGateways;
+
+            _mapData = {"EW": {}, "W": {}, "Y": {}, "N": {}};
+            for (var i = 0; i < warningGateways.length; i++) {
+                var _type = warningGateways[i][1] == "E" ? "EW" : "W";
+
+                var _areaName = areaCodeDict.init().getAreaName(warningGateways[i][0]);
+                var _area = city ? _areaName[2] : (province ? _areaName[1] : _areaName[0].substring(0, 2));
+
+                if (typeof _mapData[_type][_area] !== 'undefined') {
+                    _mapData[_type][_area] += warningGateways[i][2];
+                } else {
+                    _mapData[_type][_area] = warningGateways[i][2];
+                }
+            }
+            for (var i = 0; i < statusGateways.length; i++) {
+                var _type = statusGateways[i][1];
+
+                var _areaName = areaCodeDict.init().getAreaName(statusGateways[i][0]);
+                var _area = city ? _areaName[2] : (province ? _areaName[1] : _areaName[0].substring(0, 2));
+
+                if (typeof _mapData[_type][_area] !== 'undefined') {
+                    _mapData[_type][_area] += statusGateways[i][2];
+                } else {
+                    _mapData[_type][_area] = statusGateways[i][2];
+                }
+            }
+
             drawCharts();
         }).error(function() {
         });
@@ -547,15 +717,16 @@ $(document).ready(function() {
     var drawCharts = function() {
         $("#areaPie").is(":hidden") ? drawAreaBar() : drawAreaPie();
         $("#typePie").is(":hidden") ? drawTypeBar() : drawTypePie();
+        drawAreaMap();
     }
 
     var drawAreaBar = function() {
-        var option_areaBar = $.extend({}, option_bar);
-        option_areaBar.xAxis[0].data = $.map(_yearAreaWarning, function(val, i) { return i; });
+        var option_areaBar = $.extend(true, {}, option_bar);
+        option_areaBar.xAxis.data = $.map(_yearAreaWarning, function(val, i) { return i.substring(0, 2); });
         option_areaBar.series[0].data = $.map(_yearAreaWarning, function(val, i) { return val; });
         chartAreaBar.hideLoading();
 
-        var chartWidth = option_areaBar.series[0].data.length * 33;
+        var chartWidth = option_areaBar.series[0].data.length * 34;
         $("#areaBar").width(chartWidth > 0 ? chartWidth : "100%");
 
         chartAreaBar.resize();
@@ -563,9 +734,8 @@ $(document).ready(function() {
     }
 
     var drawTypeBar = function() {
-        var option_typeBar = $.extend({}, option_bar);
-        //option_typeBar.xAxis[0].data = $.map(_yearTypeWarning, function(val, i) { return i; });
-        option_typeBar.xAxis[0].data = ["预警", "火警", "烟雾", "燃气", "电气"];
+        var option_typeBar = $.extend(true, {}, option_bar);
+        option_typeBar.xAxis.data = $.map(_yearTypeWarning, function(val, i) { return _warningType[i]; });
         option_typeBar.series[0].data = $.map(_yearTypeWarning, function(val, i) { return val; });
         chartTypeBar.hideLoading();
         chartTypeBar.resize();
@@ -573,16 +743,16 @@ $(document).ready(function() {
     }
 
     var drawAreaPie = function() {
-        var option_areaPie = $.extend({}, option_pie);
-        option_areaPie.title.x = document.getElementById('areaPie').offsetWidth * 0.35 - 18;
-        option_areaPie.legend.x = document.getElementById('areaPie').offsetWidth / 4 * 3;
+        var option_areaPie = $.extend(true, {}, option_pie);
+        option_areaPie.title.text = "TOP6";
+        option_areaPie.title.left = document.getElementById('areaPie').offsetWidth * 0.35 - 22;
 
         var data_legend = [];
         var data_series = [];
         $.each(_yearAreaWarning, function(key, val) {
             if (data_legend.length == 6) return;
-            data_legend.push(key);
-            data_series.push({value:val, name:key});
+            data_legend.push({name:key.substring(0, 2), icon:'circle'});
+            data_series.push({value:val, name:key.substring(0, 2)});
         });
         option_areaPie.legend.data = data_legend;
         option_areaPie.series[0].data = data_series;
@@ -592,7 +762,65 @@ $(document).ready(function() {
     }
 
     var drawTypePie = function() {
+        var option_typePie = $.extend(true, {}, option_pie);
 
+        var data_legend = [];
+        var data_series = [];
+        $.each(_yearTypeWarning, function(key, val) {
+            data_legend.push({name:_warningType[key], icon:'circle'});
+            data_series.push({value:val, name:_warningType[key]});
+        });
+        option_typePie.legend.data = data_legend;
+        option_typePie.series[0].data = data_series;
+        chartTypePie.hideLoading();
+        chartTypePie.resize();
+        chartTypePie.setOption(option_typePie, true);
+    }
+
+    var drawAreaMap = function() {
+        var option_areaMap = $.extend(true, {}, option_map);
+
+        var mapName = city ? city : (province ? province : 'china');
+        $.getJSON('./echarts/mapData/json/' + mapName + '.json', function (data) {
+            echarts.registerMap(mapName, data);
+            option_areaMap.series[0].map = option_areaMap.series[1].map = option_areaMap.series[2].map = option_areaMap.series[3].map = mapName;
+
+            var data_series = [];
+            var maxData = 10;
+            $.each(_yearAreaWarning, function(key, val) {
+                data_series.push({value:val, name:key});
+                if (val > maxData) {
+                    maxData = val;
+                }
+            });
+            option_areaMap.visualMap.max = maxData;
+            option_areaMap.series[0].data = data_series;
+            option_areaMap.series[0].label.normal.formatter = function (params) {
+                var result = [];
+                if (typeof _mapData['W'][params.name] !== 'undefined') {
+                    result.push('{W|' + _mapData['W'][params.name] + '}');
+                }
+                if (typeof _mapData['EW'][params.name] !== 'undefined') {
+                    result.push('{EW|' + _mapData['EW'][params.name] + '}');
+                }
+                if (typeof _mapData['Y'][params.name] !== 'undefined') {
+                    result.push('{Y|' + _mapData['Y'][params.name] + '}');
+                }
+                if (typeof _mapData['N'][params.name] !== 'undefined') {
+                    result.push('{N|' + _mapData['N'][params.name] + '}');
+                }
+
+                if (result.length > 0) {
+                    return result.join(' ') + '\n' + '{NAME|' + params.name + '}';
+                } else {
+                    return '';
+                }
+            };
+
+            chartAreaMap.hideLoading();
+            chartAreaMap.resize();
+            chartAreaMap.setOption(option_areaMap, true);
+        });
     }
 
     // 报警信息
@@ -600,7 +828,7 @@ $(document).ready(function() {
     var loadAlarmList = function() {
         $("#today").text(moment().format('YYYY-MM-DD'));
         if (alarmTable) {
-            var url = "/alarm/list?status=0&areaCode=" + areaCode + "&village=" + village;
+            var url = "/alarm/list?status=0&areaCode=" + areaCode;
             alarmTable.ajax.url(url).load();
         } else {
             alarmTable = $('#alarmList').DataTable({
@@ -609,8 +837,8 @@ $(document).ready(function() {
                 "searching": false,
                 "lengthChange": false,
                 "ordering": false,
-                "ajax": "/alarm/list?status=0&areaCode=" + areaCode + "&village=" + village,
-                "scrollY": 200,
+                "ajax": "/alarm/list?status=0&areaCode=" + areaCode,
+                "scrollY": 210,
                 "paging": false,
                 "info": false,
                 "columns": [
@@ -641,12 +869,14 @@ $(document).ready(function() {
         }
     }
 
+    loadParams();
+    initAlarmStatCharts();
+    loadAlarmList();
+
     var loadPage = function() {
         loadAlarmStat();
         loadAlarmList();
     }
-    loadParams();
-    loadPage();
     setInterval(function() {
         loadPage();
     }, 10000);
