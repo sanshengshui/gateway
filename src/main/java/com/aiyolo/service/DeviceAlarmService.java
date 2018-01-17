@@ -15,10 +15,9 @@ import com.aiyolo.repository.DeviceAlarmSpecification;
 import com.aiyolo.repository.DeviceCategoryRepository;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.service.alarm.AlarmService;
+import com.aiyolo.service.alarm.NowAlarmService;
 import com.aiyolo.vo.DeviceAlarmSearchVo;
-
 import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-
 import java.util.*;
 
 @Service
@@ -184,14 +182,19 @@ public class DeviceAlarmService {
                                 String cls = (String) content_cls.next();
                                 Object params = content.get(cls);
 
-                                //                                String packageName = this.getClass().getPackage().getName() + ".alarm";
-                                //                                String className = cls.replace(cls.substring(0, 1), cls.substring(0, 1).toUpperCase()) + "AlarmService";
-                                //                                S service = (S) Class.forName(packageName + "." + className).newInstance();
+                                // String packageName = this.getClass().getPackage().getName() + ".alarm";
+                                // String className = cls.replace(cls.substring(0, 1), cls.substring(0, 1).toUpperCase()) + "AlarmService";
+                                // S service = (S) Class.forName(packageName + "." + className).newInstance();
                                 String serviceName = StringHelper.underline2Camel(cls) + "AlarmService";
                                 S service = (S) SpringUtil.getBean(serviceName);
                                 service.run(deviceAlarm, params);
                             }
                         }
+                    }
+
+                    if (deviceAlarm.getValue() == 0) {
+                        NowAlarmService nowAlarmService = (NowAlarmService) SpringUtil.getBean("nowAlarmService");
+                        nowAlarmService.run(deviceAlarm, "C");
                     }
                 }
             }

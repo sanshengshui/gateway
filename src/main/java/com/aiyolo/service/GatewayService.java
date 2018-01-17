@@ -57,6 +57,31 @@ public class GatewayService {
         return gateways;
     }
 
+    public List<Gateway> getAllGatewayByAreaCodeAndVillage(String areaCode, String village) {
+        List<Gateway> gateways = new ArrayList<Gateway>();
+
+        // 取有权限的区域
+        Map<String, List<String>> authorities = customUserDetailsService.getAuthorities();
+        if (authorities.get("areas").contains("0") && "0".equals(areaCode)) {
+            if (StringUtils.isEmpty(village)) {
+                gateways = (List<Gateway>) gatewayRepository.findAll();
+            } else {
+                gateways = gatewayRepository.findByVillageLike("%" + village + "%");
+            }
+        } else {
+            String areaCodeSearchPat = areaCodeService.getAreaCodeSearchPat(authorities, areaCode);
+            if (StringUtils.isNotEmpty(areaCodeSearchPat)) {
+                if (StringUtils.isEmpty(village)) {
+                    gateways = gatewayRepository.findByAreaCodeMatch(areaCodeSearchPat);
+                } else {
+                    gateways = gatewayRepository.findByAreaCodeAndVillageMatch(areaCodeSearchPat, village);
+                }
+            }
+        }
+
+        return gateways;
+    }
+
     public Page<Gateway> getPageGatewayByAreaCodeAndAddress(Pageable pageable, String areaCode, String address) {
         Page<Gateway> gateways = new PageImpl<Gateway>(new ArrayList<Gateway>());
 

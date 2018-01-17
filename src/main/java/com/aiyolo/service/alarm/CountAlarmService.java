@@ -15,33 +15,37 @@ public class CountAlarmService extends AlarmService {
 
     @Autowired
     GatewayRepository gatewayRepository;
-
     @Autowired
     DeviceAlarmStatRepository deviceAlarmStatRepository;
 
+    @Autowired
+    NowAlarmService nowAlarmService;
+
     @Override
     public void run(DeviceAlarm deviceAlarm, Object params) {
+        Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(deviceAlarm.getGlImei());
+        if (gateway == null) {
+            return;
+        }
+
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         String date = format.format(deviceAlarm.getTimestamp() * 1000L);
-        String glImei = deviceAlarm.getGlImei();
+        String areaCode = gateway.getAreaCode();
         String alarmType = String.valueOf(params);
 
-        DeviceAlarmStat deviceAlarmStat = deviceAlarmStatRepository.findOneByDateAndGlImeiAndType(date, glImei, alarmType);
+        DeviceAlarmStat deviceAlarmStat = deviceAlarmStatRepository.findOneByDateAndAreaCodeAndType(date, areaCode, alarmType);
         if (deviceAlarmStat != null) {
             deviceAlarmStat.setNum(deviceAlarmStat.getNum() + 1);
             deviceAlarmStatRepository.save(deviceAlarmStat);
         } else {
-            Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(deviceAlarm.getGlImei());
-            if (gateway != null) {
-                deviceAlarmStatRepository.save(new DeviceAlarmStat(
-                        date,
-                        glImei,
-                        gateway.getAreaCode(),
-                        gateway.getVillage(),
-                        alarmType,
-                        1));
-            }
+            deviceAlarmStatRepository.save(new DeviceAlarmStat(
+                    date,
+                    areaCode,
+                    alarmType,
+                    1));
         }
+
+        nowAlarmService.run(deviceAlarm, params);
     }
 
 }

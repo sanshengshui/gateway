@@ -406,7 +406,7 @@
 	  city: '市　　',
 
 	  // Defines the initial value of district.
-	  district: '区　　'
+	  district: '区/县　'
 	};
 
 /***/ },

@@ -7,6 +7,17 @@
     <script type="text/javascript"
             src="http://api.map.baidu.com/api?v=2.0&amp;ak=aKIjifPRabvI63HVtjCOhN4fOFCvDVgB"></script>
     <style>
+    body {
+        color: #fff;
+    }
+    .wrapper {
+        background-color: rgb(18,20,24) !important;
+    }
+    h1.title {
+        margin-top: 10px;
+        font-size: 32px;
+        font-weight: bold;
+    }
     .h1,
     .h2,
     .h3 {
@@ -19,7 +30,7 @@
     }
     table#yearWarning>thead>tr>th {
         padding: 0;
-        font-size: 22px;
+        font-size: 24px;
         font-weight: bold;
         border-bottom: 0;
     }
@@ -28,47 +39,58 @@
         border-top: 0;
     }
     table#yearWarning>tbody>tr>td>span {
+        color: rgb(237,126,58);
         font-size: 52px;
+        font-weight: bold;
         line-height: 60px;
     }
     table.dataTable {
         margin-top: 0 !important;
     }
+    .table-striped>tbody>tr:nth-of-type(odd) {
+        background-color: rgb(25,29,35);
+    }
+
+    .box {
+        background-color: rgb(18,20,24);
+        border-radius: 10px;
+    }
+    .box.box-solid.box-default {
+        border-top: 1px solid rgb(51,58,73);
+        border-right: 1px solid rgb(28,31,39);
+        border-bottom: 1px solid rgb(15,17,20);
+        border-left: 1px solid rgb(28,31,39);
+    }
+    .box.box-solid.box-default>.box-header {
+        color: #fff;
+        background-color: rgb(28,31,39);
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+    .box-body {
+        background-color: rgb(28,31,39);
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
     </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
-    <th:block th:include="fragments/header :: main-header"></th:block>
-    <th:block th:include="fragments/menu :: menu"></th:block>
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-        <!-- Main content -->
-        <section class="content">
-            <div class="row">
+            <div class="">
                 <div class="col-xs-12">
-                    <div class="box">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">首页</h3>
-                            <div class="box-tools">
-                                <form class="form-inline">
-                                    <div id="distpicker" class="form-group form-group-sm">
-                                        <select id="province" name="province" class="form-control"></select>
-                                        <select id="city" name="city" class="form-control"></select>
-                                        <select id="district" name="district" class="form-control"></select>
-                                    </div>
-                                    <button type="submit" class="btn btn-default btn-sm">查询</button>
-                                    <button type="button" class="btn btn-success btn-sm" onclick="launch()">演示链接</button>
-                                </form>
-                            </div><!-- /.box-tools -->
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <h1 class="title">智能消防系统</h1>
+                                </div>
+                                <div class="col-md-5">
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-md-7">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="box box-solid box-default">
-                                                <div class="box-body">
+                                                <div class="box-body" style="background-color: rgb(237,126,58); border-radius: 10px;">
                                                     <div class="pull-left h3">
                                                         当日预警<br />(次)
                                                     </div>
@@ -83,7 +105,7 @@
                                         <!-- /.col -->
                                         <div class="col-md-6">
                                             <div class="box box-solid box-default">
-                                                <div class="box-body">
+                                                <div class="box-body" style="background-color: rgb(229,48,79); border-radius: 10px;">
                                                     <div class="pull-left h3">
                                                         当日报警<br />(次)
                                                     </div>
@@ -101,8 +123,18 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="box box-solid box-default">
-                                                <div class="box-header with-border">
+                                                <div class="box-header">
                                                     <h3 class="box-title">行政区划图</h3>
+                                                    <div class="box-tools">
+                                                        <form class="form-inline">
+                                                            <div id="distpicker" class="form-group form-group-sm">
+                                                                <select id="province" name="province" class="form-control"></select>
+                                                                <select id="city" name="city" class="form-control"></select>
+                                                                <select id="district" name="district" class="form-control"></select>
+                                                            </div>
+                                                            <button type="submit" class="btn btn-warning btn-sm">查询</button>
+                                                        </form>
+                                                    </div><!-- /.box-tools -->
                                                 </div>
                                                 <!-- /.box-header -->
                                                 <div class="box-body">
@@ -121,7 +153,7 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="box box-solid box-default">
-                                                <div class="box-body">
+                                                <div class="box-body" style="border-radius: 10px;">
                                                     <table class="table text-center" id="yearWarning">
                                                         <thead>
                                                         <tr>
@@ -149,10 +181,10 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="box box-solid box-default">
-                                                <div class="box-header with-border">
+                                                <div class="box-header">
                                                     <h3 class="box-title">区域报警统计</h3><span id="areaUnit">（年/次）</span>
                                                     <div class="box-tools">
-                                                        <button type="button" class="btn btn-default btn-sm"
+                                                        <button type="button" class="btn btn-warning btn-sm"
                                                                 onclick="changeAreaChart(this)">饼图
                                                         </button>
                                                     </div>
@@ -169,10 +201,10 @@
                                         <!-- /.col -->
                                         <div class="col-md-6">
                                             <div class="box box-solid box-default">
-                                                <div class="box-header with-border">
+                                                <div class="box-header">
                                                     <h3 class="box-title">分类报警统计</h3><span id="typeUnit">（年/次）</span>
                                                     <div class="box-tools">
-                                                        <button type="button" class="btn btn-default btn-sm"
+                                                        <button type="button" class="btn btn-warning btn-sm"
                                                                 onclick="changeTypeChart(this)">饼图
                                                         </button>
                                                     </div>
@@ -192,7 +224,7 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="box box-solid box-default">
-                                                <div class="box-header with-border">
+                                                <div class="box-header">
                                                     <h3 class="box-title">报警信息</h3>
                                                     <div class="box-tools" id="today">
                                                     </div>
@@ -220,19 +252,10 @@
                                 <!-- /.col -->
                             </div>
                             <!-- /.row -->
-                        </div>
-                        <!-- /.box-body -->
-                    </div>
-                    <!-- /.box -->
                 </div>
                 <!-- /.col -->
             </div>
             <!-- /.row -->
-        </section>
-        <!-- /.content -->
-    </div>
-    <!-- /.content-wrapper -->
-    <th:block th:include="fragments/footer :: footer"></th:block>
 </div>
 
 <th:block th:include="fragments/footer :: js"></th:block>
@@ -340,7 +363,7 @@ var displayMap = function(areaCode, id) {
 
 
 
-var launch, changeAreaChart, changeTypeChart;
+var changeAreaChart, changeTypeChart;
 $(document).ready(function() {
     // 调整地图容器尺寸
     //var maxHeight = $(window).height();
@@ -401,12 +424,6 @@ $(document).ready(function() {
         return false;
     });
 
-    launch = function() {
-        loadParams();
-        loadPage();
-        window.open('/launch?adcode=' + (areaCode ? areaCode : 0), '_blank');
-    }
-
     var option_bar = {
         tooltip: {
             show: false
@@ -427,6 +444,9 @@ $(document).ready(function() {
             axisLine: { show: false },
             axisTick: { show: false },
             splitLine: { show: false },
+            axisLabel: {
+                color: '#fff'
+            },
             data: []
         },
         yAxis: {
@@ -447,7 +467,7 @@ $(document).ready(function() {
                             return params.data;
                         }
                     },
-                    color: '#000'
+                    color: '#fff'
                 }
             },
             itemStyle: {
@@ -489,6 +509,9 @@ $(document).ready(function() {
             itemWidth: 8,
             itemHeight: 8,
             selectedMode: false,
+            textStyle: {
+                color: '#fff'
+            },
             data: []
         },
         series: [{
@@ -520,6 +543,7 @@ $(document).ready(function() {
             itemHeight: 14,
             selectedMode: false,
             textStyle: {
+                color: '#fff',
                 fontSize: 14
             },
             data: ['报警设备(台)', '预警设备(台)', '正常设备(台)', '故障设备(台)']
@@ -529,7 +553,10 @@ $(document).ready(function() {
             max: 1000,
             left: 'left',
             top: 'bottom',
-            calculable: true
+            calculable: true,
+            textStyle: {
+                color: '#fff'
+            }
         },
         series: [
             {
@@ -879,7 +906,7 @@ $(document).ready(function() {
     }
     setInterval(function() {
         loadPage();
-    }, 10000);
+    }, 1000000);
 });
 /*]]>*/
 </script>
