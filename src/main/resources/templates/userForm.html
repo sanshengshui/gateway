@@ -22,7 +22,6 @@
                         <!-- form start -->
                         <form id="user" class="form-horizontal" th:object="${user}" th:action="@{/user/save}" method="post">
                             <input type="hidden" th:field="*{id}"/>
-                            <input type="hidden" th:field="*{productIds}"/>
                             <div class="box-body">
                                 <div class="form-group" sec:authorize="hasRole('ROLE_MANAGER')">
                                     <label for="channelId" class="col-sm-2 control-label">所属渠道：</label>
@@ -61,15 +60,6 @@
                                                th:required="${user.id == null} ? 'true' : 'false'"/>
                                     </div>
                                     <span class="help-block" th:if="${user.id != null}">留空不修改密码</span>
-                                </div>
-                                <div th:class="${#fields.hasErrors('productIds')} ? 'form-group has-error' : 'form-group'">
-                                    <label class="col-sm-2 control-label">关联产品：</label>
-                                    <div class="col-sm-4">
-                                        <div id="d_productIds" class="checkbox">
-                                        </div>
-                                    </div>
-                                    <span class="help-block" th:if="${#fields.hasErrors('productIds')}"
-                                          th:errors="*{productIds}">Product Error</span>
                                 </div>
                                 <div id="areaContainer" class="form-group">
                                     <label for="areaCode" class="col-sm-2 control-label">可查看区域：</label>
@@ -114,7 +104,7 @@
 </div>
 
 <th:block th:include="fragments/footer :: js"></th:block>
-<script src="/js/dict.js?product,channel"></script>
+<script src="/js/dict.js?channel"></script>
 <script src="/js/distpicker.js"></script>
 <script src="/js/distpicker.init.js"></script>
 
@@ -184,18 +174,6 @@ $(document).ready(function() {
         }
     }
 
-    $.each(authorities, function(key, value) {
-        if (value.authority.substring(0, 4) == "PROD") {
-            var productId = value.authority.substring(5);
-            $('#d_productIds')
-                .append('<label><input type="checkbox" value="' + productId + '"/>' + dict(productId, 'product') + '</label>');
-        }
-    });
-    if ($('#productIds').val()) {
-        var productIds = $('#productIds').val().split(",");
-        $("input:checkbox").val(productIds);
-    }
-
     // 初始化
     if ($('#areaCode').val()) {
         areaCodes = $('#areaCode').val().split(",");
@@ -215,27 +193,6 @@ $(document).ready(function() {
             addAreaText(areaCodes[i], areaName1, areaName2, areaName3);
         }
     }
-
-    $("#user").submit(function(event) {
-        $("#productIds").val(
-            $("input:checked").map(function() {
-                return $(this).val();
-            })
-            .get()
-            .join()
-        );
-
-        $(".has-error .help-block").remove();
-        $("div").removeClass("has-error");
-
-        if ($("#productIds").val() == "") {
-            $("#d_productIds").parent().after('<span class="help-block">请选择关联产品！</span>');
-            $("#d_productIds").parent().parent().addClass("has-error");
-            return false;
-        }
-
-        return;
-    });
 });
 /*]]>*/
 </script>

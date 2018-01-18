@@ -33,11 +33,12 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
             String realname,
             String phone);
 
-    Page<User> findPageByRoleAndChannelNameLikeAndUsernameLikeAndPhoneLike(
+    Page<User> findPageByRoleAndChannelNameLikeAndUsernameLikeAndRealnameLikeAndPhoneLike(
             Pageable pageable,
             RoleEnum role,
             String channelName,
             String username,
+            String realname,
             String phone);
 
 }

@@ -8,15 +8,15 @@ public class ChannelSearchVo extends PageSearchVo {
 
     private String channelName = "";
     private String username = "";
+    private String realname = "";
     private String phone = "";
-    private String deviceId = "";
     private RoleEnum role = RoleEnum.AGENT;
 
     @Override
     public String toString() {
         return String.format(
-                "ChannelSearchVo[channelName='%s', username='%s', phone='%s', deviceId='%s', role='%s']",
-                channelName, username, phone, deviceId, role.getName());
+                "ChannelSearchVo[channelName='%s', username='%s', realname='%s', phone='%s', role='%s']",
+                channelName, username, realname, phone, role.getName());
     }
 
     public String getChannelName() {
@@ -35,20 +35,20 @@ public class ChannelSearchVo extends PageSearchVo {
         this.username = username;
     }
 
+    public String getRealname() {
+        return realname;
+    }
+
+    public void setRealname(String realname) {
+        this.realname = realname;
+    }
+
     public String getPhone() {
         return phone;
     }
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
     }
 
     public RoleEnum getRole() {

@@ -57,29 +57,9 @@ public class UserController {
             return "userForm";
         }
 
-        if (StringUtils.isEmpty(user.getProductIds())) {
-            bindingResult.rejectValue("productIds", "error.user", "请选择关联产品！");
-            return "userForm";
-        }
-
         if (! RoleEnum.MANAGER.equals(customUserDetailsService.getRole())) {
             // 非管理员，固定只能添加本渠道用户
             user.setChannelId(customUserDetailsService.getChannelId());
-        }
-
-        // 取有权限的产品
-        List<String> ownProductIds = customUserDetailsService.getAuthorities().get("products");
-        String[] userProductIds = user.getProductIds().split(",");
-        List<String> newUserProductIds = new ArrayList<String>();
-        for (int i = 0; i < userProductIds.length; i++) {
-            if (ownProductIds.contains(userProductIds[i])) {
-                newUserProductIds.add(userProductIds[i]);
-            }
-        }
-        if (newUserProductIds.size() < 1) {
-            return "redirect:/404";
-        } else {
-            user.setProductIds(String.join(",", newUserProductIds));
         }
 
         // 取有权限的区域
@@ -106,7 +86,6 @@ public class UserController {
                 userRecord.setChannelId(user.getChannelId());
                 userRecord.setRealname(user.getRealname());
                 userRecord.setPhone(user.getPhone());
-                userRecord.setProductIds(user.getProductIds());
                 userRecord.setGatewayAreaCodes(user.getGatewayAreaCodes());
 
                 if (! StringUtils.isEmpty(user.getPassword())) {
@@ -132,7 +111,6 @@ public class UserController {
                     user.getPhone(),
                     hashedPassword,
                     RoleEnum.EMPLOYEE,
-                    user.getProductIds(),
                     user.getGatewayAreaCodes()));
 
             return "redirect:/user";
