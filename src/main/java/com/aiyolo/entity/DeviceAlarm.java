@@ -15,6 +15,8 @@ public class DeviceAlarm extends BaseEntity implements Serializable {
     private String glImei = "";
     private Integer timestamp = 0;
     private Integer value = 0;
+    private Integer value1 = 0;
+    private Integer value2 = 0;
     private Integer status = 0;
 
     @ManyToOne
@@ -27,20 +29,49 @@ public class DeviceAlarm extends BaseEntity implements Serializable {
 
     protected DeviceAlarm() {}
 
-    public DeviceAlarm(String type, String imei, String glImei, Integer timestamp, Integer value, Integer status) {
+    public DeviceAlarm(String type, String imei, String glImei, Integer timestamp, Integer value
+            , Integer value1, Integer value2, Integer status) {
         this.type = type;
         this.imei = imei;
         this.glImei = glImei;
         this.timestamp = timestamp;
         this.value = value;
+        this.value1 = value1;
+        this.value2 = value2;
         this.status = status;
     }
+
+//    public DeviceAlarm(String type, String imei, String glImei, Integer timestamp, Integer value, Integer status) {
+//        this.type = type;
+//        this.imei = imei;
+//        this.glImei = glImei;
+//        this.timestamp = timestamp;
+//        this.value = value;
+//        this.status = status;
+//    }
 
     @Override
     public String toString() {
         return String.format(
-                "DeviceAlarm[id=%d, type='%s', imei='%s', gl_imei='%s', timestamp=%d, value=%d, status=%d]",
-                id, type, imei, glImei, timestamp, value, status);
+                "DeviceAlarm[id=%d, type='%s', imei='%s', gl_imei='%s', timestamp=%d, value=%d" +
+                        ", value1=%d, value2=%d, status=%d]",
+                id, type, imei, glImei, timestamp, value,value1,value2, status);
+    }
+
+    public Integer getValue1() {
+        return value1;
+    }
+
+    public void setValue1(Integer value1) {
+        this.value1 = value1;
+    }
+
+    public Integer getValue2() {
+        return value2;
+    }
+
+    public void setValue2(Integer value2) {
+        this.value2 = value2;
     }
 
     public String getType() {

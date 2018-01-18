@@ -146,23 +146,34 @@ public class DeviceStatusService {
     public static String deviceTypeToName(String type) {
         String name = "";
         switch (type) {
-            case DeviceTypeConsts.DEV_TYPE_CG:
-                name = DeviceTypeConsts.DEVICE_NAME_CG;
+            case DeviceTypeConsts.TYPE_CO_CH4_SWITCH_BAT:
+            case DeviceTypeConsts.TYPE_CO_CH4_SWITCH:
+                name = DeviceTypeConsts.NAME_CO_CH4;
                 break;
-            case DeviceTypeConsts.DEV_TYPE_CO:
-                name = DeviceTypeConsts.DEVICE_NAME_CO;
+            case DeviceTypeConsts.TYPE_CO_SWITCH_BAT:
+            case DeviceTypeConsts.TYPE_CO_SWITCH:
+                name = DeviceTypeConsts.NAME_CO;
                 break;
-            case DeviceTypeConsts.DEV_TYPE_GAS:
-                name = DeviceTypeConsts.DEVICE_NAME_GAS;
+            case DeviceTypeConsts.TYPE_CH4:
+            case DeviceTypeConsts.TYPE_CH4_OLD:
+            case DeviceTypeConsts.TYPE_CH4_VALUE:
+            case DeviceTypeConsts.TYPE_CH4_SWITCH:
+            case DeviceTypeConsts.TYPE_CH4_SWITCH_BAT:
+                name = DeviceTypeConsts.NAME_CH4;
                 break;
-            case DeviceTypeConsts.DEV_TYPE_SMOKE:
-                name = DeviceTypeConsts.DEVICE_NAME_SMOKE;
+            case DeviceTypeConsts.TYPE_SMOKE:
+            case DeviceTypeConsts.TYPE_SMOKE_OLD:
+                name = DeviceTypeConsts.NAME_SMOKE;
                 break;
-            case DeviceTypeConsts.DEV_TYPE_SOS:
-                name = DeviceTypeConsts.DEVICE_NAME_SOS;
+            case DeviceTypeConsts.TYPE_SOS:
+            case DeviceTypeConsts.TYPE_SOS_OLD:
+                name = DeviceTypeConsts.NAME_SOS;
                 break;
-            case DeviceTypeConsts.DEV_TYPE_VALVE:
-                name = DeviceTypeConsts.DEVICE_NAME_VALVE;
+            case DeviceTypeConsts.TYPE_VALVE:
+                name = DeviceTypeConsts.NAME_VALVE;
+                break;
+            case DeviceTypeConsts.TYPE_ELECTRIC_METER:
+                name = DeviceTypeConsts.NAME_ELECTRIC_METER;
                 break;
         }
         return name;

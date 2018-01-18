@@ -2,6 +2,7 @@ package com.aiyolo.channel.data.processor;
 
 import com.aiyolo.common.SpringUtil;
 import com.aiyolo.entity.Checked;
+import com.aiyolo.entity.Device;
 import com.aiyolo.entity.DeviceStatus;
 import com.aiyolo.entity.GatewayStatus;
 import com.aiyolo.repository.CheckedRepository;
@@ -38,12 +39,14 @@ public class GatewayDevstaProcessor extends Processor {
                 JSONObject deviceStatus = deviceStatuses.getJSONObject(i);
 
                 String imei = deviceStatus.getString("imei");
-                if (!glImei.equals(deviceRepository.findFirstByImeiOrderByIdDesc(imei).getGlImei())){
+                Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imei);
+
+                if (!glImei.equals(device.getGlImei())){
                     //不是所属网关汇报的状态忽略掉
                     continue;
                 }
                 deviceStatusRepository.save(new DeviceStatus(
-                        deviceStatus.getString("dev"),
+                        device.getType(),
                         imei,
                         glImei,
                         mid,
