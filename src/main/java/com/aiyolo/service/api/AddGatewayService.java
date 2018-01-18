@@ -3,13 +3,16 @@ package com.aiyolo.service.api;
 import com.aiyolo.constant.ApiResponseStateEnum;
 import com.aiyolo.constant.Role4GatewayEnum;
 import com.aiyolo.entity.AppUserGateway;
+import com.aiyolo.entity.Gateway;
 import com.aiyolo.entity.GatewaySharePass;
 import com.aiyolo.repository.AppUserGatewayRepository;
+import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.repository.GatewaySharePassRepository;
 import com.aiyolo.service.api.request.AddGatewayRequest;
 import com.aiyolo.service.api.request.RequestObject;
 import com.aiyolo.service.api.response.Response;
 import com.aiyolo.service.api.response.ResponseObject;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -23,6 +26,8 @@ public class AddGatewayService extends BaseService {
     AppUserGatewayRepository appUserGatewayRepository;
     @Autowired
     GatewaySharePassRepository gatewaySharePassRepository;
+    @Autowired
+    GatewayRepository gatewayRepository;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -36,6 +41,12 @@ public class AddGatewayService extends BaseService {
             return (Res) responseRequestParameterError(request.getAction());
         }
 
+        Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(imei);
+        if (gateway == null) {
+            return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
+        }
+
+
         List<AppUserGateway> gatewayAppUsers = appUserGatewayRepository.findByGlImei(imei);
         if (gatewayAppUsers.size() == 0) { // 首位绑定网关的人无需密码，并且自动成为管理员
             appUserGatewayRepository.save(new AppUserGateway(userId, imei, Role4GatewayEnum.MANAGER));
@@ -46,7 +57,7 @@ public class AddGatewayService extends BaseService {
 
             GatewaySharePass gatewaySharePass = gatewaySharePassRepository.findFirstByGlImeiOrderByIdDesc(imei);
             if (gatewaySharePass == null || !gatewaySharePass.getPass().equals(pass) ||
-                    (System.currentTimeMillis() - gatewaySharePass.getUpdatedAt().getTime()) > 5*60*1000L) {
+                    (System.currentTimeMillis() - gatewaySharePass.getUpdatedAt().getTime()) > 5 * 60 * 1000L) {
                 return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "动态密码错误");
             }
 

@@ -41,7 +41,12 @@ public class GatewayDevstaProcessor extends Processor {
                 String imei = deviceStatus.getString("imei");
                 Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imei);
 
-                if (!glImei.equals(device.getGlImei())){
+                if (device == null) {
+                    // TODO: 2018/1/18 设备不应该为空，要从根源解决
+                    continue;
+                }
+
+                if (!glImei.equals(device.getGlImei())) {
                     //不是所属网关汇报的状态忽略掉
                     continue;
                 }
