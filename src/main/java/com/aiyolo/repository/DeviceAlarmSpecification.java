@@ -29,10 +29,10 @@ public class DeviceAlarmSpecification {
                             cb.literal(deviceAlarmSearchVo.getAreaCode()))));
                 }
                 if (StringUtils.isNotEmpty(deviceAlarmSearchVo.getVillage())) {
-                    predicates.add(cb.like(root.get("village"), "%" + deviceAlarmSearchVo.getVillage() + "%"));
+                    predicates.add(cb.like(root.get("gateway").get("village"), "%" + deviceAlarmSearchVo.getVillage() + "%"));
                 }
                 if (StringUtils.isNotEmpty(deviceAlarmSearchVo.getAddress())) {
-                    predicates.add(cb.like(root.get("address"), "%" + deviceAlarmSearchVo.getAddress() + "%"));
+                    predicates.add(cb.like(root.get("gateway").get("address"), "%" + deviceAlarmSearchVo.getAddress() + "%"));
                 }
                 if (deviceAlarmSearchVo.getStatus() >= 0) {
                     predicates.add(cb.equal(root.get("status"), deviceAlarmSearchVo.getStatus()));
