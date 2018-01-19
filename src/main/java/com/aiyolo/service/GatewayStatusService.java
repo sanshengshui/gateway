@@ -11,6 +11,7 @@ import com.aiyolo.queue.Sender;
 import com.aiyolo.repository.DeviceRepository;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.repository.GatewayStatusRepository;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,16 +45,19 @@ public class GatewayStatusService {
     GatewayService gatewayService;
 
     public void pushGatewayStatus(Gateway gateway) {
-        pushGatewayStatus(gateway, AppNoticeTypeConsts.MODIFY);
+        pushGatewayStatus(gateway, AppNoticeTypeConsts.MODIFY, null);
     }
 
-    public void pushGatewayStatus(Gateway gateway, Integer noticeType) {
+    public void pushGatewayStatus(Gateway gateway, Integer noticeType, String[] mobileIds) {
         if (gateway == null) {
             return;
         }
 
         try {
-            String[] mobileIds = gatewayService.getGatewayUserMobileIds(gateway.getGlImei());
+            if (mobileIds == null) {
+                mobileIds = gatewayService.getGatewayUserMobileIds(gateway.getGlImei());
+            }
+
             if (mobileIds != null && mobileIds.length > 0) {
                 // 推送给APP
                 Map<String, Object> headerMap = AppNoticeGatewayRequest.getInstance().requestHeader(mobileIds);
