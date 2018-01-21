@@ -49,10 +49,11 @@ public class Receiver {
                             .equals(code)) {
                         className = new StringBuilder().append("Gateway").append(new String(actionByte)
                                 .replace("_", "")).append("Processor").toString();
-                    } else if (new Integer(603).equals(code)) {
-                        className = new StringBuilder().append("App").append(new String(actionByte)
-                                .replace("_", "")).append("Processor").toString();
                     }
+//                    else if (new Integer(603).equals(code)) {
+//                        className = new StringBuilder().append("App").append(new String(actionByte)
+//                                .replace("_", "")).append("Processor").toString();
+//                    }
 
                     processorFactory.getProcessor(className).run(messageString);
 

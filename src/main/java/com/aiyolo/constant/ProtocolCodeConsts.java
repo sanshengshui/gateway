@@ -9,8 +9,8 @@ public class ProtocolCodeConsts {
     public static final int DEVICE_INFO = 1205;
     public static final int APP_LOGIN = 1206;
 
-    public static final int RECEIVE_FROM_APP = 603;
-    public static final int SEND_TO_APP = 604;
+//    public static final int RECEIVE_FROM_APP = 603;
+//    public static final int SEND_TO_APP = 604;
 
 
 }

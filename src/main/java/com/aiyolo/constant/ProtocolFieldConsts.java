@@ -9,6 +9,7 @@ public class ProtocolFieldConsts {
     public static final String IMEI = "imei";
     public static final String IMEIS = "imeis";
     public static final String CACHE_TIME = "cache_time";
+    public static final String IS_TEXT = "is_text";
     public static final String PRODUCT_ID = "product_id";
     public static final String PIN = "pin";
     public static final String MID = "mid";
