@@ -20,6 +20,9 @@ import org.apache.commons.logging.LogFactory;
 import java.text.SimpleDateFormat;
 import java.util.Map;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+import static com.aiyolo.constant.ProtocolFieldConsts.MID;
+
 public class GatewayUpstaProcessor extends Processor {
 
     private static Log gatewayLogger = LogFactory.getLog("gatewayLog");
@@ -30,13 +33,17 @@ public class GatewayUpstaProcessor extends Processor {
             init(message);
 
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd HH");
-            String _dh = format.format(messageBodyJson.getInt("mid") * 1000L);
+            int mid = messageBodyJson.getInt(MID);
+            String _dh = format.format(mid * 1000L);
             String[] _dhArray = _dh.split(" ");
 
+            String imei = messageHeaderJson.getString(IMEI);
+            int check = messageBodyJson.getInt("check");
+            int sos = messageBodyJson.getInt("sos");
             GatewayStatus gatewayStatus = new GatewayStatus(
-                    messageHeaderJson.getString("gl_id"),
-                    messageBodyJson.getString("imei"),
-                    messageBodyJson.getInt("mid"),
+                    imei,
+                    imei,
+                    mid,
                     _dhArray[0],
                     _dhArray[1],
                     messageBodyJson.getInt("rssi"),
@@ -45,8 +52,8 @@ public class GatewayUpstaProcessor extends Processor {
                     messageBodyJson.getInt("atm"),
                     messageBodyJson.getString("ver"),
                     messageBodyJson.getInt("err"),
-                    messageBodyJson.getInt("sos"),
-                    messageBodyJson.getInt("check"),
+                    sos,
+                    check,
                     messageBodyJson.getInt("htmp"));
 
             GatewayStatusRepository gatewayStatusRepository = (GatewayStatusRepository)
@@ -55,11 +62,9 @@ public class GatewayUpstaProcessor extends Processor {
 
             //-------------------------增加网关报警和巡检---------------------------------
 
-            int mid = messageBodyJson.getInt("mid");
-            String imei = messageBodyJson.getString("imei");
             GatewayAlarmService gatewayAlarmService = (GatewayAlarmService)
                     SpringUtil.getBean("gatewayAlarmService");
-            if (messageBodyJson.getInt("check") == 1) {
+            if (check == 1) {
                 CheckedRepository checkedRepository = (CheckedRepository) SpringUtil.getBean("checkedRepository");
                 checkedRepository.save(new Checked(imei, mid));
                 gatewayAlarmService.pushChecked(imei,mid);
@@ -67,7 +72,6 @@ public class GatewayUpstaProcessor extends Processor {
 
             GatewayStatus load = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(gatewayStatus.getGlImei());
             if (load != null) {
-                int sos = messageBodyJson.getInt("sos");
                 if (load.getSos() != sos) {
                     //触发网关报警或者解除网关报警
 
@@ -83,12 +87,12 @@ public class GatewayUpstaProcessor extends Processor {
             Sender sender = (Sender) SpringUtil.getBean("sender");
 
             GatewayRepository gatewayRepository = (GatewayRepository) SpringUtil.getBean("gatewayRepository");
-            Gateway gateway = gatewayRepository.findFirstByGlIdOrderByIdDesc(messageHeaderJson.getString("gl_id"));
+            Gateway gateway = gatewayRepository.findFirstByGlIdOrderByIdDesc(imei);
 
             GatewaySettingService gatewaySettingService = (GatewaySettingService) SpringUtil.getBean("gatewaySettingService");
             GatewaySetting gatewaySetting = gatewaySettingService.getGatewaySetting(gateway);
 
-            Map<String, Object> resHeaderMap = GatewayUpstaResponse.getInstance().responseHeader(messageHeaderJson.getString("gl_id"));
+            Map<String, Object> resHeaderMap = GatewayUpstaResponse.getInstance().responseHeader(imei);
             Map<String, Object> resBodyMap = GatewayUpstaResponse.getInstance().responseBody(messageJson, gatewaySetting);
 
             sender.sendMessage(resHeaderMap, resBodyMap);

@@ -3,6 +3,7 @@ package com.aiyolo.channel.data.processor;
 import com.aiyolo.common.SpringUtil;
 import com.aiyolo.constant.AlarmStatusEnum;
 import com.aiyolo.constant.DeviceOnlineStatusConsts;
+import com.aiyolo.constant.ProtocolFieldConsts;
 import com.aiyolo.entity.Device;
 import com.aiyolo.entity.DeviceAlarm;
 import com.aiyolo.entity.DeviceAlarmCancel;
@@ -15,6 +16,9 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+import static com.aiyolo.constant.ProtocolFieldConsts.MID;
 
 public class GatewayAlarmProcessor extends Processor {
 
@@ -32,34 +36,37 @@ public class GatewayAlarmProcessor extends Processor {
             DeviceAlarmService deviceAlarmService = (DeviceAlarmService) SpringUtil.getBean("deviceAlarmService");
             DeviceRepository deviceRepository = (DeviceRepository) SpringUtil.getBean("deviceRepository");
 
-            JSONArray deviceAlarms = messageBodyJson.getJSONArray("devs");
+            JSONArray deviceAlarms = messageBodyJson.getJSONArray(ProtocolFieldConsts.DEVS);
 
             for (int i = 0; i < deviceAlarms.size(); i++) {
                 JSONObject alarm = deviceAlarms.getJSONObject(i);
-                String imei = alarm.getString("imei");
+                String imei = alarm.getString(IMEI);
                 Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imei);
 
                 if (device == null){
                     continue;
                 }
 
+                String glImei = messageBodyJson.getString(IMEI);
+                int mid = messageBodyJson.getInt(MID);
+                int val = alarm.getInt("val");
                 DeviceAlarm deviceAlarm = new DeviceAlarm(
                         device.getType(),
                         imei,
-                        messageBodyJson.getString("imei"),
-                        messageBodyJson.getInt("mid"),
-                        alarm.getInt("val"),
+                        glImei,
+                        mid,
+                        val,
                         alarm.getInt("val1"),
                         alarm.getInt("val2"),
                         AlarmStatusEnum.LIFE.getValue());
 
-                if (AlarmStatusEnum.CLEAR.getValue().equals(alarm.getInt("val"))) {
+                if (AlarmStatusEnum.CLEAR.getValue().equals(val)) {
                     // 警报解除记录单独存储
                     deviceAlarmCancelRepository.save(new DeviceAlarmCancel(
                             device.getType(),
                             imei,
-                            messageBodyJson.getString("imei"),
-                            messageBodyJson.getInt("mid")));
+                            glImei,
+                            mid));
 
                     // 先查询是否有未解除的报警
                     DeviceAlarm _deviceAlarm = deviceAlarmRepository.findFirstByImeiAndStatusOrderByIdDesc(

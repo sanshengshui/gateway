@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.aiyolo.constant.ChannelConsts;
+import com.aiyolo.constant.ProtocolCodeConsts;
+
+import static com.aiyolo.constant.ProtocolFieldConsts.CODE;
 
 public class AppMessagePushRequest extends AppRequest {
 
@@ -20,9 +23,8 @@ public class AppMessagePushRequest extends AppRequest {
     public Map<String, Object> requestHeader(String[] mobileIds) {
         Map<String, Object> headerMap = super.requestHeader(mobileIds);
         if (headerMap != null) {
-            headerMap.remove("code");
-            headerMap.put("cmd", "push_text");
-            headerMap.put("product_id", ChannelConsts.PRODUCT_ID);
+            headerMap.put(CODE, ProtocolCodeConsts.PUSH_TO_APP);
+            headerMap.put("is_text", 1);
         }
         return headerMap;
     }
@@ -32,7 +34,7 @@ public class AppMessagePushRequest extends AppRequest {
         try {
             Map<String, Object> bodyMap = new HashMap<String, Object>();
 
-            bodyMap.put("gl_id", data.get("glId"));
+//            bodyMap.put("gl_id", data.get("glId"));
             bodyMap.put("title", data.get("title"));
             bodyMap.put("text", data.get("text"));
 

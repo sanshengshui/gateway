@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -255,13 +256,13 @@ public class GatewayService {
     /**
      * 查询网关信息
      *
-     * @param glId
+     * @param imei
      * @return
      */
-    public void requestGatewayInfo(String glId) throws Exception {
-        if (StringUtils.isNotEmpty(glId)) {
-            Map<String, Object> headerMap = GatewayInfoRequest.getInstance().requestHeader(glId);
-            Map<String, Object> bodyMap = GatewayInfoRequest.getInstance().requestBody(glId);
+    public void requestGatewayInfo(String imei) throws Exception {
+        if (StringUtils.isNotEmpty(imei)) {
+            Map<String, Object> headerMap = GatewayInfoRequest.getInstance().requestHeader(imei);
+            Map<String, Object> bodyMap = GatewayInfoRequest.getInstance().requestBody(new HashMap<>());
 
             Sender sender = (Sender) SpringUtil.getBean("sender");
             sender.sendMessage(headerMap, bodyMap);

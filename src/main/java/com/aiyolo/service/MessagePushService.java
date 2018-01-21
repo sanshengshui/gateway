@@ -37,7 +37,7 @@ public class MessagePushService {
             Map<String, Object> headerMap = AppMessagePushRequest.getInstance().requestHeader(mobileIds);
 
             Map<String, Object> queryParamMap = new HashMap<String, Object>();
-            queryParamMap.put("glId", glId);
+//            queryParamMap.put("glId", glId);
             queryParamMap.put("title", title);
             queryParamMap.put("text", text);
 

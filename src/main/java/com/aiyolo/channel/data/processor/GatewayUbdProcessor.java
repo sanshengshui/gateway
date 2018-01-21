@@ -16,6 +16,8 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.List;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+
 public class GatewayUbdProcessor extends Processor {
 
     private static Log gatewayLogger = LogFactory.getLog("gatewayLog");
@@ -25,7 +27,7 @@ public class GatewayUbdProcessor extends Processor {
         try {
             init(message);
 
-            String imei = messageBodyJson.getString("imei");
+            String imei = messageBodyJson.getString(IMEI);
 
             GatewayService gatewayService = (GatewayService) SpringUtil.getBean("gatewayService");
             List<AppUserGateway> gatewayAppUsers = gatewayService.getGatewayAppUsers(imei);

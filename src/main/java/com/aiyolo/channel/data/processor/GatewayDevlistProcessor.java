@@ -2,6 +2,7 @@ package com.aiyolo.channel.data.processor;
 
 import com.aiyolo.channel.data.response.GatewayDevlistResponse;
 import com.aiyolo.common.SpringUtil;
+import com.aiyolo.constant.ProtocolFieldConsts;
 import com.aiyolo.entity.Device;
 import com.aiyolo.queue.Sender;
 import com.aiyolo.repository.DeviceRepository;
@@ -24,9 +25,10 @@ public class GatewayDevlistProcessor extends Processor {
             Sender sender = (Sender) SpringUtil.getBean("sender");
 
             DeviceRepository deviceRepository = (DeviceRepository) SpringUtil.getBean("deviceRepository");
-            List<Device> devices = deviceRepository.findByGlImei(messageBodyJson.getString("imei"));
+            String glImei = messageBodyJson.getString(ProtocolFieldConsts.IMEI);
+            List<Device> devices = deviceRepository.findByGlImei(glImei);
 
-            Map<String, Object> resHeaderMap = GatewayDevlistResponse.getInstance().responseHeader(messageHeaderJson.getString("gl_id"));
+            Map<String, Object> resHeaderMap = GatewayDevlistResponse.getInstance().responseHeader(glImei);
             Map<String, Object> resBodyMap = GatewayDevlistResponse.getInstance().responseBody(messageJson, devices);
 
             sender.sendMessage(resHeaderMap, resBodyMap);

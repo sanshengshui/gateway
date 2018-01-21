@@ -1,6 +1,7 @@
 package com.aiyolo.channel.data.processor;
 
 import com.aiyolo.common.SpringUtil;
+import com.aiyolo.constant.ProtocolFieldConsts;
 import com.aiyolo.entity.Checked;
 import com.aiyolo.entity.Device;
 import com.aiyolo.entity.DeviceStatus;
@@ -17,6 +18,8 @@ import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+
 public class GatewayDevstaProcessor extends Processor {
 
     private static Log gatewayLogger = LogFactory.getLog("gatewayLog");
@@ -31,14 +34,14 @@ public class GatewayDevstaProcessor extends Processor {
             DeviceStatusService deviceStatusService = (DeviceStatusService) SpringUtil.getBean("deviceStatusService");
 
             DeviceRepository deviceRepository = (DeviceRepository) SpringUtil.getBean("deviceRepository");
-            JSONArray deviceStatuses = messageBodyJson.getJSONArray("devs");
+            JSONArray deviceStatuses = messageBodyJson.getJSONArray(ProtocolFieldConsts.DEVS);
 
-            String glImei = messageBodyJson.getString("imei");
-            int mid = messageBodyJson.getInt("mid");
+            String glImei = messageBodyJson.getString(IMEI);
+            int mid = messageBodyJson.getInt(ProtocolFieldConsts.MID);
             for (int i = 0; i < deviceStatuses.size(); i++) {
                 JSONObject deviceStatus = deviceStatuses.getJSONObject(i);
 
-                String imei = deviceStatus.getString("imei");
+                String imei = deviceStatus.getString(IMEI);
                 Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imei);
 
                 if (device == null) {
@@ -63,7 +66,7 @@ public class GatewayDevstaProcessor extends Processor {
                         deviceStatus.getInt("check")));
 
                 // 推送给app
-                deviceStatusService.pushDeviceStatus(deviceStatus.getString("imei"));
+                deviceStatusService.pushDeviceStatus(imei);
 
 
                 //-------------------------增加巡检---------------------------------

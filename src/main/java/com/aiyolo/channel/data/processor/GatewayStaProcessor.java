@@ -9,6 +9,8 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.Map;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+
 public class GatewayStaProcessor extends Processor {
 
     private static Log gatewayLogger = LogFactory.getLog("gatewayLog");
@@ -34,8 +36,8 @@ public class GatewayStaProcessor extends Processor {
                 gatewaySta.setCell(cell);
             } else {
                 gatewaySta = new GatewaySta(
-                        messageHeaderJson.getString("gl_id"),
-                        messageBodyJson.getString("imei"),
+                        messageHeaderJson.getString(IMEI),
+                        messageBodyJson.getString(IMEI),
                         mcc,
                         mnc,
                         lac,
