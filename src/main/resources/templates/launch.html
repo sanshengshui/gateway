@@ -18,6 +18,15 @@
         font-size: 32px;
         font-weight: bold;
     }
+    h1.title>span {
+        padding-left: 20px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .h1 {
+        font-size: 52px;
+        line-height: 42px;
+    }
     .h1,
     .h2,
     .h3 {
@@ -40,7 +49,7 @@
     }
     table#yearWarning>tbody>tr>td>span {
         color: rgb(237,126,58);
-        font-size: 52px;
+        font-size: 56px;
         font-weight: bold;
         line-height: 60px;
     }
@@ -49,6 +58,12 @@
     }
     .table-striped>tbody>tr:nth-of-type(odd) {
         background-color: rgb(25,29,35);
+    }
+    .table>thead>tr>th {
+        border-bottom: 1px solid rgb(56,55,79);
+    }
+    .table>tbody>tr>td {
+        border-top: 0;
     }
 
     .box {
@@ -80,7 +95,12 @@
                 <div class="col-xs-12">
                             <div class="row">
                                 <div class="col-md-7">
-                                    <h1 class="title">智能消防系统</h1>
+                                    <div class="pull-left">
+                                        <h1 class="title">智能消防系统<span id="areaName"></span></h1>
+                                    </div>
+                                    <div class="pull-right">
+                                        <h1 class="title" id="nowTime"></h1>
+                                    </div>
                                 </div>
                                 <div class="col-md-5">
                                 </div>
@@ -276,7 +296,7 @@ distpickerInit(authorities);
 // 省市区联动
 var distpicker_params = {valueType: "code"};
 var adcode = getUrlParam("adcode");
-if (adcode) {
+if (adcode && adcode.length == 6) {
     var _p = adcode.substring(0, 2);
     var _c = adcode.substring(2, 4);
     var _d = adcode.substring(4);
@@ -285,6 +305,7 @@ if (adcode) {
     if (_d != '00') distpicker_params.district = _p + _c + _d;
 }
 $('#distpicker').distpicker(distpicker_params);
+
 
 var map_init = false;
 var map_timer;
@@ -409,12 +430,24 @@ $(document).ready(function() {
         }
     }
 
+    var changeAreaName = function(adcode) {
+        if (adcode && adcode.length == 6) {
+            var areaName = areaCodeDict.init().getAreaName(adcode);
+            var _areaName = '';
+            _areaName += areaName[0] != '' ? areaName[0] : '';
+            _areaName += areaName[1] != '' ? ('-' + areaName[1]) : '';
+            _areaName += areaName[2] != '' ? ('-' + areaName[2]) : '';
+            $('#areaName').text(_areaName);
+        }
+    }
+
     var province, city, district, areaCode;
     var loadParams = function() {
         province = $("#province").val();
         city = $("#city").val();
         district = $("#district").val();
         areaCode = district ? district : (city ? city : province);
+        changeAreaName(areaCode);
     }
 
     $('form').submit(function(e) {
@@ -492,9 +525,8 @@ $(document).ready(function() {
             left: 'center',
             top: 'middle',
             textStyle : {
-                color: '#444',
-                fontSize: 14,
-                fontWeight: 'bolder'
+                color: '#fff',
+                fontSize: 14
             }
         },
         tooltip: {
@@ -772,7 +804,7 @@ $(document).ready(function() {
     var drawAreaPie = function() {
         var option_areaPie = $.extend(true, {}, option_pie);
         option_areaPie.title.text = "TOP6";
-        option_areaPie.title.left = document.getElementById('areaPie').offsetWidth * 0.35 - 22;
+        option_areaPie.title.left = document.getElementById('areaPie').offsetWidth * 0.35 - 24;
 
         var data_legend = [];
         var data_series = [];
@@ -906,7 +938,15 @@ $(document).ready(function() {
     }
     setInterval(function() {
         loadPage();
-    }, 1000000);
+    }, 10000);
+
+    var loadTime = function() {
+        $("#nowTime").text(moment().format('HH:mm'));
+    }
+    loadTime();
+    setInterval(function() {
+        loadTime();
+    }, 60000);
 });
 /*]]>*/
 </script>

@@ -10,10 +10,13 @@ import com.aiyolo.repository.DeviceRepository;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.service.GatewayService;
 import com.aiyolo.service.GatewayStatusService;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.List;
+
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
 
 public class GatewayUbdProcessor extends Processor {
 
@@ -24,10 +27,13 @@ public class GatewayUbdProcessor extends Processor {
         try {
             init(message);
 
-            String imei = messageBodyJson.getString("imei");
+            String imei = messageBodyJson.getString(IMEI);
 
             GatewayService gatewayService = (GatewayService) SpringUtil.getBean("gatewayService");
             List<AppUserGateway> gatewayAppUsers = gatewayService.getGatewayAppUsers(imei);
+
+            //删除之前先把mobileids找出来,否则无法推送
+            String[] mobileIds = gatewayService.getGatewayUserMobileIds(gatewayAppUsers);
             if (gatewayAppUsers != null) {
                 AppUserGatewayRepository appUserGatewayRepository = (AppUserGatewayRepository) SpringUtil.getBean("appUserGatewayRepository");
                 appUserGatewayRepository.delete(gatewayAppUsers);
@@ -54,7 +60,7 @@ public class GatewayUbdProcessor extends Processor {
 
             // 推送给app
             GatewayStatusService gatewayStatusService = (GatewayStatusService) SpringUtil.getBean("gatewayStatusService");
-            gatewayStatusService.pushGatewayStatus(gateway, AppNoticeTypeConsts.DELETE);
+            gatewayStatusService.pushGatewayStatus(gateway, AppNoticeTypeConsts.DELETE, mobileIds);
 
             // 写入文件待后续处理
             gatewayLogger.info(message);

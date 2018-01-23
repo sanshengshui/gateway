@@ -54,11 +54,6 @@ public class ChannelController {
             return "channelForm";
         }
 
-        if (StringUtils.isEmpty(user.getProductIds())) {
-            bindingResult.rejectValue("productIds", "error.user", "请选择关联产品！");
-            return "channelForm";
-        }
-
         if (user.getId() != null) {
             User userRecord = channelService.getChannelUserById(user.getId());
             if (userRecord != null) {
@@ -71,7 +66,6 @@ public class ChannelController {
                 userRecord.getChannel().setName(user.getChannel().getName());
                 userRecord.setRealname(user.getRealname());
                 userRecord.setPhone(user.getPhone());
-                userRecord.setProductIds(user.getProductIds());
                 userRecord.setGatewayAreaCodes(user.getGatewayAreaCodes());
 
                 if (! StringUtils.isEmpty(user.getPassword())) {
@@ -104,7 +98,6 @@ public class ChannelController {
                     user.getPhone(),
                     hashedPassword,
                     RoleEnum.AGENT,
-                    user.getProductIds(),
                     user.getGatewayAreaCodes()));
 
             return "redirect:/channel";

@@ -2,6 +2,7 @@ package com.aiyolo.channel.data.processor;
 
 import com.aiyolo.cache.GatewayBeatCache;
 import com.aiyolo.common.SpringUtil;
+import com.aiyolo.constant.ProtocolFieldConsts;
 
 public class GatewayBeatProcessor extends Processor {
 
@@ -10,8 +11,9 @@ public class GatewayBeatProcessor extends Processor {
         try {
             init(message);
 
-            String glId = messageHeaderJson.getString("gl_id");
-            long timestamp = messageHeaderJson.getLong("timestamp");
+//            String glId = messageHeaderJson.getString("gl_id");
+            String glId = messageHeaderJson.getString(ProtocolFieldConsts.IMEI);
+            long timestamp = messageHeaderJson.getLong(ProtocolFieldConsts.TIMESTAMP);
 
             GatewayBeatCache gatewayBeatCache = (GatewayBeatCache) SpringUtil.getBean("gatewayBeatCache");
 

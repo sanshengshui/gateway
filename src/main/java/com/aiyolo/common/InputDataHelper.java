@@ -5,12 +5,27 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.aiyolo.constant.InputDataTypeEnum;
+import com.aiyolo.constant.ProtocolFieldConsts;
 
 import net.sf.json.JSONObject;
+
+import static com.aiyolo.constant.ProtocolFieldConsts.ACT;
+import static com.aiyolo.constant.ProtocolFieldConsts.ACTION;
 
 public class InputDataHelper {
 
     private static Log errorLogger = LogFactory.getLog("errorLog");
+
+
+    public static String getAction(JSONObject bodyJson){
+        String action = "";
+        if (bodyJson.containsKey(ACTION)) {
+            action = bodyJson.getString(ACTION);
+        } else if (bodyJson.containsKey(ACT)) {
+            action = bodyJson.getString(ACT);
+        }
+        return action;
+    }
 
     /**
      * 判断数据类型

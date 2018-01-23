@@ -16,6 +16,9 @@ import org.springframework.util.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+import static com.aiyolo.constant.ProtocolFieldConsts.PIN;
+
 @Service
 public class SetPairService extends BaseService {
 
@@ -44,8 +47,8 @@ public class SetPairService extends BaseService {
             Map<String, Object> headerMap = GatewayPairRequest.getInstance().requestHeader(appUserGateway.getGateway().getGlId());
 
             Map<String, Object> data = new HashMap<String, Object>();
-            data.put("imei", imei);
-            data.put("pin", appUserGateway.getGateway().getGlPin());
+            data.put(IMEI, imei);
+            data.put(PIN, appUserGateway.getGateway().getGlPin());
             Map<String, Object> bodyMap = GatewayPairRequest.getInstance().requestBody(data);
 
             sender.sendMessage(headerMap, bodyMap);

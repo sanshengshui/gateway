@@ -20,11 +20,12 @@ public class ChannelService {
     public Page<User> getPageChannelUser(ChannelSearchVo channelSearchVo) {
         Page<User> users = new PageImpl<User>(new ArrayList<User>());
 
-        users = userRepository.findPageByRoleAndChannelNameLikeAndUsernameLikeAndPhoneLike(
+        users = userRepository.findPageByRoleAndChannelNameLikeAndUsernameLikeAndRealnameLikeAndPhoneLike(
                 SimplePageRequest.getPageable(channelSearchVo),
                 channelSearchVo.getRole(),
                 "%" + channelSearchVo.getChannelName() + "%",
                 "%" + channelSearchVo.getUsername() + "%",
+                "%" + channelSearchVo.getRealname() + "%",
                 "%" + channelSearchVo.getPhone() + "%");
 
         return users;

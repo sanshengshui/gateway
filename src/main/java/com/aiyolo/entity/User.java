@@ -33,14 +33,13 @@ public class User extends BaseEntity {
 
     public User() {}
 
-    public User(Long channelId, String username, String realname, String phone, String password, RoleEnum role, String productIds, String gatewayAreaCodes) {
+    public User(Long channelId, String username, String realname, String phone, String password, RoleEnum role, String gatewayAreaCodes) {
         this.channelId = channelId;
         this.username = username;
         this.realname = realname;
         this.phone = phone;
         this.password = password;
         this.role = role;
-        this.productIds = productIds;
         this.gatewayAreaCodes = gatewayAreaCodes;
     }
 

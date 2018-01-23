@@ -1,36 +1,44 @@
 package com.aiyolo.channel.data.request;
 
 import com.aiyolo.common.ArrayHelper;
+import com.aiyolo.constant.ChannelConsts;
 import com.aiyolo.constant.ProtocolCodeConsts;
+import com.aiyolo.constant.ProtocolFieldConsts;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.CACHE_TIME;
+import static com.aiyolo.constant.ProtocolFieldConsts.CODE;
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEIS;
+import static com.aiyolo.constant.ProtocolFieldConsts.PRODUCT_ID;
+
 public abstract class GatewayRequest extends Request {
 
-    public Map<String, Object> requestHeader(String glId) {
-        String[] glIds = new String[1];
-        glIds[0] = glId;
-        return requestHeader(glIds);
+    public Map<String, Object> requestHeader(String imei) {
+        String[] imeis = new String[1];
+        imeis[0] = imei;
+        return requestHeader(imeis);
     }
 
     @Override
-    public Map<String, Object> requestHeader(String[] glIds) {
+    public Map<String, Object> requestHeader(String[] imeis) {
         try {
             Map<String, Object> headerMap = new HashMap<String, Object>();
 
-            glIds = (String[]) ArrayHelper.removeNullElement(glIds);
+            imeis = (String[]) ArrayHelper.removeNullElement(imeis);
 
-            Object[] glIdObjects = new Object[glIds.length];
-            for (int i = 0; i < glIds.length; i++) {
+            Object[] glIdObjects = new Object[imeis.length];
+            for (int i = 0; i < imeis.length; i++) {
                 Map<String, String> glIdMap = new HashMap<String, String>();
-                glIdMap.put("gl_id", glIds[i]);
+                glIdMap.put(ProtocolFieldConsts.IMEI, imeis[i]);
                 glIdObjects[i] = glIdMap;
             }
 
-            headerMap.put("code", ProtocolCodeConsts.SEND_TO_GATEWAY);
-            headerMap.put("gl_ids", glIdObjects);
-            headerMap.put("cache_time", 0);
+            headerMap.put(CODE, ProtocolCodeConsts.SEND_TO_GATEWAY);
+            headerMap.put(IMEIS, glIdObjects);
+            headerMap.put(CACHE_TIME, 0);
+            headerMap.put(PRODUCT_ID, ChannelConsts.PRODUCT_ID);
 
             return headerMap;
         } catch (Exception e) {

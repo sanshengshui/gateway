@@ -5,6 +5,12 @@ import com.aiyolo.constant.ChannelConsts;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.ACT;
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+import static com.aiyolo.constant.ProtocolFieldConsts.MID;
+import static com.aiyolo.constant.ProtocolFieldConsts.PID;
+import static com.aiyolo.constant.ProtocolFieldConsts.PIN;
+
 public class GatewayPairRequest extends GatewayRequest {
 
     public static final String ACTION = "pair";
@@ -23,11 +29,11 @@ public class GatewayPairRequest extends GatewayRequest {
         try {
             Map<String, Object> bodyMap = new HashMap<String, Object>();
 
-            bodyMap.put("act", ACTION);
-            bodyMap.put("pid", ChannelConsts.PRODUCT_ID);
-            bodyMap.put("imei", data.get("imei"));
-            bodyMap.put("pin", data.get("pin"));
-            bodyMap.put("mid", System.currentTimeMillis() / 1000);
+            bodyMap.put(ACT, ACTION);
+            bodyMap.put(PID, ChannelConsts.PRODUCT_ID);
+            bodyMap.put(IMEI, data.get(IMEI));
+            bodyMap.put(PIN, data.get(PIN));
+            bodyMap.put(MID, System.currentTimeMillis() / 1000);
 
             return bodyMap;
         } catch (Exception e) {

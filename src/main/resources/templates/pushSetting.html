@@ -94,8 +94,8 @@
 
 <script th:inline="javascript">
 /*<![CDATA[*/
-var type = /*[[${pushSetting0.type}]]*/ 'app';
-fragment_polish("push-setting-" + type);
+var target = /*[[${pushSetting0.target}]]*/ 'app';
+fragment_polish("push-setting-" + target);
 
 var reg = new RegExp("#(.*)$", "i");
 var r = window.location.href.match(reg);

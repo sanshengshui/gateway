@@ -4,7 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.aiyolo.common.ArrayHelper;
+import com.aiyolo.constant.ChannelConsts;
 import com.aiyolo.constant.ProtocolCodeConsts;
+
+import static com.aiyolo.constant.ProtocolFieldConsts.CACHE_TIME;
+import static com.aiyolo.constant.ProtocolFieldConsts.CODE;
+import static com.aiyolo.constant.ProtocolFieldConsts.IS_TEXT;
+import static com.aiyolo.constant.ProtocolFieldConsts.PRODUCT_ID;
 
 public abstract class AppRequest extends Request {
 
@@ -28,9 +34,11 @@ public abstract class AppRequest extends Request {
                 mobileIdObjects[i] = mobileIdMap;
             }
 
-            headerMap.put("code", ProtocolCodeConsts.SEND_TO_APP);
+            headerMap.put(CODE, ProtocolCodeConsts.PUSH_TO_APP);
             headerMap.put("mobile_ids", mobileIdObjects);
-            headerMap.put("cache_time", 0);
+            headerMap.put(CACHE_TIME, 0);
+            headerMap.put(IS_TEXT, 0);
+            headerMap.put(PRODUCT_ID, ChannelConsts.PRODUCT_ID);
 
             return headerMap;
         } catch (Exception e) {

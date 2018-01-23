@@ -1,7 +1,9 @@
 package com.aiyolo.channel.data.processor;
 
 import com.aiyolo.common.SpringUtil;
+import com.aiyolo.constant.ProtocolFieldConsts;
 import com.aiyolo.entity.Checked;
+import com.aiyolo.entity.Device;
 import com.aiyolo.entity.DeviceStatus;
 import com.aiyolo.entity.GatewayStatus;
 import com.aiyolo.repository.CheckedRepository;
@@ -15,6 +17,8 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
 
 public class GatewayDevstaProcessor extends Processor {
 
@@ -30,20 +34,27 @@ public class GatewayDevstaProcessor extends Processor {
             DeviceStatusService deviceStatusService = (DeviceStatusService) SpringUtil.getBean("deviceStatusService");
 
             DeviceRepository deviceRepository = (DeviceRepository) SpringUtil.getBean("deviceRepository");
-            JSONArray deviceStatuses = messageBodyJson.getJSONArray("devs");
+            JSONArray deviceStatuses = messageBodyJson.getJSONArray(ProtocolFieldConsts.DEVS);
 
-            String glImei = messageBodyJson.getString("imei");
-            int mid = messageBodyJson.getInt("mid");
+            String glImei = messageBodyJson.getString(IMEI);
+            int mid = messageBodyJson.getInt(ProtocolFieldConsts.MID);
             for (int i = 0; i < deviceStatuses.size(); i++) {
                 JSONObject deviceStatus = deviceStatuses.getJSONObject(i);
 
-                String imei = deviceStatus.getString("imei");
-                if (!glImei.equals(deviceRepository.findFirstByImeiOrderByIdDesc(imei).getGlImei())){
+                String imei = deviceStatus.getString(IMEI);
+                Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imei);
+
+                if (device == null) {
+                    // TODO: 2018/1/18 设备不应该为空，要从根源解决
+                    continue;
+                }
+
+                if (!glImei.equals(device.getGlImei())) {
                     //不是所属网关汇报的状态忽略掉
                     continue;
                 }
                 deviceStatusRepository.save(new DeviceStatus(
-                        deviceStatus.getString("dev"),
+                        device.getType(),
                         imei,
                         glImei,
                         mid,
@@ -55,7 +66,7 @@ public class GatewayDevstaProcessor extends Processor {
                         deviceStatus.getInt("check")));
 
                 // 推送给app
-                deviceStatusService.pushDeviceStatus(deviceStatus.getString("imei"));
+                deviceStatusService.pushDeviceStatus(imei);
 
 
                 //-------------------------增加巡检---------------------------------
