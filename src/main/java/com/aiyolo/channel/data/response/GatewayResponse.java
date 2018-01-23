@@ -27,15 +27,15 @@ public abstract class GatewayResponse extends Response {
             Map<String, Object> headerMap = new HashMap<String, Object>();
             imeis = (String[]) ArrayHelper.removeNullElement(imeis);
 
-            Object[] glIdObjects = new Object[imeis.length];
-            for (int i = 0; i < imeis.length; i++) {
-                Map<String, String> glIdMap = new HashMap<String, String>();
-                glIdMap.put(ProtocolFieldConsts.IMEI, imeis[i]);
-                glIdObjects[i] = glIdMap;
-            }
+//            Object[] glIdObjects = new Object[imeis.length];
+//            for (int i = 0; i < imeis.length; i++) {
+//                Map<String, String> glIdMap = new HashMap<String, String>();
+//                glIdMap.put(ProtocolFieldConsts.IMEI, imeis[i]);
+//                glIdObjects[i] = glIdMap;
+//            }
 
             headerMap.put(CODE, ProtocolCodeConsts.SEND_TO_GATEWAY);
-            headerMap.put(IMEIS, glIdObjects);
+            headerMap.put(IMEIS, imeis);
             headerMap.put(CACHE_TIME, 0);
             headerMap.put(PRODUCT_ID, ChannelConsts.PRODUCT_ID);
 

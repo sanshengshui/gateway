@@ -27,15 +27,15 @@ public abstract class AppRequest extends Request {
 
             mobileIds = (String[]) ArrayHelper.removeNullElement(mobileIds);
 
-            Object[] mobileIdObjects = new Object[mobileIds.length];
-            for (int i = 0; i < mobileIds.length; i++) {
-                Map<String, String> mobileIdMap = new HashMap<String, String>();
-                mobileIdMap.put("mobile_id", mobileIds[i]);
-                mobileIdObjects[i] = mobileIdMap;
-            }
+//            Object[] mobileIdObjects = new Object[mobileIds.length];
+//            for (int i = 0; i < mobileIds.length; i++) {
+//                Map<String, String> mobileIdMap = new HashMap<String, String>();
+//                mobileIdMap.put("mobile_id", mobileIds[i]);
+//                mobileIdObjects[i] = mobileIdMap;
+//            }
 
             headerMap.put(CODE, ProtocolCodeConsts.PUSH_TO_APP);
-            headerMap.put("mobile_ids", mobileIdObjects);
+            headerMap.put("mobile_ids", mobileIds);
             headerMap.put(CACHE_TIME, 0);
             headerMap.put(IS_TEXT, 0);
             headerMap.put(PRODUCT_ID, ChannelConsts.PRODUCT_ID);
