@@ -6,6 +6,7 @@ package com.aiyolo.channel.data.response;
  */
 public class Resp {
 
+
     /**
      * 请求接口标识
      */
@@ -44,12 +45,12 @@ public class Resp {
     }
 
 
-    public Resp(String action,String error){
+    public Resp(String action, String error){
         this.action =action;
         this.error =error;
     }
 
-    public Resp(String action,String error,Object data){
+    public Resp(String action, String error, Object data){
         this.action = action;
         this.error =error;
         this.data =data;
@@ -69,8 +70,9 @@ public class Resp {
      * @param action
      * @return
      */
-    public static Resp error(String action,Object data){
-        return new Resp(action,"120",data);
+    public static Resp error(String action){
+        return new Resp(action,"400");
     }
+
 
 }

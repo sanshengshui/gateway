@@ -12,23 +12,30 @@ import java.util.List;
  * @description 盒子和店铺之间的绑定关系
  */
 @Entity
-public class Bind extends BaseEntity implements Serializable{
+public class Bind  implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String shopid;
 
-    private List<String> imeis;
+    private String imeis;
 
     @Override
+    public String toString() {
+        return "Bind{" +
+                "id=" + id +
+                ", shopid='" + shopid + '\'' +
+                ", imeis='" + imeis + '\'' +
+                '}';
+    }
+
     public Long getId() {
         return id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -41,11 +48,11 @@ public class Bind extends BaseEntity implements Serializable{
         this.shopid = shopid;
     }
 
-    public List<String> getImeis() {
+    public String getImeis() {
         return imeis;
     }
 
-    public void setImeis(List<String> imeis) {
+    public void setImeis(String imeis) {
         this.imeis = imeis;
     }
 }
