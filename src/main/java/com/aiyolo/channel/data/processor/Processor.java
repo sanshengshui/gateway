@@ -2,12 +2,15 @@ package com.aiyolo.channel.data.processor;
 
 import com.aiyolo.cache.GatewayBeatCache;
 import com.aiyolo.cache.GatewayLiveStatusCache;
+import com.aiyolo.channel.data.response.GatewayPushResponse;
+import com.aiyolo.channel.data.response.GatewayResponse;
 import com.aiyolo.common.InputDataHelper;
 import com.aiyolo.common.SpringUtil;
 import com.aiyolo.constant.InputDataTypeEnum;
 import com.aiyolo.constant.ProtocolCodeConsts;
 import com.aiyolo.constant.ProtocolFieldConsts;
 import com.aiyolo.entity.Gateway;
+import com.aiyolo.queue.Sender;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.service.GatewayService;
 
@@ -17,6 +20,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
+
+import java.util.Map;
 
 import static com.aiyolo.cache.GatewayLiveStatusCache.LIVE;
 import static com.aiyolo.constant.ProtocolFieldConsts.ACT;
@@ -43,24 +48,34 @@ public abstract class Processor {
         boolean containsImei = messageHeaderJson.containsKey(IMEI);
         switch (code) {
             case ProtocolCodeConsts.RECEIVE_FROM_GATEWAY:
-                if (!containsImei || !messageBodyJson.containsKey(IMEI)||
+                if (!containsImei || !messageBodyJson.containsKey(IMEI) ||
                         (!messageBodyJson.containsKey(ACTION) && !messageBodyJson.containsKey(ACT))) {
                     throw new RuntimeException("Gateway Params Error.");
                 }
                 String action = InputDataHelper.getAction(messageBodyJson);
                 if (!ArrayUtils.contains(InputDataTypeEnum.GATEWAY_PUSH.getValue(), action)) {
+                    //只有这几个接口才需要查状态
                     return;
 
                 }
+                String imei = messageHeaderJson.getString(IMEI);
+                if (!action.equals("upsta")) {
+                    // 应答
+                    Sender sender = (Sender) SpringUtil.getBean("sender");
+                    Map<String, Object> responseHeader = GatewayPushResponse.getInstance().responseHeader(imei);
+                    Map<String, Object> responseBody = GatewayPushResponse.getInstance().responseBody(messageJson, null);
+                    sender.sendMessage(responseHeader, responseBody);
+                }
+
 
                 GatewayService gatewayService = (GatewayService) SpringUtil.getBean("gatewayService");
                 GatewayRepository gatewayRepository = (GatewayRepository) SpringUtil.getBean("gatewayRepository");
 
                 // 查询该是否已入库
-                String imei = messageHeaderJson.getString(IMEI);
+
                 Gateway gateway = gatewayRepository.findFirstByGlIdOrderByIdDesc(imei);
                 if (gateway == null) {
-                   gatewayRepository.save(new Gateway(imei,imei, messageBodyJson.getString(PIN)));
+                    gatewayRepository.save(new Gateway(imei, imei, messageBodyJson.getString(PIN)));
 
                     gatewayService.requestGatewayInfo(imei);
                 } else {
@@ -93,9 +108,9 @@ public abstract class Processor {
             case ProtocolCodeConsts.PUSH_TO_APP:
                 break;
             case ProtocolCodeConsts.DEVICE_INFO:
-                if (!containsImei) {
-                    throw new RuntimeException("Gateway imei Params Error.");
-                }
+//                if (!containsImei) {
+//                    throw new RuntimeException("Gateway imei Params Error.");
+//                }
                 break;
             case ProtocolCodeConsts.APP_LOGIN:
                 break;

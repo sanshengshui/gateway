@@ -6,6 +6,7 @@ import com.aiyolo.constant.ProtocolCodeConsts;
 import com.aiyolo.constant.ProtocolFieldConsts;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.aiyolo.constant.ProtocolFieldConsts.CACHE_TIME;
@@ -24,7 +25,7 @@ public abstract class GatewayResponse extends Response {
     @Override
     public Map<String, Object> responseHeader(String[] imeis) {
         try {
-            Map<String, Object> headerMap = new HashMap<String, Object>();
+            Map<String, Object> headerMap = new LinkedHashMap<>();
             imeis = (String[]) ArrayHelper.removeNullElement(imeis);
 
 //            Object[] glIdObjects = new Object[imeis.length];

@@ -4,6 +4,7 @@ import com.aiyolo.common.BaiduMapHelper;
 import com.aiyolo.common.SpringUtil;
 import com.aiyolo.entity.GatewaySta;
 import com.aiyolo.repository.GatewayStaRepository;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,10 +26,11 @@ public class GatewayStaProcessor extends Processor {
             int lac = messageBodyJson.getInt("lac");
             int cell = messageBodyJson.getInt("cell");
 
+            String glImei = messageHeaderJson.getString(IMEI);
             GatewayStaRepository gatewayStaRepository = (GatewayStaRepository) SpringUtil.getBean("gatewayStaRepository");
 
             // 查询记录是否存在
-            GatewaySta gatewaySta = gatewayStaRepository.findFirstByGlIdOrderByIdDesc(messageHeaderJson.getString("gl_id"));
+            GatewaySta gatewaySta = gatewayStaRepository.findFirstByGlIdOrderByIdDesc(glImei);
             if (gatewaySta != null) {
                 gatewaySta.setMcc(mcc);
                 gatewaySta.setMnc(mnc);
@@ -36,8 +38,8 @@ public class GatewayStaProcessor extends Processor {
                 gatewaySta.setCell(cell);
             } else {
                 gatewaySta = new GatewaySta(
-                        messageHeaderJson.getString(IMEI),
-                        messageBodyJson.getString(IMEI),
+                        glImei,
+                        glImei,
                         mcc,
                         mnc,
                         lac,
