@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @date 2018年1月23日 下午13:42
  */
 @Entity
-public class Shop extends BaseEntity implements Serializable{
+public class Shop  implements Serializable{
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,6 +34,20 @@ public class Shop extends BaseEntity implements Serializable{
 
     private String shopphone;
 
+    @Override
+    public String toString() {
+        return "Shop{" +
+                "id=" + id +
+                ", channelid='" + channelid + '\'' +
+                ", brandid='" + brandid + '\'' +
+                ", shop='" + shop + '\'' +
+                ", province='" + province + '\'' +
+                ", city='" + city + '\'' +
+                ", area='" + area + '\'' +
+                ", address='" + address + '\'' +
+                ", shopphone='" + shopphone + '\'' +
+                '}';
+    }
 
     public Long getId() {
         return id;
