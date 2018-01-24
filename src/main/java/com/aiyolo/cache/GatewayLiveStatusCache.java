@@ -19,8 +19,8 @@ public class GatewayLiveStatusCache {
     @Value("${gateway.live.beat.period}")
     private long gatewayLiveBeatPeriod;
 
-    @Cacheable(value="gatewayLiveStatus", unless="#result == T(com.aiyolo.cache.GatewayLiveStatusCache).UNKNOWN")
-    public int getByGlId(String glId) {
+    @Cacheable(value = "gatewayLiveStatus", unless = "#result == T(com.aiyolo.cache.GatewayLiveStatusCache).UNKNOWN")
+    public int getByGlImei(String glImei) {
         long currentTime = System.currentTimeMillis();
         long appLaunchTime = (long) commonCache.get("appLaunchTime");
         if (currentTime - appLaunchTime > gatewayLiveBeatPeriod) {
@@ -31,7 +31,7 @@ public class GatewayLiveStatusCache {
     }
 
     @CachePut(value = "gatewayLiveStatus", key = "#p0")
-    public int save(String glId, int liveStatus) {
+    public int save(String glImei, int liveStatus) {
         return liveStatus;
     }
 

@@ -7,16 +7,21 @@ import com.aiyolo.constant.ProtocolFieldConsts;
 import com.aiyolo.entity.Device;
 import com.aiyolo.entity.DeviceAlarm;
 import com.aiyolo.entity.DeviceAlarmCancel;
+import com.aiyolo.entity.DeviceStatus;
 import com.aiyolo.repository.DeviceAlarmCancelRepository;
 import com.aiyolo.repository.DeviceAlarmRepository;
 import com.aiyolo.repository.DeviceRepository;
+import com.aiyolo.repository.DeviceStatusRepository;
 import com.aiyolo.service.DeviceAlarmService;
 import com.aiyolo.service.DeviceStatusService;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import static com.aiyolo.constant.DeviceOnlineStatusConsts.ONLINE;
 import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
 import static com.aiyolo.constant.ProtocolFieldConsts.MID;
 
@@ -35,6 +40,7 @@ public class GatewayAlarmProcessor extends Processor {
             DeviceStatusService deviceStatusService = (DeviceStatusService) SpringUtil.getBean("deviceStatusService");
             DeviceAlarmService deviceAlarmService = (DeviceAlarmService) SpringUtil.getBean("deviceAlarmService");
             DeviceRepository deviceRepository = (DeviceRepository) SpringUtil.getBean("deviceRepository");
+            DeviceStatusRepository deviceStatusRepository = (DeviceStatusRepository) SpringUtil.getBean("deviceStatusRepository");
 
             JSONArray deviceAlarms = messageBodyJson.getJSONArray(ProtocolFieldConsts.DEVS);
 
@@ -43,7 +49,7 @@ public class GatewayAlarmProcessor extends Processor {
                 String imei = alarm.getString(IMEI);
                 Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imei);
 
-                if (device == null){
+                if (device == null) {
                     continue;
                 }
 
@@ -83,8 +89,11 @@ public class GatewayAlarmProcessor extends Processor {
                     deviceAlarmRepository.save(deviceAlarm);
                 }
 
+                //强制在线
+                deviceStatusService.forceOnline(deviceStatusRepository, imei, device, glImei, mid);
+
                 // 推送设备状态变化
-                deviceStatusService.pushDeviceStatus(imei, DeviceOnlineStatusConsts.ONLINE);
+                deviceStatusService.pushDeviceStatus(imei);
 
                 // 推送预报警通知给APP&个推&发送短信
                 deviceAlarmService.pushDeviceAlarm(deviceAlarm);
@@ -99,5 +108,6 @@ public class GatewayAlarmProcessor extends Processor {
             errorLogger.error("GatewayAlarmProcessor异常！message:" + message, e);
         }
     }
+
 
 }

@@ -24,6 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.aiyolo.constant.DeviceOnlineStatusConsts.ONLINE;
+
 @Service
 public class DeviceStatusService {
 
@@ -45,14 +47,14 @@ public class DeviceStatusService {
     MessagePushService messagePushService;
 
     public void pushDeviceStatus(Device device) {
-        pushDeviceStatus(device, AppNoticeTypeConsts.MODIFY, null);
+        pushDeviceStatus(device, AppNoticeTypeConsts.MODIFY);
     }
 
-    public void pushDeviceStatus(Device device, Integer onlineStatus) {
-        pushDeviceStatus(device, AppNoticeTypeConsts.MODIFY, onlineStatus);
-    }
+    //    public void pushDeviceStatus(Device device, Integer onlineStatus) {
+    //        pushDeviceStatus(device, AppNoticeTypeConsts.MODIFY, onlineStatus);
+    //    }
 
-    public void pushDeviceStatus(Device device, Integer noticeType, Integer onlineStatus) {
+    public void pushDeviceStatus(Device device, Integer noticeType) {
         if (device == null) {
             return;
         }
@@ -80,9 +82,9 @@ public class DeviceStatusService {
                     queryParamMap.put("bat", deviceStatus.getBat());
                     queryParamMap.put("check", deviceStatus.getChecked());
                 }
-                if (onlineStatus != null) {
-                    queryParamMap.put("online", onlineStatus);
-                }
+                //                if (onlineStatus != null) {
+                //                    queryParamMap.put("online", onlineStatus);
+                //                }
 
                 DeviceAlarm deviceAlarm = deviceAlarmRepository.findFirstByImeiOrderByIdDesc(device.getImei());
                 if (deviceAlarm != null) {
@@ -107,14 +109,14 @@ public class DeviceStatusService {
         pushDeviceStatus(device);
     }
 
-    public void pushDeviceStatus(String imei, Integer onlineStatus) {
-        Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imei);
-        if (device == null) {
-            return;
-        }
-
-        pushDeviceStatus(device, onlineStatus);
-    }
+    //    public void pushDeviceStatus(String imei, Integer onlineStatus) {
+    //        Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imei);
+    //        if (device == null) {
+    //            return;
+    //        }
+    //
+    //        pushDeviceStatus(device, onlineStatus);
+    //    }
 
 
     public void pushChecked(String imei, int mid) {
@@ -134,7 +136,7 @@ public class DeviceStatusService {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         // 推送给个推
-        messagePushService.pushMessage(mobileIds, gateway.getGlId()
+        messagePushService.pushMessage(mobileIds
                 , "巡检通知"
                 , "智能网关" + gateway.getGlName() + "下的" + deviceTypeToName(device.getType())
                         + "在" + format.format(mid * 1000L) + "完成巡检");
@@ -142,6 +144,17 @@ public class DeviceStatusService {
 
     }
 
+
+    public void forceOnline(DeviceStatusRepository deviceStatusRepository, String imei, Device device, String glImei, int mid) {
+        //强制在线
+        DeviceStatus deviceStatus = deviceStatusRepository.findFirstByImeiOrderByIdDesc(imei);
+        if (deviceStatus == null) {
+            deviceStatus = new DeviceStatus(device.getType(), imei, glImei, mid, ONLINE
+                    , 0, 4, 0x64, "", 0);
+        }
+        deviceStatus.setOnline(ONLINE);
+        deviceStatusRepository.save(deviceStatus);
+    }
 
     public static String deviceTypeToName(String type) {
         String name = "";

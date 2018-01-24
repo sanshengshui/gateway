@@ -6,6 +6,7 @@ import com.aiyolo.constant.ProtocolCodeConsts;
 import com.aiyolo.constant.ProtocolFieldConsts;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.aiyolo.constant.ProtocolFieldConsts.CACHE_TIME;
@@ -24,18 +25,18 @@ public abstract class GatewayResponse extends Response {
     @Override
     public Map<String, Object> responseHeader(String[] imeis) {
         try {
-            Map<String, Object> headerMap = new HashMap<String, Object>();
+            Map<String, Object> headerMap = new LinkedHashMap<>();
             imeis = (String[]) ArrayHelper.removeNullElement(imeis);
 
-            Object[] glIdObjects = new Object[imeis.length];
-            for (int i = 0; i < imeis.length; i++) {
-                Map<String, String> glIdMap = new HashMap<String, String>();
-                glIdMap.put(ProtocolFieldConsts.IMEI, imeis[i]);
-                glIdObjects[i] = glIdMap;
-            }
+//            Object[] glIdObjects = new Object[imeis.length];
+//            for (int i = 0; i < imeis.length; i++) {
+//                Map<String, String> glIdMap = new HashMap<String, String>();
+//                glIdMap.put(ProtocolFieldConsts.IMEI, imeis[i]);
+//                glIdObjects[i] = glIdMap;
+//            }
 
             headerMap.put(CODE, ProtocolCodeConsts.SEND_TO_GATEWAY);
-            headerMap.put(IMEIS, glIdObjects);
+            headerMap.put(IMEIS, imeis);
             headerMap.put(CACHE_TIME, 0);
             headerMap.put(PRODUCT_ID, ChannelConsts.PRODUCT_ID);
 

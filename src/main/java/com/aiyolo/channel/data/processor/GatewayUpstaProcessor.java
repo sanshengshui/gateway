@@ -37,12 +37,11 @@ public class GatewayUpstaProcessor extends Processor {
             String _dh = format.format(mid * 1000L);
             String[] _dhArray = _dh.split(" ");
 
-            String imei = messageHeaderJson.getString(IMEI);
+            String glImei = messageHeaderJson.getString(IMEI);
             int check = messageBodyJson.getInt("check");
             int sos = messageBodyJson.getInt("sos");
             GatewayStatus gatewayStatus = new GatewayStatus(
-                    imei,
-                    imei,
+                    glImei,
                     mid,
                     _dhArray[0],
                     _dhArray[1],
@@ -56,26 +55,24 @@ public class GatewayUpstaProcessor extends Processor {
                     check,
                     messageBodyJson.getInt("htmp"));
 
-            GatewayStatusRepository gatewayStatusRepository = (GatewayStatusRepository)
-                    SpringUtil.getBean("gatewayStatusRepository");
+            GatewayStatusRepository gatewayStatusRepository = (GatewayStatusRepository) SpringUtil.getBean("gatewayStatusRepository");
 
 
             //-------------------------增加网关报警和巡检---------------------------------
 
-            GatewayAlarmService gatewayAlarmService = (GatewayAlarmService)
-                    SpringUtil.getBean("gatewayAlarmService");
+            GatewayAlarmService gatewayAlarmService = (GatewayAlarmService) SpringUtil.getBean("gatewayAlarmService");
             if (check == 1) {
                 CheckedRepository checkedRepository = (CheckedRepository) SpringUtil.getBean("checkedRepository");
-                checkedRepository.save(new Checked(imei, mid));
-                gatewayAlarmService.pushChecked(imei,mid);
+                checkedRepository.save(new Checked(glImei, mid));
+                gatewayAlarmService.pushChecked(glImei, mid);
             }
 
-            GatewayStatus load = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(gatewayStatus.getGlImei());
+            GatewayStatus load = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(glImei);
             if (load != null) {
                 if (load.getSos() != sos) {
                     //触发网关报警或者解除网关报警
 
-                    gatewayAlarmService.gatewayAlarm(imei, sos, mid);
+                    gatewayAlarmService.gatewayAlarm(glImei, sos, mid);
                 }
             }
             //-------------------------增加网关报警和巡检---------------------------------
@@ -87,12 +84,12 @@ public class GatewayUpstaProcessor extends Processor {
             Sender sender = (Sender) SpringUtil.getBean("sender");
 
             GatewayRepository gatewayRepository = (GatewayRepository) SpringUtil.getBean("gatewayRepository");
-            Gateway gateway = gatewayRepository.findFirstByGlIdOrderByIdDesc(imei);
+            Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(glImei);
 
             GatewaySettingService gatewaySettingService = (GatewaySettingService) SpringUtil.getBean("gatewaySettingService");
             GatewaySetting gatewaySetting = gatewaySettingService.getGatewaySetting(gateway);
 
-            Map<String, Object> resHeaderMap = GatewayUpstaResponse.getInstance().responseHeader(imei);
+            Map<String, Object> resHeaderMap = GatewayUpstaResponse.getInstance().responseHeader(glImei);
             Map<String, Object> resBodyMap = GatewayUpstaResponse.getInstance().responseBody(messageJson, gatewaySetting);
 
             sender.sendMessage(resHeaderMap, resBodyMap);

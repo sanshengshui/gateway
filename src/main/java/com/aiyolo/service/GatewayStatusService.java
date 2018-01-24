@@ -70,7 +70,7 @@ public class GatewayStatusService {
                 List<Device> devices = deviceRepository.findByGlImei(gateway.getGlImei());
                 queryParamMap.put("dev_num", devices.size());
 
-                int gatewayLiveStatus = gatewayLiveStatusCache.getByGlId(gateway.getGlId());
+                int gatewayLiveStatus = gatewayLiveStatusCache.getByGlImei(gateway.getGlImei());
                 queryParamMap.put("online", gatewayLiveStatus);
 
                 GatewayStatus gatewayStatus = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(gateway.getGlImei());
@@ -102,15 +102,15 @@ public class GatewayStatusService {
     }
 
     @Async
-    public void notifyGatewayLiveStatusChange(String glId) {
+    public void notifyGatewayLiveStatusChange(String glImei) {
         try {
-            Gateway gateway = gatewayRepository.findFirstByGlIdOrderByIdDesc(glId);
+            Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(glImei);
             if (gateway != null) {
                 pushGatewayStatus(gateway);
             }
-            taskLogger.info("notifyGatewayLiveStatusChange completed.(glId:" + glId + ")");
+            taskLogger.info("notifyGatewayLiveStatusChange completed.(glImei:" + glImei + ")");
         } catch (Exception e) {
-            errorLogger.error("notifyGatewayLiveStatusChange异常！glId:" + glId, e);
+            errorLogger.error("notifyGatewayLiveStatusChange异常！glImei:" + glImei, e);
         }
     }
 

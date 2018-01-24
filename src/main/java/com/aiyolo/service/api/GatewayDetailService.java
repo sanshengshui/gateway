@@ -63,7 +63,7 @@ public class GatewayDetailService extends BaseService {
             gatewayDetailResponse.setVer(gatewayStatus.getVersion());
         }
 
-        int gatewayLiveStatus = gatewayLiveStatusCache.getByGlId(appUserGateway.getGateway().getGlId());
+        int gatewayLiveStatus = gatewayLiveStatusCache.getByGlImei(appUserGateway.getGateway().getGlImei());
         gatewayDetailResponse.setOnline(gatewayLiveStatus);
 
         List<Device> devices = deviceRepository.findByGlImei(imei);

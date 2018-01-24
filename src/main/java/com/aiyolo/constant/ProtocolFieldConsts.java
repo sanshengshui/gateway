@@ -22,4 +22,5 @@ public class ProtocolFieldConsts {
     public static final String LATITUDE = "latitude";
     public static final String ACTION = "action";
     public static final String ACT = "act";
+    public static final String MESSAGE = "message";
 }

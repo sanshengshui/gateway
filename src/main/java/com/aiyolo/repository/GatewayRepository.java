@@ -1,6 +1,7 @@
 package com.aiyolo.repository;
 
 import com.aiyolo.entity.Gateway;
+
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -33,27 +34,25 @@ public interface GatewayRepository extends PagingAndSortingRepository<Gateway, L
     @Query(
             value = "select d from Gateway d where regexp(areaCode, :areaCodePat)=1",
             countQuery = "select count(d) from Gateway d where regexp(areaCode, :areaCodePat)=1"
-            )
+    )
     Page<Gateway> findPageByAreaCodeMatch(Pageable pageable, @Param("areaCodePat") String areaCodePat);
 
     @Query(
             value = "select d from Gateway d where regexp(areaCode, :areaCodePat)=1 and address like %:address%",
             countQuery = "select count(d) from Gateway d where regexp(areaCode, :areaCodePat)=1 and address like %:address%"
-            )
+    )
     Page<Gateway> findPageByAreaCodeAndAddressMatch(
             Pageable pageable,
             @Param("areaCodePat") String areaCodePat,
             @Param("address") String address);
 
-    @Cacheable(value="gateways", unless="#result == null")
-    Gateway findFirstByGlIdOrderByIdDesc(String glId);
 
-    @Cacheable(value="gateways", unless="#result == null")
+    @Cacheable(value = "gateways", unless = "#result == null")
     Gateway findFirstByGlImeiOrderByIdDesc(String glImei);
 
     @Override
     @SuppressWarnings("unchecked")
-    @Caching(put = { @CachePut(value="gateways", key="#p0.getGlId()"), @CachePut(value="gateways", key="#p0.getGlImei()") })
+    @Caching(put = {@CachePut(value = "gateways", key = "#p0.getGlImei()")})
     Gateway save(Gateway gateway);
 
 }

@@ -52,9 +52,9 @@ public class GatewayLiveMonitor {
                     for (Object key : keys) {
                         Element element = ehCache.get(key);
                         if (element != null) {
-                            String glId = (String) key;
+                            String glImei = (String) key;
                             long gatewayBeat = (long) element.getObjectValue();
-                            int gatewayLiveStatus = gatewayLiveStatusCache.getByGlId(glId);
+                            int gatewayLiveStatus = gatewayLiveStatusCache.getByGlImei(glImei);
 
                             int newLiveStatus;
                             if (currentTime - gatewayBeat > gatewayLiveBeatPeriod) {
@@ -64,9 +64,9 @@ public class GatewayLiveMonitor {
                             }
 
                             if (gatewayLiveStatus != newLiveStatus) {
-                                gatewayLiveStatusCache.save(glId, newLiveStatus);
+                                gatewayLiveStatusCache.save(glImei, newLiveStatus);
                                 if (gatewayLiveStatus != GatewayLiveStatusCache.UNKNOWN) {
-                                    gatewayStatusService.notifyGatewayLiveStatusChange(glId);
+                                    gatewayStatusService.notifyGatewayLiveStatusChange(glImei);
                                     liveChangeCount++;
                                 }
                             }
