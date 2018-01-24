@@ -1,13 +1,10 @@
 package com.aiyolo.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * @description 渠道实体类
+ * @description 店铺实体类
  * @date 2018年1月23日 下午13:42
  */
 @Entity
@@ -22,7 +19,7 @@ public class Shop  implements Serializable{
 
     private String brandid;
 
-    private String shop;
+    private String name;
 
     private String province;
 
@@ -40,13 +37,21 @@ public class Shop  implements Serializable{
                 "id=" + id +
                 ", channelid='" + channelid + '\'' +
                 ", brandid='" + brandid + '\'' +
-                ", shop='" + shop + '\'' +
+                ", name='" + name + '\'' +
                 ", province='" + province + '\'' +
                 ", city='" + city + '\'' +
                 ", area='" + area + '\'' +
                 ", address='" + address + '\'' +
                 ", shopphone='" + shopphone + '\'' +
                 '}';
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Long getId() {
@@ -73,13 +78,7 @@ public class Shop  implements Serializable{
         this.brandid = brandid;
     }
 
-    public String getShop() {
-        return shop;
-    }
 
-    public void setShop(String shop) {
-        this.shop = shop;
-    }
 
     public String getProvince() {
         return province;

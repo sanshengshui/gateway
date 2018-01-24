@@ -25,9 +25,13 @@ public class ShopController {
             Shop shop
     ){
         try {
-            shopRepository.save(shop);
+            if (shopRepository.findByName(shop.getName()).size() != 0){
+                return Resp.error(action);
+            }
+            {
+                shopRepository.save(shop);
+            }
             String shopid = String.valueOf(shop.getId());
-            System.out.println(shop.toString());
             return Resp.ok(action,shopid);
         }catch (Exception e){
             return Resp.error(action);
