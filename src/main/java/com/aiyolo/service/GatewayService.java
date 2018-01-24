@@ -130,7 +130,7 @@ public class GatewayService {
             if (areaCodeService.areaCodeMatches(gateway.getAreaCode(), authorities.get("areas"))) {
                 if (StringUtils.isEmpty(gateway.getLocationAreaCode()) || StringUtils.isEmpty(gateway.getLocationAddress())) {
                     // 读取基站地址
-                    GatewaySta gatewaySta = gatewayStaRepository.findFirstByGlIdOrderByIdDesc(gateway.getGlId());
+                    GatewaySta gatewaySta = gatewayStaRepository.findFirstByGlImeiOrderByIdDesc(gateway.getGlImei());
                     if (gatewaySta != null && !StringUtils.isEmpty(gatewaySta.getLocationAreaCode()) && !StringUtils.isEmpty(gatewaySta.getLocationAddress())) {
                         gateway.setLocationAreaCode(gatewaySta.getLocationAreaCode());
                         gateway.setLocationAddress(gatewaySta.getLocationAddress());
@@ -150,21 +150,6 @@ public class GatewayService {
         return null;
     }
 
-    public Gateway getGatewayByGlId(String glId) {
-        if (glId == null) {
-            return null;
-        }
-
-        Gateway gateway = gatewayRepository.findFirstByGlIdOrderByIdDesc(glId);
-        if (gateway != null) {
-            Map<String, List<String>> authorities = customUserDetailsService.getAuthorities();
-            if (areaCodeService.areaCodeMatches(gateway.getAreaCode(), authorities.get("areas"))) {
-                return gateway;
-            }
-        }
-
-        return null;
-    }
 
     public Gateway getGatewayByGlImei(String glImei) {
         if (glImei == null) {

@@ -44,7 +44,7 @@ public class ListGatewayService extends BaseService {
             gatewayObject.setAdmin(appUserGateways.get(i).getRole().getValue());
 
             if (appUserGateways.get(i).getGateway() != null) {
-                int gatewayLiveStatus = gatewayLiveStatusCache.getByGlId(appUserGateways.get(i).getGateway().getGlId());
+                int gatewayLiveStatus = gatewayLiveStatusCache.getByGlImei(appUserGateways.get(i).getGateway().getGlImei());
                 gatewayObject.setOnline(gatewayLiveStatus);
 
                 gatewayObject.setGlName(appUserGateways.get(i).getGateway().getGlName());

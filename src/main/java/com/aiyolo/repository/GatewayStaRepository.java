@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface GatewayStaRepository extends CrudRepository<GatewaySta, Long> {
 
-    GatewaySta findFirstByGlIdOrderByIdDesc(String glId);
+    GatewaySta findFirstByGlImeiOrderByIdDesc(String glImei);
 
 }

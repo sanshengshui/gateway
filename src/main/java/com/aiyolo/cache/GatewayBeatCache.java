@@ -10,16 +10,16 @@ public class GatewayBeatCache {
     /**
      * 网关心跳缓存
      *
-     * @param String glId
+     * @param String glImei
      * @return 网关最后心跳时间（毫秒）
      */
     @Cacheable("gatewayBeat")
-    public long getByGlId(String glId) {
+    public long getByGlImei(String glImei) {
         return 0L;
     }
 
     @CachePut(value = "gatewayBeat", key = "#p0")
-    public long save(String glId, long timestamp) {
+    public long save(String glImei, long timestamp) {
         return timestamp;
     }
 

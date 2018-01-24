@@ -58,11 +58,11 @@ public abstract class Processor {
                     return;
 
                 }
-                String imei = messageHeaderJson.getString(IMEI);
+                String glImei = messageHeaderJson.getString(IMEI);
                 if (!action.equals("upsta")) {
                     // 应答
                     Sender sender = (Sender) SpringUtil.getBean("sender");
-                    Map<String, Object> responseHeader = GatewayPushResponse.getInstance().responseHeader(imei);
+                    Map<String, Object> responseHeader = GatewayPushResponse.getInstance().responseHeader(glImei);
                     Map<String, Object> responseBody = GatewayPushResponse.getInstance().responseBody(messageJson, null);
                     sender.sendMessage(responseHeader, responseBody);
                 }
@@ -73,27 +73,27 @@ public abstract class Processor {
 
                 // 查询该是否已入库
 
-                Gateway gateway = gatewayRepository.findFirstByGlIdOrderByIdDesc(imei);
+                Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(glImei);
                 if (gateway == null) {
-                    gatewayRepository.save(new Gateway(imei, imei, messageBodyJson.getString(PIN)));
+                    gatewayRepository.save(new Gateway(glImei, messageBodyJson.getString(PIN)));
 
-                    gatewayService.requestGatewayInfo(imei);
+                    gatewayService.requestGatewayInfo(glImei);
                 } else {
                     if (StringUtils.isEmpty(gateway.getGlLongitude())
                             || StringUtils.isEmpty(gateway.getGlLatitude())) {
-                        gatewayService.requestGatewayInfo(imei);
+                        gatewayService.requestGatewayInfo(glImei);
                     }
                 }
 
                 // 检查网关存活状态
                 GatewayLiveStatusCache gatewayLiveStatusCache = (GatewayLiveStatusCache) SpringUtil.getBean("gatewayLiveStatusCache");
-                int gatewayLiveStatus = gatewayLiveStatusCache.getByGlId(imei);
+                int gatewayLiveStatus = gatewayLiveStatusCache.getByGlImei(glImei);
                 if (gatewayLiveStatus != LIVE) {
                     // 记录一条心跳
                     GatewayBeatCache gatewayBeatCache = (GatewayBeatCache) SpringUtil.getBean("gatewayBeatCache");
-                    gatewayBeatCache.save(imei, System.currentTimeMillis());
+                    gatewayBeatCache.save(glImei, System.currentTimeMillis());
                     // 更新存活状态
-                    gatewayLiveStatusCache.save(imei, LIVE);
+                    gatewayLiveStatusCache.save(glImei, LIVE);
                 }
 
 
@@ -102,15 +102,15 @@ public abstract class Processor {
                 break;
             case ProtocolCodeConsts.GATEWAY_BEAT:
                 if (!containsImei) {
-                    throw new RuntimeException("Gateway imei Params Error.");
+                    throw new RuntimeException("Gateway glImei Params Error.");
                 }
                 break;
             case ProtocolCodeConsts.PUSH_TO_APP:
                 break;
             case ProtocolCodeConsts.DEVICE_INFO:
-//                if (!containsImei) {
-//                    throw new RuntimeException("Gateway imei Params Error.");
-//                }
+                //                if (!containsImei) {
+                //                    throw new RuntimeException("Gateway glImei Params Error.");
+                //                }
                 break;
             case ProtocolCodeConsts.APP_LOGIN:
                 break;

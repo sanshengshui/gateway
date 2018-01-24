@@ -17,7 +17,9 @@ import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.service.alarm.AlarmService;
 import com.aiyolo.service.alarm.NowAlarmService;
 import com.aiyolo.vo.DeviceAlarmSearchVo;
+
 import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+
 import java.util.*;
 
 @Service
@@ -140,7 +143,7 @@ public class DeviceAlarmService {
                 sender.sendMessage(headerMap, bodyMap);
 
                 // 推送给个推
-                messagePushService.pushMessage(mobileIds, deviceAlarm.getGateway().getGlId(), msgTitle, msgContent);
+                messagePushService.pushMessage(mobileIds, msgTitle, msgContent);
 
                 // 发送短信
                 smsPushService.pushSms(deviceAlarm.getGlImei(), smsContent);

@@ -79,7 +79,7 @@
                 }
 
                 marker[devices[i].id] = new BMap.Marker(new BMap.Point(lo[0], lo[1]));
-                if (deviceAlarms[devices[i].glId] && deviceAlarms[devices[i].glId].status == 1) {
+                if (deviceAlarms[devices[i].glImei] && deviceAlarms[devices[i].glImei].status == 1) {
                     marker[devices[i].id].setIcon(mapRedIcon);
                 } else {
                     marker[devices[i].id].setIcon(mapBlueIcon);
@@ -97,9 +97,9 @@
                 });
             }
 
-            for (var glId in deviceAlarms) {
-                if (deviceAlarms[glId].status == 1) {
-                    $(".alarm-container").prepend("<p>【" + (deviceAlarms[glId].device.glName ? deviceAlarms[glId].device.glName : deviceAlarms[glId].device.glImei) + "】 出现" + dict(deviceAlarms[glId].type, 'alarm_type') + "预警</p>");
+            for (var glImei in deviceAlarms) {
+                if (deviceAlarms[glImei].status == 1) {
+                    $(".alarm-container").prepend("<p>【" + (deviceAlarms[glImei].device.glName ? deviceAlarms[glImei].device.glName : deviceAlarms[glImei].device.glImei) + "】 出现" + dict(deviceAlarms[glImei].type, 'alarm_type') + "预警</p>");
                 }
             }
 

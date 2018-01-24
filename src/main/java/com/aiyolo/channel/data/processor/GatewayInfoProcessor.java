@@ -35,7 +35,7 @@ public class GatewayInfoProcessor extends Processor {
                     GatewayRepository gatewayRepository = (GatewayRepository) SpringUtil.getBean("gatewayRepository");
 
                     // 查询该网关是否存在
-                    Gateway gateway = gatewayRepository.findFirstByGlIdOrderByIdDesc(glImei);
+                    Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(glImei);
                     if (gateway != null) {
                         gateway.setGlLogintime(logintime);
                         gateway.setGlLongitude(longitude);

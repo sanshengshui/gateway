@@ -11,13 +11,12 @@ public class GatewayBeatProcessor extends Processor {
         try {
             init(message);
 
-//            String glId = messageHeaderJson.getString("gl_id");
-            String glId = messageHeaderJson.getString(ProtocolFieldConsts.IMEI);
+            String glImei = messageHeaderJson.getString(ProtocolFieldConsts.IMEI);
             long timestamp = messageHeaderJson.getLong(ProtocolFieldConsts.TIMESTAMP);
 
             GatewayBeatCache gatewayBeatCache = (GatewayBeatCache) SpringUtil.getBean("gatewayBeatCache");
 
-            gatewayBeatCache.save(glId, timestamp);
+            gatewayBeatCache.save(glImei, timestamp);
         } catch (Exception e) {
             errorLogger.error("GatewayBeatProcessor异常！message:" + message, e);
         }

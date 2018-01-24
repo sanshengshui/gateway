@@ -348,7 +348,7 @@ var displayMap = function(areaCode, id) {
                 }
             }
             mapMarkers[gateways[i].id] = new BMap.Marker(new BMap.Point(lo[0], lo[1]));
-            if (deviceAlarms[gateways[i].glId] && deviceAlarms[gateways[i].glId].status == 1) {
+            if (deviceAlarms[gateways[i].glImei] && deviceAlarms[gateways[i].glImei].status == 1) {
                 mapMarkers[gateways[i].id].setIcon(mapRedIcon);
             } else {
                 mapMarkers[gateways[i].id].setIcon(mapBlueIcon);

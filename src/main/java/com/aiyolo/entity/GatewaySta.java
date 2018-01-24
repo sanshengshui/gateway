@@ -3,6 +3,7 @@ package com.aiyolo.entity;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
 import java.io.Serializable;
 
 @Entity
@@ -10,7 +11,6 @@ public class GatewaySta extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String glId = "";
     private String glImei = "";
     private Integer mcc = 0;
     private Integer mnc = 0;
@@ -21,13 +21,12 @@ public class GatewaySta extends BaseEntity implements Serializable {
     private String locationAddress = "";
 
     @ManyToOne
-    @JoinColumn(name = "glId", referencedColumnName = "glId", insertable = false, updatable = false)
+    @JoinColumn(name = "glImei", referencedColumnName = "glImei", insertable = false, updatable = false)
     private Gateway gateway;
 
     protected GatewaySta() {}
 
-    public GatewaySta(String glId, String glImei, Integer mcc, Integer mnc, Integer lac, Integer cell) {
-        this.glId = glId;
+    public GatewaySta(String glImei, Integer mcc, Integer mnc, Integer lac, Integer cell) {
         this.glImei = glImei;
         this.mcc = mcc;
         this.mnc = mnc;
@@ -38,17 +37,10 @@ public class GatewaySta extends BaseEntity implements Serializable {
     @Override
     public String toString() {
         return String.format(
-                "GatewaySta[id=%d, gl_id='%s', gl_imei='%s', mcc=%d, mnc=%d, lac=%d, cell=%d]",
-                id, glId, glImei, mcc, mnc, lac, cell);
+                "GatewaySta[id=%d, gl_imei='%s', mcc=%d, mnc=%d, lac=%d, cell=%d]",
+                id, glImei, mcc, mnc, lac, cell);
     }
 
-    public String getGlId() {
-        return glId;
-    }
-
-    public void setGlId(String glId) {
-        this.glId = glId;
-    }
 
     public String getGlImei() {
         return glImei;

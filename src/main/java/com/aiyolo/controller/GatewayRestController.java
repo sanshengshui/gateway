@@ -67,7 +67,7 @@ public class GatewayRestController {
 
             if (StringUtils.isEmpty(records.get(i).getLocationAreaCode()) || StringUtils.isEmpty(records.get(i).getLocationAddress())) {
                 // 读取基站地址
-                GatewaySta gatewaySta = gatewayStaRepository.findFirstByGlIdOrderByIdDesc(records.get(i).getGlId());
+                GatewaySta gatewaySta = gatewayStaRepository.findFirstByGlImeiOrderByIdDesc(records.get(i).getGlImei());
                 if (gatewaySta != null && !StringUtils.isEmpty(gatewaySta.getLocationAreaCode()) && !StringUtils.isEmpty(gatewaySta.getLocationAddress())) {
                     records.get(i).setLocationAreaCode(gatewaySta.getLocationAreaCode());
                     records.get(i).setLocationAddress(gatewaySta.getLocationAddress());

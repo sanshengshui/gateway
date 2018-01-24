@@ -134,7 +134,7 @@ public class DeviceStatusService {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         // 推送给个推
-        messagePushService.pushMessage(mobileIds, gateway.getGlId()
+        messagePushService.pushMessage(mobileIds
                 , "巡检通知"
                 , "智能网关" + gateway.getGlName() + "下的" + deviceTypeToName(device.getType())
                         + "在" + format.format(mid * 1000L) + "完成巡检");

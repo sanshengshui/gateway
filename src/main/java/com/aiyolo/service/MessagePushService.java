@@ -2,6 +2,7 @@ package com.aiyolo.service;
 
 import com.aiyolo.channel.data.request.AppMessagePushRequest;
 import com.aiyolo.queue.Sender;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,18 +17,20 @@ public class MessagePushService {
 
     private static final Log errorLogger = LogFactory.getLog("errorLog");
 
-    @Autowired Sender sender;
+    @Autowired
+    Sender sender;
 
-    @Autowired GatewayService gatewayService;
+    @Autowired
+    GatewayService gatewayService;
 
-    public void pushMessage(String glImei, String glId, String title, String text) {
+    public void pushMessage(String glImei, String title, String text) {
         String[] mobileIds = gatewayService.getGatewayUserMobileIds(glImei);
         if (mobileIds != null && mobileIds.length > 0) {
-            pushMessage(mobileIds, glId, title, text);
+            pushMessage(mobileIds, title, text);
         }
     }
 
-    public void pushMessage(String[] mobileIds, String glId, String title, String text) {
+    public void pushMessage(String[] mobileIds, String title, String text) {
         if (mobileIds == null || mobileIds.length == 0 || StringUtils.isEmpty(text)) {
             return;
         }
@@ -37,7 +40,6 @@ public class MessagePushService {
             Map<String, Object> headerMap = AppMessagePushRequest.getInstance().requestHeader(mobileIds);
 
             Map<String, Object> queryParamMap = new HashMap<String, Object>();
-//            queryParamMap.put("glId", glId);
             queryParamMap.put("title", title);
             queryParamMap.put("text", text);
 
@@ -45,7 +47,7 @@ public class MessagePushService {
 
             sender.sendMessage(headerMap, bodyMap);
         } catch (Exception e) {
-            errorLogger.error("pushMessage异常！glId:" + glId + ", title:" + title + ", text:" + text, e);
+            errorLogger.error("pushMessage异常！ title:" + title + ", text:" + text, e);
         }
     }
 

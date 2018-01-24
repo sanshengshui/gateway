@@ -3,6 +3,7 @@ package com.aiyolo.entity;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
 import java.io.Serializable;
 
 @Entity
@@ -10,7 +11,6 @@ public class GatewayStatus extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String glId = "";
     private String glImei = "";
     private Integer timestamp = 0;
     private String date = "";
@@ -26,15 +26,14 @@ public class GatewayStatus extends BaseEntity implements Serializable {
     private Integer htmp = 0;
 
     @ManyToOne
-    @JoinColumn(name = "glId", referencedColumnName = "glId", insertable = false, updatable = false)
+    @JoinColumn(name = "glImei", referencedColumnName = "glImei", insertable = false, updatable = false)
     private Gateway gateway;
 
     protected GatewayStatus() {}
 
-    public GatewayStatus(String glId, String glImei, Integer timestamp, String date, String hour
+    public GatewayStatus(String glImei, Integer timestamp, String date, String hour
             , Integer rssi, Integer temperature, Integer humidity, Integer atmosphere, String version
             , Integer status, Integer sos, Integer checked, Integer htmp) {
-        this.glId = glId;
         this.glImei = glImei;
         this.timestamp = timestamp;
         this.date = date;
@@ -53,17 +52,10 @@ public class GatewayStatus extends BaseEntity implements Serializable {
     @Override
     public String toString() {
         return String.format(
-                "GatewayStatus[id=%d, gl_id='%s', gl_imei='%s', date='%s', hour='%s']",
-                id, glId, glImei, date, hour);
+                "GatewayStatus[id=%d,  gl_imei='%s', date='%s', hour='%s']",
+                id, glImei, date, hour);
     }
 
-    public String getGlId() {
-        return glId;
-    }
-
-    public void setGlId(String glId) {
-        this.glId = glId;
-    }
 
     public String getGlImei() {
         return glImei;

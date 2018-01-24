@@ -2,6 +2,7 @@ package com.aiyolo.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -10,7 +11,6 @@ public class Gateway extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String glId = "";
     private String glName = "";
     private String glImei = "";
     private String glPin = "";
@@ -37,8 +37,7 @@ public class Gateway extends BaseEntity implements Serializable {
 
     protected Gateway() {}
 
-    public Gateway(String glId, String glImei, String glPin) {
-        this.glId = glId;
+    public Gateway(String glImei, String glPin) {
         this.glImei = glImei;
         this.glPin = glPin;
     }
@@ -46,17 +45,10 @@ public class Gateway extends BaseEntity implements Serializable {
     @Override
     public String toString() {
         return String.format(
-                "Gateway[id=%d, gl_id='%s', gl_name='%s', gl_imei='%s', gl_pin='%s', user_name='%s', user_phones='%s', area_code='%s', village='%s', address='%s']",
-                id, glId, glName, glImei, glPin, userName, userPhones, areaCode, village, address);
+                "Gateway[id=%d, gl_name='%s', gl_imei='%s', gl_pin='%s', user_name='%s', user_phones='%s', area_code='%s', village='%s', address='%s']",
+                id, glName, glImei, glPin, userName, userPhones, areaCode, village, address);
     }
 
-    public String getGlId() {
-        return glId;
-    }
-
-    public void setGlId(String glId) {
-        this.glId = glId;
-    }
 
     public String getGlName() {
         return glName;

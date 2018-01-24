@@ -30,7 +30,7 @@ public class GatewayStaProcessor extends Processor {
             GatewayStaRepository gatewayStaRepository = (GatewayStaRepository) SpringUtil.getBean("gatewayStaRepository");
 
             // 查询记录是否存在
-            GatewaySta gatewaySta = gatewayStaRepository.findFirstByGlIdOrderByIdDesc(glImei);
+            GatewaySta gatewaySta = gatewayStaRepository.findFirstByGlImeiOrderByIdDesc(glImei);
             if (gatewaySta != null) {
                 gatewaySta.setMcc(mcc);
                 gatewaySta.setMnc(mnc);
@@ -38,7 +38,6 @@ public class GatewayStaProcessor extends Processor {
                 gatewaySta.setCell(cell);
             } else {
                 gatewaySta = new GatewaySta(
-                        glImei,
                         glImei,
                         mcc,
                         mnc,

@@ -128,7 +128,7 @@ public class GatewayAlarmService {
                 sender.sendMessage(headerMap, bodyMap);
 
                 // 推送给个推
-                messagePushService.pushMessage(mobileIds, gateway.getGlId(), msgTitle, msgContent);
+                messagePushService.pushMessage(mobileIds, msgTitle, msgContent);
 
                 // 发送短信
                 smsPushService.pushSms(imei, smsContent);
@@ -149,7 +149,7 @@ public class GatewayAlarmService {
 
         String[] mobileIds = gatewayService.getGatewayUserMobileIds(imei);
         // 推送给个推
-        messagePushService.pushMessage(mobileIds, gateway.getGlId()
+        messagePushService.pushMessage(mobileIds
                 , "巡检通知"
                 , "智能网关" + gateway.getGlName()
                         + "在" + format.format(mid * 1000L) + "完成巡检");

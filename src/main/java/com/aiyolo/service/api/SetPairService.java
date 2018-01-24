@@ -34,20 +34,20 @@ public class SetPairService extends BaseService {
         String userId = authenticate(request);
 
         SetPairRequest setPairRequest = (SetPairRequest) request;
-        String imei = setPairRequest.getImei();
-        if (StringUtils.isEmpty(imei)) {
+        String glImei = setPairRequest.getImei();
+        if (StringUtils.isEmpty(glImei)) {
             return (Res) responseRequestParameterError(request.getAction());
         }
 
-        AppUserGateway appUserGateway = appUserGatewayRepository.findOneByUserIdAndGlImei(userId, imei);
+        AppUserGateway appUserGateway = appUserGatewayRepository.findOneByUserIdAndGlImei(userId, glImei);
         if (appUserGateway == null || appUserGateway.getGateway() == null) {
             return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
         } else {
             // 下发组网配对模式
-            Map<String, Object> headerMap = GatewayPairRequest.getInstance().requestHeader(appUserGateway.getGateway().getGlId());
+            Map<String, Object> headerMap = GatewayPairRequest.getInstance().requestHeader(glImei);
 
             Map<String, Object> data = new HashMap<String, Object>();
-            data.put(IMEI, imei);
+            data.put(IMEI, glImei);
             data.put(PIN, appUserGateway.getGateway().getGlPin());
             Map<String, Object> bodyMap = GatewayPairRequest.getInstance().requestBody(data);
 
