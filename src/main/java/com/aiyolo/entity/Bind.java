@@ -1,59 +1,53 @@
 package com.aiyolo.entity;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.List;
+
 
 /**
  * @author 穆书伟
  * @description 盒子和店铺之间的绑定关系
  */
 @Entity
-public class Bind  implements Serializable {
-
+public class Bind  extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer deviceid;
 
-    private String shopid;
+    private Integer shopid;
 
-    private String imeis;
+    private Integer status;
 
     @Override
     public String toString() {
         return "Bind{" +
-                "id=" + id +
-                ", shopid='" + shopid + '\'' +
-                ", imeis='" + imeis + '\'' +
+                "deviceid=" + deviceid +
+                ", shopid=" + shopid +
+                ", status=" + status +
                 '}';
     }
 
-    public Long getId() {
-        return id;
+    public Integer getDeviceid() {
+        return deviceid;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setDeviceid(Integer deviceid) {
+        this.deviceid = deviceid;
     }
 
-    public String getShopid() {
+    public Integer getShopid() {
         return shopid;
     }
 
-    public void setShopid(String shopid) {
+    public void setShopid(Integer shopid) {
         this.shopid = shopid;
     }
 
-    public String getImeis() {
-        return imeis;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setImeis(String imeis) {
-        this.imeis = imeis;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

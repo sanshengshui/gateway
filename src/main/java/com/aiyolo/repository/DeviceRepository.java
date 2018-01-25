@@ -11,6 +11,8 @@ public interface DeviceRepository extends PagingAndSortingRepository<Device, Lon
 
     List<Device> findByGlImei(String GlImei);
 
+    Device findByImei(String imei);
+
     Page<Device> findPageByGlImei(Pageable pageable, String glImei);
 
     Device findFirstByImeiOrderByIdDesc(String imei);

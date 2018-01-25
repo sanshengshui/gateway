@@ -1,70 +1,44 @@
-package com.aiyolo.entity;
+package com.aiyolo.service.api.request;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * @description 店铺实体类
- * @date 2018年1月23日 下午13:42
- */
-@Entity
-public class Shop  implements Serializable{
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    private Long id;
-
-    private Long channelid;
-
+public class CreateShopRequest {
+    private String action;
+    private String channelid;
     private String brandid;
-
-    private String name;
-
+    private String shop;
     private String province;
-
     private String city;
-
     private String area;
-
     private String address;
-
     private String shopphone;
-
-    private Date createdAt;
-
-    private Date updatedAt;
 
     @Override
     public String toString() {
-        return "Shop{" +
-                "id=" + id +
-                ", channelid=" + channelid +
+        return "CreateShopRequest{" +
+                "action='" + action + '\'' +
+                ", channelid='" + channelid + '\'' +
                 ", brandid='" + brandid + '\'' +
-                ", name='" + name + '\'' +
+                ", shop='" + shop + '\'' +
                 ", province='" + province + '\'' +
                 ", city='" + city + '\'' +
                 ", area='" + area + '\'' +
                 ", address='" + address + '\'' +
                 ", shopphone='" + shopphone + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 '}';
     }
 
-    public Long getId() {
-        return id;
+    public String getAction() {
+        return action;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setAction(String action) {
+        this.action = action;
     }
 
-    public Long getChannelid() {
+    public String getChannelid() {
         return channelid;
     }
 
-    public void setChannelid(Long channelid) {
+    public void setChannelid(String channelid) {
         this.channelid = channelid;
     }
 
@@ -76,12 +50,12 @@ public class Shop  implements Serializable{
         this.brandid = brandid;
     }
 
-    public String getName() {
-        return name;
+    public String getShop() {
+        return shop;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setShop(String shop) {
+        this.shop = shop;
     }
 
     public String getProvince() {
@@ -122,21 +96,5 @@ public class Shop  implements Serializable{
 
     public void setShopphone(String shopphone) {
         this.shopphone = shopphone;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }
