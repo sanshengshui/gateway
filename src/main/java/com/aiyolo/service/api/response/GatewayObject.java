@@ -12,17 +12,20 @@ public class GatewayObject {
     private String glName = "";
     private String ver = "";
     private Integer admin = 0;
+    private Integer err = 0;
 
     public GatewayObject() {
     }
 
-    public GatewayObject(String imei, Integer online, Integer devNum, String glName, String ver, Integer admin) {
+    public GatewayObject(String imei, Integer online, Integer devNum, String glName, String ver, Integer admin
+            , Integer err) {
         this.imei = imei;
         this.online = online;
         this.devNum = devNum;
         this.glName = glName;
         this.ver = ver;
         this.admin = admin;
+        this.err = err;
     }
 
     @Override
@@ -34,7 +37,16 @@ public class GatewayObject {
                 ", gl_name='" + glName + '\'' +
                 ", ver='" + ver + '\'' +
                 ", admin=" + admin +
+                ", err=" + err +
                 '}';
+    }
+
+    public Integer getErr() {
+        return err;
+    }
+
+    public void setErr(Integer err) {
+        this.err = err;
     }
 
     public String getImei() {

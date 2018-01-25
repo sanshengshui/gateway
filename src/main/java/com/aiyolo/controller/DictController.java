@@ -3,6 +3,7 @@ package com.aiyolo.controller;
 import com.aiyolo.common.FileHelper;
 import com.aiyolo.common.SpringUtil;
 import com.aiyolo.constant.AlarmStatusEnum;
+import com.aiyolo.constant.ChannelConsts;
 import com.aiyolo.constant.ProductEnum;
 import com.aiyolo.constant.Role4GatewayEnum;
 import com.aiyolo.constant.RoleEnum;
@@ -29,7 +30,7 @@ public class DictController {
     public String product() {
         Map<String, String> productMap = new HashMap<String, String>();
         for (int i = 0; i < ProductEnum.values().length; i++) {
-            productMap.put(ProductEnum.values()[i].getId(), ProductEnum.values()[i].getName());
+            productMap.put(ChannelConsts.PRODUCT_ID, ProductEnum.values()[i].getName());
         }
 
         return "var dict_product = " + JSONObject.fromObject(productMap).toString();

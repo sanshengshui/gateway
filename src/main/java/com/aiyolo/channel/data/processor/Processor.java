@@ -6,6 +6,7 @@ import com.aiyolo.channel.data.response.GatewayPushResponse;
 import com.aiyolo.channel.data.response.GatewayResponse;
 import com.aiyolo.common.InputDataHelper;
 import com.aiyolo.common.SpringUtil;
+import com.aiyolo.constant.ChannelConsts;
 import com.aiyolo.constant.InputDataTypeEnum;
 import com.aiyolo.constant.ProtocolCodeConsts;
 import com.aiyolo.constant.ProtocolFieldConsts;
@@ -28,6 +29,7 @@ import static com.aiyolo.constant.ProtocolFieldConsts.ACT;
 import static com.aiyolo.constant.ProtocolFieldConsts.ACTION;
 import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
 import static com.aiyolo.constant.ProtocolFieldConsts.PIN;
+import static com.aiyolo.constant.ProtocolFieldConsts.UP_STA;
 
 public abstract class Processor {
 
@@ -44,22 +46,26 @@ public abstract class Processor {
 
 
         int code = messageHeaderJson.getInt(ProtocolFieldConsts.CODE);
+        String action = InputDataHelper.getAction(messageBodyJson);
 
-        boolean containsImei = messageHeaderJson.containsKey(IMEI);
+        //        boolean containsImei = messageHeaderJson.containsKey(IMEI);
         switch (code) {
             case ProtocolCodeConsts.RECEIVE_FROM_GATEWAY:
-                if (!containsImei || !messageBodyJson.containsKey(IMEI) ||
-                        (!messageBodyJson.containsKey(ACTION) && !messageBodyJson.containsKey(ACT))) {
+
+                //用于通道项目切换环境,本项目不需要重新部署
+                ChannelConsts.PRODUCT_ID = messageHeaderJson.getString(ProtocolFieldConsts.PRODUCT_ID);
+
+
+                if (!messageBodyJson.containsKey(IMEI) || StringUtils.isEmpty(action)) {
                     throw new RuntimeException("Gateway Params Error.");
                 }
-                String action = InputDataHelper.getAction(messageBodyJson);
                 if (!ArrayUtils.contains(InputDataTypeEnum.GATEWAY_PUSH.getValue(), action)) {
                     //只有这几个接口才需要查状态
                     return;
 
                 }
                 String glImei = messageHeaderJson.getString(IMEI);
-                if (!action.equals("upsta")) {
+                if (!action.equals(UP_STA)) {
                     // 应答
                     Sender sender = (Sender) SpringUtil.getBean("sender");
                     Map<String, Object> responseHeader = GatewayPushResponse.getInstance().responseHeader(glImei);
@@ -101,9 +107,9 @@ public abstract class Processor {
             case ProtocolCodeConsts.SEND_TO_GATEWAY:
                 break;
             case ProtocolCodeConsts.GATEWAY_BEAT:
-                if (!containsImei) {
-                    throw new RuntimeException("Gateway glImei Params Error.");
-                }
+                //                if (!containsImei) {
+                //                    throw new RuntimeException("Gateway glImei Params Error.");
+                //                }
                 break;
             case ProtocolCodeConsts.PUSH_TO_APP:
                 break;
