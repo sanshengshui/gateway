@@ -20,6 +20,11 @@ public class GatewayController {
 
     @Autowired GatewayService gatewayService;
 
+    @RequestMapping("/map/{id}")
+    public String map(@PathVariable String id,Model model){
+        return id;
+    }
+
     @RequestMapping("/view/{id}")
     public String view(@PathVariable String id, Model model) {
         Gateway gateway = gatewayService.getGatewayById(id);

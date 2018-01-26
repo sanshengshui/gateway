@@ -14,54 +14,86 @@
         <!-- Main content -->
         <section class="content">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="box">
                         <div class="box-header with-border">
                             <h3 class="box-title">设备信息</h3>
                         </div>
                         <!-- /.box-header -->
                         <div class="box-body">
-                            <input type="hidden" id="areaCode" th:field="${gateway.areaCode}"/>
-                            <input type="hidden" id="locationAreaCode" th:field="${gateway.locationAreaCode}"/>
-                            <table class="table">
-                                <thead>
+                            <div class="col-sm-4">
+                                <input type="hidden" id="areaCode" th:field="${gateway.areaCode}"/>
+                                <input type="hidden" id="locationAreaCode" th:field="${gateway.locationAreaCode}"/>
+                                <table class="table">
+                                    <tr>
+                                        <td>设备名称:</td>
+                                        <td th:text="${gateway.glName}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>设备mac:</td>
+                                        <td>00:1c:c2:3f:34:53</td>
+                                    </tr>
+                                    <tr>
+                                        <td>设备ID:</td>
+                                        <td th:text="${gateway.glImei}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>关联设备</td>
+                                        <td>4</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-sm-4">
+                                <table class="table">
+                                    <tr>
+                                        <td>详细地址:</td>
+                                        <td th:text="${gateway.address}" id="address"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>小区名称:</td>
+                                        <td th:text="${gateway.village}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>自动定位地址:</td>
+                                        <td th:text="${gateway.locationAddress}" id="locationAddress"></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>注：定位地址仅供参考</td>
+                                    </tr>
+                                </table>
+
+                            </div>
+                            <div class="col-sm-4">
+                                <table class="table">
                                 <tr>
-                                    <td>设备ID</td>
-                                    <td th:text="${gateway.glImei}"></td>
-                                </tr>
-                                </thead>
-                                <tr>
-                                    <td>设备名称</td>
-                                    <td th:text="${gateway.glName}"></td>
+                                    <td>报警次数:</td>
+                                    <td>2</td>
                                 </tr>
                                 <tr>
-                                    <td>报警联系人</td>
-                                    <td th:text="${gateway.userName}"></td>
+                                    <td>巡检状态:</td>
+                                    <td>已巡检</td>
                                 </tr>
                                 <tr>
-                                    <td>联系人手机</td>
-                                    <td th:text="${gateway.userPhones}" id="userPhones"></td>
+                                    <td>巡检时间:</td>
+                                    <td>2017-12-03</td>
                                 </tr>
                                 <tr>
-                                    <td>设备地址</td>
-                                    <td th:text="${gateway.address}" id="address"></td>
+                                    <td>上线时间:</td>
+                                    <td>2016-08-29</td>
                                 </tr>
-                                <tr>
-                                    <td>自动定位的地址</td>
-                                    <td th:text="${gateway.locationAddress}" id="locationAddress"></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>注：定位地址仅供参考</td>
-                                </tr>
-                            </table>
+                                </table>
+                            </div>
                         </div>
                         <!-- /.box-body -->
                     </div>
                     <!-- /.box -->
                 </div>
                 <!-- /.col -->
-                <div class="col-md-6">
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-md-12">
                     <div class="box">
                         <div class="box-header with-border">
                             <h3 class="box-title">设备成员列表</h3>
@@ -84,7 +116,6 @@
                     </div>
                     <!-- /.box -->
                 </div>
-                <!-- /.col -->
             </div>
             <!-- /.row -->
             <div class="row">

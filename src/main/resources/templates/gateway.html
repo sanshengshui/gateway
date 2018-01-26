@@ -110,7 +110,7 @@ $(document).ready(function() {
     ];
     if ($("th").length > 11) {
         columns[11] = { "data": "id", "render": function(data, type, full, meta) {
-            return '<a href="/gateway/edit/' + data + '">编辑</a> <a href="/gateway/view/' + data + '">查看</a>';
+            return '<a href="/gateway/edit/' + data + '">编辑</a> <a href="/gateway/view/' + data + '">查看</a> <a href="/gateway/map/' + data + '">热力图</a>';
         } };
     }
 
