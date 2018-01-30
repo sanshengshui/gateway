@@ -3,7 +3,10 @@ package com.aiyolo.channel.data.request;
 import com.aiyolo.constant.ChannelConsts;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static com.aiyolo.constant.ProtocolFieldConsts.PID;
 
 public class GatewayBroaRequest extends GatewayRequest {
 
@@ -21,10 +24,11 @@ public class GatewayBroaRequest extends GatewayRequest {
     @Override
     public Map<String, Object> requestBody(Map<String, Object> data) {
         try {
-            Map<String, Object> bodyMap = new HashMap<String, Object>();
+            Map<String, Object> bodyMap = new LinkedHashMap<>();
 
             bodyMap.put("act", ACTION);
-            bodyMap.put("pid", ChannelConsts.PRODUCT_ID);
+            bodyMap.put(PID, ChannelConsts.PRODUCT_ID);
+            //            bodyMap.put(PID, product_id);
             bodyMap.put("imei", data.get("imei"));
             bodyMap.put("pin", data.get("pin"));
             bodyMap.put("mid", System.currentTimeMillis() / 1000);

@@ -21,6 +21,7 @@ idea {
 }
 
 jar {
+//    baseName = 'gateway-backend-test'
     baseName = 'gateway-backend'
     version =  '0.1.0'
 }
