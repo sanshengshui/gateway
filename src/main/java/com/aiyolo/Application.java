@@ -7,6 +7,7 @@ import com.aiyolo.service.storage.StorageProperties;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,6 +40,10 @@ public class Application extends AsyncConfigurerSupport {
 //        return new Queue(QueueConsts.outputQueueName, true);
 //    }
 
+
+    @Value("${gelian.queue.input}")
+    protected String inputQueueName;
+
     @Bean
     Receiver receiver() {
         return new Receiver();
@@ -53,7 +58,7 @@ public class Application extends AsyncConfigurerSupport {
     SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.setQueueNames(QueueConsts.inputQueueName);
+        container.setQueueNames(inputQueueName);
         container.setMessageListener(listenerAdapter);
         container.setConcurrentConsumers(concurrentConsumers);
         container.setMaxConcurrentConsumers(maxConcurrentConsumers);

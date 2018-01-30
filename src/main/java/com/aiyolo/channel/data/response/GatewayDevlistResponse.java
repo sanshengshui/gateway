@@ -5,6 +5,7 @@ import net.sf.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class GatewayDevlistResponse extends GatewayResponse {
     @Override
     public Map<String, Object> responseBody(JSONObject request, Object data) {
         try {
-            Map<String, Object> bodyMap = new HashMap<String, Object>();
+            Map<String, Object> bodyMap = new LinkedHashMap<String, Object>();
 
             bodyMap.put("act", ACTION);
             bodyMap.put("pid", request.getJSONObject("body").get("pid"));

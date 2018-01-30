@@ -5,6 +5,7 @@ import com.aiyolo.entity.GatewaySetting;
 import net.sf.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class GatewayUpstaResponse extends GatewayResponse {
@@ -23,7 +24,7 @@ public class GatewayUpstaResponse extends GatewayResponse {
     @Override
     public Map<String, Object> responseBody(JSONObject request, Object data) {
         try {
-            Map<String, Object> bodyMap = new HashMap<String, Object>();
+            Map<String, Object> bodyMap = new LinkedHashMap<String, Object>();
 
             bodyMap.put("act", ACTION);
             bodyMap.put("pid", request.getJSONObject("body").get("pid"));

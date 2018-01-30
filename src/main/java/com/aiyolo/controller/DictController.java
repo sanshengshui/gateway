@@ -12,8 +12,11 @@ import com.aiyolo.entity.DeviceCategory;
 import com.aiyolo.repository.ChannelRepository;
 import com.aiyolo.repository.DeviceCategoryRepository;
 import com.aiyolo.service.AreaCodeService;
+
 import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,10 +29,14 @@ import java.util.Map;
 @RequestMapping("/dict")
 public class DictController {
 
+    //    @Value("${gelian.product_id}")
+    //    protected String product_id;
+
     @RequestMapping(value = "/product", produces = "text/javascript; charset=UTF-8")
     public String product() {
         Map<String, String> productMap = new HashMap<String, String>();
         for (int i = 0; i < ProductEnum.values().length; i++) {
+            //            productMap.put(product_id, ProductEnum.values()[i].getName());
             productMap.put(ChannelConsts.PRODUCT_ID, ProductEnum.values()[i].getName());
         }
 

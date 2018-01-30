@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.aiyolo.constant.QueueConsts;
 
@@ -16,6 +17,9 @@ public class Sender {
 
     private static Log mqLogger = LogFactory.getLog("mqLog");
     private static Log errorLogger = LogFactory.getLog("errorLog");
+
+    @Value("${gelian.queue.output}")
+    protected String outputQueueName;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -27,7 +31,7 @@ public class Sender {
             data.put("body", bodyMap);
             String messageString = JSONObject.fromObject(data).toString();
 
-            rabbitTemplate.convertAndSend(QueueConsts.outputQueueName, messageString);
+            rabbitTemplate.convertAndSend(outputQueueName, messageString);
 
             mqLogger.info("写入队列:" + messageString);
         } catch (Exception e) {
