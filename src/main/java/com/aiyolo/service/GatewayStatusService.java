@@ -61,7 +61,6 @@ public class GatewayStatusService {
             if (mobileIds != null && mobileIds.length > 0) {
                 // 推送给APP
                 Map<String, Object> headerMap = AppNoticeGatewayRequest.getInstance().requestHeader(mobileIds);
-                headerMap.put("cache_time", PushConsts.CACHE_TIME);
 
                 Map<String, Object> queryParamMap = new HashMap<String, Object>();
                 queryParamMap.put("imei", gateway.getGlImei());

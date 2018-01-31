@@ -5,7 +5,9 @@ import java.util.Map;
 
 import com.aiyolo.constant.ChannelConsts;
 import com.aiyolo.constant.ProtocolCodeConsts;
+import com.aiyolo.constant.PushConsts;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.CACHE_TIME;
 import static com.aiyolo.constant.ProtocolFieldConsts.CODE;
 import static com.aiyolo.constant.ProtocolFieldConsts.IS_TEXT;
 
@@ -24,7 +26,7 @@ public class AppMessagePushRequest extends AppRequest {
     public Map<String, Object> requestHeader(String[] mobileIds) {
         Map<String, Object> headerMap = super.requestHeader(mobileIds);
         if (headerMap != null) {
-            headerMap.put(CODE, ProtocolCodeConsts.PUSH_TO_APP);
+            headerMap.put(CACHE_TIME, PushConsts.CACHE_TIME);
             headerMap.put(IS_TEXT, 1);
         }
         return headerMap;

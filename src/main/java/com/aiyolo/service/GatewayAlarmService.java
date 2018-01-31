@@ -114,7 +114,6 @@ public class GatewayAlarmService {
 
                 // 推送给APP
                 Map<String, Object> headerMap = AppNoticeWarningRequest.getInstance().requestHeader(mobileIds);
-                headerMap.put("cache_time", PushConsts.CACHE_TIME);
 
                 Map<String, Object> queryParamMap = new HashMap<String, Object>();
                 queryParamMap.put("imeiGateway", imei);
