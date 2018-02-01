@@ -34,6 +34,7 @@ public class AppNoticeGatewayRequest extends AppRequest {
             bodyMap.put("atm", MapUtils.getInteger(data, "atm", 0));
             bodyMap.put("ver", MapUtils.getString(data, "ver", ""));
             bodyMap.put("check", MapUtils.getInteger(data, "check", 0));
+            bodyMap.put("htmp", MapUtils.getInteger(data, "htmp", 0));
 
             return bodyMap;
         } catch (Exception e) {

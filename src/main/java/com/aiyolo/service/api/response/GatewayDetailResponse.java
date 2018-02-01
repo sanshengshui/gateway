@@ -18,6 +18,7 @@ public class GatewayDetailResponse extends Response {
     private Integer temp = 0;
     private Integer hum = 0;
     private Integer atm = 0;
+    private Integer htmp = 0;
     private String ver = "";
 
     public GatewayDetailResponse(RequestObject request) {
@@ -34,6 +35,7 @@ public class GatewayDetailResponse extends Response {
         this.temp = (Integer) gatewayDetail.get("temp");
         this.hum = (Integer) gatewayDetail.get("hum");
         this.atm = (Integer) gatewayDetail.get("atm");
+        this.htmp = (Integer) gatewayDetail.get("htmp");
         this.ver = (String) gatewayDetail.get("ver");
     }
 
@@ -43,6 +45,14 @@ public class GatewayDetailResponse extends Response {
                 "imei='" + imei + '\'' +
                 "devs='" + devs.toString() + '\'' +
                 '}';
+    }
+
+    public Integer getHtmp() {
+        return htmp;
+    }
+
+    public void setHtmp(Integer htmp) {
+        this.htmp = htmp;
     }
 
     public String getImei() {

@@ -80,6 +80,7 @@ public class GatewayStatusService {
                     queryParamMap.put("atm", gatewayStatus.getAtmosphere());
                     queryParamMap.put("ver", gatewayStatus.getVersion());
                     queryParamMap.put("check", gatewayStatus.getChecked());
+                    queryParamMap.put("htmp", gatewayStatus.getHtmp());
                 }
 
                 Map<String, Object> bodyMap = AppNoticeGatewayRequest.getInstance().requestBody(queryParamMap);

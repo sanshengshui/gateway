@@ -61,6 +61,7 @@ public class GatewayDetailService extends BaseService {
             gatewayDetailResponse.setHum(gatewayStatus.getHumidity());
             gatewayDetailResponse.setAtm(gatewayStatus.getAtmosphere());
             gatewayDetailResponse.setVer(gatewayStatus.getVersion());
+            gatewayDetailResponse.setHtmp(gatewayStatus.getHtmp());
         }
 
         int gatewayLiveStatus = gatewayLiveStatusCache.getByGlImei(appUserGateway.getGateway().getGlImei());

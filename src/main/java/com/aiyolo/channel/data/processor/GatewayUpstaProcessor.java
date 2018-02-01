@@ -40,6 +40,7 @@ public class GatewayUpstaProcessor extends Processor {
             String glImei = messageHeaderJson.getString(IMEI);
             int check = messageBodyJson.getInt("check");
             int sos = messageBodyJson.getInt("sos");
+            int htmp = messageBodyJson.getInt("htmp");
             GatewayStatus gatewayStatus = new GatewayStatus(
                     glImei,
                     mid,
@@ -53,7 +54,7 @@ public class GatewayUpstaProcessor extends Processor {
                     messageBodyJson.getInt("err"),
                     sos,
                     check,
-                    messageBodyJson.getInt("htmp"));
+                    htmp);
 
             GatewayStatusRepository gatewayStatusRepository = (GatewayStatusRepository) SpringUtil.getBean("gatewayStatusRepository");
 
@@ -67,13 +68,18 @@ public class GatewayUpstaProcessor extends Processor {
                 gatewayAlarmService.pushChecked(glImei, mid);
             }
 
+
             GatewayStatus load = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(glImei);
             if (load != null) {
                 if (load.getSos() != sos) {
                     //触发网关报警或者解除网关报警
-
                     gatewayAlarmService.gatewayAlarm(glImei, sos, mid);
                 }
+
+                if (load.getHtmp() != htmp) {
+                    // TODO: 2018/2/1 发送预警通知栏推送和短信，以及记录日志
+                }
+
             }
             //-------------------------增加网关报警和巡检---------------------------------
 

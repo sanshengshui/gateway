@@ -58,7 +58,7 @@ public class AddGatewayService extends BaseService {
             GatewaySharePass gatewaySharePass = gatewaySharePassRepository.findFirstByGlImeiOrderByIdDesc(imei);
             if (gatewaySharePass == null || !gatewaySharePass.getPass().equals(pass) ||
                     (System.currentTimeMillis() - gatewaySharePass.getUpdatedAt().getTime()) > 5 * 60 * 1000L) {
-                return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "动态密码错误");
+                return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "二维码已过期");
             }
 
             for (int i = 0; i < gatewayAppUsers.size(); i++) {
