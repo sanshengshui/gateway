@@ -60,7 +60,7 @@ public class GatewayUbdProcessor extends Processor {
 
             // 推送给app
             GatewayStatusService gatewayStatusService = (GatewayStatusService) SpringUtil.getBean("gatewayStatusService");
-            gatewayStatusService.pushGatewayStatus(gateway, AppNoticeTypeConsts.DELETE, mobileIds);
+            gatewayStatusService.pushGatewayStatus(imei, AppNoticeTypeConsts.DELETE, mobileIds);
 
             // 写入文件待后续处理
             gatewayLogger.info(message);

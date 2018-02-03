@@ -102,7 +102,7 @@ public class GatewayUpstaProcessor extends Processor {
 
             // 推送给app
             GatewayStatusService gatewayStatusService = (GatewayStatusService) SpringUtil.getBean("gatewayStatusService");
-            gatewayStatusService.pushGatewayStatus(gateway);
+            gatewayStatusService.pushGatewayStatus(glImei);
 
             // 写入文件待后续处理
             gatewayLogger.info(message);

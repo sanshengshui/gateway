@@ -12,6 +12,7 @@ import com.aiyolo.repository.DeviceRepository;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.repository.GatewayStatusRepository;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,18 +45,21 @@ public class GatewayStatusService {
     @Autowired
     GatewayService gatewayService;
 
-    public void pushGatewayStatus(Gateway gateway) {
-        pushGatewayStatus(gateway, AppNoticeTypeConsts.MODIFY, null);
+//    public void pushGatewayStatus(Gateway gateway) {
+//        pushGatewayStatus(gateway, AppNoticeTypeConsts.MODIFY, null);
+//    }
+    public void pushGatewayStatus(String glImei) {
+        pushGatewayStatus(glImei, AppNoticeTypeConsts.MODIFY, null);
     }
 
-    public void pushGatewayStatus(Gateway gateway, Integer noticeType, String[] mobileIds) {
-        if (gateway == null) {
+    public void pushGatewayStatus(String glImei, Integer noticeType, String[] mobileIds) {
+        if (StringUtils.isEmpty(glImei)) {
             return;
         }
 
         try {
             if (mobileIds == null) {
-                mobileIds = gatewayService.getGatewayUserMobileIds(gateway.getGlImei());
+                mobileIds = gatewayService.getGatewayUserMobileIds(glImei);
             }
 
             if (mobileIds != null && mobileIds.length > 0) {
@@ -63,16 +67,16 @@ public class GatewayStatusService {
                 Map<String, Object> headerMap = AppNoticeGatewayRequest.getInstance().requestHeader(mobileIds);
 
                 Map<String, Object> queryParamMap = new HashMap<String, Object>();
-                queryParamMap.put("imei", gateway.getGlImei());
+                queryParamMap.put("imei", glImei);
                 queryParamMap.put("notice", noticeType);
 
-                List<Device> devices = deviceRepository.findByGlImei(gateway.getGlImei());
+                List<Device> devices = deviceRepository.findByGlImei(glImei);
                 queryParamMap.put("dev_num", devices.size());
 
-                int gatewayLiveStatus = gatewayLiveStatusCache.getByGlImei(gateway.getGlImei());
+                int gatewayLiveStatus = gatewayLiveStatusCache.getByGlImei(glImei);
                 queryParamMap.put("online", gatewayLiveStatus);
 
-                GatewayStatus gatewayStatus = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(gateway.getGlImei());
+                GatewayStatus gatewayStatus = gatewayStatusRepository.findFirstByGlImeiOrderByIdDesc(glImei);
                 if (gatewayStatus != null) {
                     queryParamMap.put("err", gatewayStatus.getStatus());
                     queryParamMap.put("temp", gatewayStatus.getTemperature());
@@ -88,25 +92,25 @@ public class GatewayStatusService {
                 sender.sendMessage(headerMap, bodyMap);
             }
         } catch (Exception e) {
-            errorLogger.error("pushGatewayStatus异常！gateway:" + gateway.toString(), e);
+            errorLogger.error("pushGatewayStatus异常！gateway:" + glImei, e);
         }
     }
 
-    public void pushGatewayStatus(String glImei) {
-        Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(glImei);
-        if (gateway == null) {
-            return;
-        }
-
-        pushGatewayStatus(gateway);
-    }
+//    public void pushGatewayStatus(String glImei) {
+//        Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(glImei);
+//        if (gateway == null) {
+//            return;
+//        }
+//
+//        pushGatewayStatus(gateway);
+//    }
 
     @Async
     public void notifyGatewayLiveStatusChange(String glImei) {
         try {
             Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(glImei);
             if (gateway != null) {
-                pushGatewayStatus(gateway);
+                pushGatewayStatus(glImei);
             }
             taskLogger.info("notifyGatewayLiveStatusChange completed.(glImei:" + glImei + ")");
         } catch (Exception e) {
