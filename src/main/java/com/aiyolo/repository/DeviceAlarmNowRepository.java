@@ -10,6 +10,8 @@ public interface DeviceAlarmNowRepository extends CrudRepository<DeviceAlarmNow,
 
     DeviceAlarmNow findOneByAreaCodeAndImeiAndType(String areaCode, String imei, String type);
 
+    DeviceAlarmNow findOneByGlImeiAndType(String glImei, String type);
+
     List<DeviceAlarmNow> findByAreaCodeAndImei(String areaCode, String imei);
 
     @Query(value = "select n.areaCode as areaCode, n.type as type, count(n.glImei) as num from DeviceAlarmNow n where " +

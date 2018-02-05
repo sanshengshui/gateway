@@ -1,10 +1,12 @@
 package com.aiyolo.controller;
 
+import com.aiyolo.cache.GatewayLiveStatusCache;
 import com.aiyolo.common.ArrayHelper;
 import com.aiyolo.common.BaiduMapHelper;
+import com.aiyolo.constant.DeviceOnlineStatusConsts;
+import com.aiyolo.entity.DeviceAlarmNow;
 import com.aiyolo.entity.Gateway;
-import com.aiyolo.entity.DeviceAlarm;
-import com.aiyolo.repository.DeviceAlarmRepository;
+import com.aiyolo.repository.DeviceAlarmNowRepository;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.service.AreaCodeService;
 import com.aiyolo.service.GatewayService;
@@ -15,79 +17,141 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/home")
 public class HomeController {
 
-    @Autowired GatewayRepository gatewayRepository;
-    @Autowired DeviceAlarmRepository deviceAlarmRepository;
+    @Autowired
+    GatewayLiveStatusCache gatewayLiveStatusCache;
 
-    @Autowired GatewayService gatewayService;
-    @Autowired AreaCodeService areaCodeService;
+    @Autowired
+    GatewayRepository gatewayRepository;
+    @Autowired
+    DeviceAlarmNowRepository deviceAlarmNowRepository;
 
-    @RequestMapping("/data")
-    public Map<String, Object> data(
-            @RequestParam(value="id", defaultValue="0") String id,
-            @RequestParam(value="areaCode", defaultValue="0") String areaCode) {
-        Long gatewayId;
+
+    @Autowired
+    GatewayService gatewayService;
+    @Autowired
+    AreaCodeService areaCodeService;
+
+    @RequestMapping("/mapData")
+    public List<Map> data(
+            @RequestParam(value="center", defaultValue="0") String center,
+            @RequestParam(value="zoom", defaultValue="0") String zoom) {
+        String[] mapCenter = center.split(",", 2);
+        if (mapCenter.length < 2) {
+            return null;
+        }
+
+        int mapZoom;
         try {
-            gatewayId = Long.valueOf(id);
+            mapZoom = Integer.valueOf(zoom);
         } catch (NumberFormatException e) {
             return null;
         }
 
-        if (! areaCodeService.checkAreaCode(areaCode, new String[] {"0"})) {
+        Map<String, String> locationAddress = BaiduMapHelper.getAddressByLocation(mapCenter[0], mapCenter[1]);
+        String areaCode = locationAddress.get("areaCode");
+        if (!areaCodeService.checkAreaCode(areaCode)) {
             return null;
         }
 
-        List<Gateway> gateways = new ArrayList<Gateway>();
-        if (gatewayId == 0) {
-            gateways = gatewayService.getAllGatewayByAreaCode(areaCode);
-        } else {
-            Gateway gateway = gatewayService.getGatewayById(gatewayId);
-            if (gateway != null) {
-                gateways.add(gateway);
+        List<Map> data = new ArrayList<Map>();
+        if (mapZoom < 15) {
+            if (mapZoom < 8) {
+                areaCode = "0";
+            } else if (mapZoom < 12) {
+                areaCode = areaCode.substring(0, 2) + "0000";
+            } else {
+                areaCode = areaCode.substring(0, 4) + "00";
             }
-        }
+            List<Gateway> gateways = gatewayService.getAllGatewayByAreaCode(areaCode);
 
-        Map<String, DeviceAlarm> deviceAlarms = new HashMap<String, DeviceAlarm>();
-        for (int i = 0; i < gateways.size(); i++) {
-            if (StringUtils.isNotEmpty(gateways.get(i).getAreaCode())) {
-                String areaName = areaCodeService.getAreaName(gateways.get(i).getAreaCode());
-                if (StringUtils.isNotEmpty(areaName) && StringUtils.isEmpty(gateways.get(i).getAddressLocation())) {
-                    String fullAddress = areaName + gateways.get(i).getAddress();
-                    Map<String, String> addressLocation = BaiduMapHelper.getLocationByAddress(fullAddress);
-                    if (addressLocation != null) {
-                        gateways.get(i).setAddressLocation(addressLocation.get("longitude") + "," + addressLocation.get("latitude"));
-                        gatewayRepository.save(gateways.get(i));
+            Map<String, Integer> items = new HashMap<String, Integer>();
+            for (int i = 0; i < gateways.size(); i++) {
+                Gateway gateway = gateways.get(i);
+                int gatewayLiveStatus = gatewayLiveStatusCache.getByGlImei(gateway.getGlImei());
+                if (gatewayLiveStatus == DeviceOnlineStatusConsts.OFFLINE) {
+                    continue;
+                }
+                if (StringUtils.isNotEmpty(gateway.getAreaCode())) {
+                    String key;
+                    if (mapZoom < 8) {
+                        key = gateway.getAreaCode().substring(0, 2) + "0000";
+                    } else if (mapZoom < 12) {
+                        key = gateway.getAreaCode().substring(0, 4) + "00";
+                    } else {
+                        key = gateway.getAreaCode();
+                    }
+
+                    if (items.get(key) == null) {
+                        items.put(key, 1);
+                    } else {
+                        items.put(key, items.get(key) + 1);
                     }
                 }
             }
+            for (Map.Entry<String, Integer> entry : items.entrySet()) {
+                Map<String, Object> item = new HashMap<String, Object>();
+                String[] areaNameArray = areaCodeService.getAreaNameArray(entry.getKey());
+                if (mapZoom < 8) {
+                    item.put("position", Arrays.copyOfRange(areaNameArray, 0, 1));
+                } else if (mapZoom < 12) {
+                    item.put("position", Arrays.copyOfRange(areaNameArray, 0, 2));
+                } else {
+                    item.put("position", areaNameArray);
+                }
+                item.put("onlineDev", entry.getValue());
 
-            // 添加网关管理员手机至userPhones
-            String managerPhone = gatewayService.getManagerPhone(gateways.get(i).getGlImei());
-            if (StringUtils.isNotEmpty(managerPhone)) {
-                String[] userPhones = ArrayHelper.getStringArray(gateways.get(i).getUserPhones());
-                String[] newUserPhones = (String[]) ArrayUtils.addAll(new String[]{managerPhone}, userPhones);
-                gateways.get(i).setUserPhones(ArrayHelper.getArrayString(newUserPhones));
+                data.add(item);
             }
+        } else {
+            List<Gateway> gateways = gatewayService.getAllGatewayByAreaCode(areaCode);
+            for (int i = 0; i < gateways.size(); i++) {
+                Gateway gateway = gateways.get(i);
+                if (StringUtils.isNotEmpty(gateway.getAreaCode())) {
+                    String areaName = areaCodeService.getAreaName(gateway.getAreaCode());
+                    if (StringUtils.isNotEmpty(areaName) && StringUtils.isEmpty(gateway.getAddressLocation())) {
+                        String fullAddress = areaName + gateway.getAddress();
+                        Map<String, String> addressLocation = BaiduMapHelper.getLocationByAddress(fullAddress);
+                        if (addressLocation != null) {
+                            gateway.setAddressLocation(addressLocation.get("longitude") + "," + addressLocation.get("latitude"));
+                            gatewayRepository.save(gateway);
+                        }
+                    }
+                }
 
-            // 获取最近一次警报记录
-            DeviceAlarm deviceAlarm = deviceAlarmRepository.findFirstByGlImeiOrderByIdDesc(gateways.get(i).getGlImei());
-            if (deviceAlarm != null) {
-                deviceAlarms.put(deviceAlarm.getGlImei(), deviceAlarm);
+                // 添加网关管理员手机至userPhones
+                String managerPhone = gatewayService.getManagerPhone(gateway.getGlImei());
+                if (StringUtils.isNotEmpty(managerPhone)) {
+                    String[] userPhones = ArrayHelper.getStringArray(gateway.getUserPhones());
+                    String[] newUserPhones = (String[]) ArrayUtils.addAll(new String[]{managerPhone}, userPhones);
+                    gateway.setUserPhones(ArrayHelper.getArrayString(newUserPhones));
+                }
+
+                Map<String, Object> item = new HashMap<String, Object>();
+                item.put("addressLocation", gateway.getAddressLocation());
+                item.put("areaCode", gateway.getAreaCode());
+                item.put("address", gateway.getAddress());
+                item.put("userName", gateway.getUserName());
+                item.put("userPhones", gateway.getUserPhones());
+
+                DeviceAlarmNow deviceAlarmNow = deviceAlarmNowRepository.findOneByGlImeiAndType(gateway.getGlImei(), "W");
+                if (deviceAlarmNow == null) {
+                    int gatewayLiveStatus = gatewayLiveStatusCache.getByGlImei(gateway.getGlImei());
+                    item.put("status", gatewayLiveStatus == DeviceOnlineStatusConsts.ONLINE ? "online" : "offline");
+                } else {
+                    item.put("status", "warning");
+                }
+
+                data.add(item);
             }
         }
 
-        Map<String, Object> response = new HashMap<String, Object>();
-        response.put("gateways", gateways);
-        response.put("deviceAlarms", deviceAlarms);
-        return response;
+        return data;
     }
 
 }

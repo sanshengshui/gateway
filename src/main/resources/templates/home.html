@@ -34,6 +34,12 @@
     table.dataTable {
         margin-top: 0 !important;
     }
+
+    .BMapLabel {
+        max-width: 100px;
+        background-color: transparent !important;
+        border: none !important;
+    }
     </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -101,12 +107,21 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="box box-solid box-default">
-                                                <div class="box-header with-border">
-                                                    <h3 class="box-title">行政区划图</h3>
-                                                </div>
-                                                <!-- /.box-header -->
-                                                <div class="box-body">
-                                                    <div id="mapContainer" style="width: 100%; height: 545px;"></div>
+                                                <div class="box-body" style="padding: 0;">
+                                                    <div style="position: absolute; top: 10px; left: 10px; z-index: 99;">
+                                                        <button type="submit" class="btn btn-default btn-sm" id="mapSwitch">切换实时地图</button>
+                                                    </div>
+                                                    <div id="addressSearch" style="position: absolute; top: 10px; right: 10px; z-index: 99; display: none;">
+                                                        <form class="form-inline">
+                                                            <div class="form-group form-group-sm">
+                                                                <input type="text" id="address" name="address" class="form-control"
+                                                                       placeholder="搜地点"/>
+                                                            </div>
+                                                            <button type="submit" class="btn btn-default btn-sm">查询</button>
+                                                        </form>
+                                                    </div>
+                                                    <div id="areaMapContainer" style="width: 100%; height: 603px; padding: 10px;"></div>
+                                                    <div id="realMapContainer" style="width: 100%; height: 603px; display: none;"></div>
                                                 </div>
                                                 <!-- /.box-body -->
                                             </div>
@@ -242,6 +257,7 @@
 <script src="/js/dict.js?alarm_type,area_code"></script>
 <script src="/js/distpicker.js"></script>
 <script src="/js/distpicker.init.js"></script>
+<script src="/js/map.js"></script>
 
 <script th:inline="javascript">
 /*<![CDATA[*/
@@ -263,92 +279,28 @@ if (adcode) {
 }
 $('#distpicker').distpicker(distpicker_params);
 
-var map_init = false;
-var map_timer;
-var map_areaCode;
-var map_gatewayId;
-var mapInfoWinOpts = { width: 400, enableMessage: false };
-//var mapRedIcon = new BMap.Icon("/images/red.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
-//var mapBlueIcon = new BMap.Icon("/images/blue.png", new BMap.Size(25, 30), { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) });
-
-var mapMarkers = [];
-var mapInfoWins = [];
-
-var map;
-var displayMap = function(areaCode, id) {
-    clearTimeout(map_timer);
-
-    map_init = (map_init && areaCode == map_areaCode && id == map_gatewayId) ? true : false;
-    map_areaCode = areaCode;
-    map_gatewayId = id;
-
-    $.getJSON("/home/data?id=" + id + "&areaCode=" + areaCode, function(data) {
-        var gateways = data.gateways;
-        var deviceAlarms = data.deviceAlarms;
-
-        for (var i = 0; i < gateways.length; i++) {
-            if (gateways[i].addressLocation == "") {
-                continue;
-            }
-            var lo = gateways[i].addressLocation.split(",");
-            if (!map_init) {
-                map = new BMap.Map("mapContainer");
-                map.centerAndZoom(new BMap.Point(lo[0], lo[1]), 10);
-                map.enableScrollWheelZoom();
-                map.addControl(new BMap.NavigationControl()); //添加默认缩放平移控件
-                map_init = true;
-                $('.box-alarm').show();
-            } else {
-                if (mapMarkers[gateways[i].id]) {
-                    map.removeOverlay(mapMarkers[gateways[i].id]);
-                }
-            }
-            mapMarkers[gateways[i].id] = new BMap.Marker(new BMap.Point(lo[0], lo[1]));
-            if (deviceAlarms[gateways[i].glImei] && deviceAlarms[gateways[i].glImei].status == 1) {
-                mapMarkers[gateways[i].id].setIcon(mapRedIcon);
-            } else {
-                mapMarkers[gateways[i].id].setIcon(mapBlueIcon);
-            }
-            map.addOverlay(mapMarkers[gateways[i].id]);
-            mapMarkers[gateways[i].id].gateway_id = gateways[i].id;
-
-            var infoWinContent = '<dl>' +
-                '<dt>地址</dt>' +
-                '<dd>' + areaCodeDict.init().getAreaName(gateways[i].areaCode).join("") + gateways[i].address + '</dd>' +
-                '<dt>联系人</dt>' +
-                '<dd>' + gateways[i].userName + '</dd>' +
-                '<dt>联系电话</dt>' +
-                '<dd>' + JSON.parse(gateways[i].userPhones).toString() + '</dd></dl>';
-            mapInfoWins[gateways[i].id] = new BMap.InfoWindow(infoWinContent, mapInfoWinOpts);
-            mapMarkers[gateways[i].id].addEventListener('click', function(evt) {
-                var id = evt.target.gateway_id;
-                mapMarkers[id].openInfoWindow(mapInfoWins[id]);
-            });
-        }
-
-        if (!map_init) {
-            alert("无地图数据！");
-        } else {
-            map_timer = setTimeout("displayMap(" + areaCode + ", " + id + ")", 5000);
-        }
-    }).error(function() {
-        // alert("无数据！");
-    });
-}
-
-
-
-
-
+var markerData = [];
 var launch, changeAreaChart, changeTypeChart;
 $(document).ready(function() {
     // 调整地图容器尺寸
     //var maxHeight = $(window).height();
-    //$('#mapContainer').height(maxHeight - 230);
+    //$('#areaMapContainer').height(maxHeight - 230);
 
-    //displayMap(0);
-
-
+    $("#mapSwitch").click(function(){
+        if ($("#areaMapContainer").is(":hidden")) {
+            $("#addressSearch").hide();
+            $("#realMapContainer").hide();
+            $("#areaMapContainer").show();
+            drawAreaMap();
+            $(this).text("切换实时地图");
+        } else {
+            $("#areaMapContainer").hide();
+            $("#addressSearch").show();
+            $("#realMapContainer").show();
+            drawRealMap();
+            $(this).text("切换行政区划图");
+        }
+    });
 
     changeAreaChart = function(o) {
         if ($("#areaBar").is(":hidden")) {
@@ -637,7 +589,7 @@ $(document).ready(function() {
         chartTypeBar = echarts.init(document.getElementById('typeBar'));
         chartAreaPie = echarts.init(document.getElementById('areaPie'));
         chartTypePie = echarts.init(document.getElementById('typePie'));
-        chartAreaMap = echarts.init(document.getElementById('mapContainer'));
+        chartAreaMap = echarts.init(document.getElementById('areaMapContainer'));
 
         loadAlarmStat();
     }
@@ -821,6 +773,11 @@ $(document).ready(function() {
             chartAreaMap.resize();
             chartAreaMap.setOption(option_areaMap, true);
         });
+    }
+
+    var drawRealMap = function() {
+        initMap();
+        setInterval("refresh()", 5000);
     }
 
     // 报警信息
