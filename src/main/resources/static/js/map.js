@@ -35,20 +35,22 @@ function addMapControl() {
     //map.addControl(overviewControl);
 }
 function addMapOverlay(i) {
-    if (zoom < 5) {
-        return;
-    }
+    if (zoom < 5) return;
 
     if (typeof i === 'undefined') {
         i = 0;
-        getData();
-        var _overlayStyle = overlayStyle;
-        getOverlayStyle();
-        if (_overlayStyle != overlayStyle) {
-            getOpts();
-            map.clearOverlays();
-            markers = [];
-        }
+        $.ajaxSettings.async = false;
+        $.getJSON("/home/mapData?center=" + center.lng + "," + center.lat + "&zoom=" + zoom, function (data) {
+            markerData = data;
+
+            var _overlayStyle = overlayStyle;
+            getOverlayStyle();
+            if (_overlayStyle != overlayStyle) {
+                getOverlayOpts();
+                map.clearOverlays();
+                markers = [];
+            }
+        });
     }
 
     if (overlayStyle == "DEVICE") {
@@ -61,7 +63,7 @@ function addMapOverlay(i) {
         return;
     }
 
-    var labelContent = "<div style='width: " + opts.icon.size + "px; text-align: center;'>"
+    var labelContent = "<div style='width: " + overlayOpts.icon.size + "px; text-align: center;'>"
             + markerData[i].position[markerData[i].position.length - 1]
             + "<br />"
             + markerData[i].onlineDev + "台"
@@ -72,12 +74,12 @@ function addMapOverlay(i) {
                     point,
                     {
                         icon : new BMap.Icon(
-                                "/images/" + opts.icon.size + ".png",
-                                new BMap.Size(opts.icon.size, opts.icon.size))
+                                "/images/" + overlayOpts.icon.size + ".png",
+                                new BMap.Size(overlayOpts.icon.size, overlayOpts.icon.size))
                     });
             var label = new BMap.Label(labelContent);
-            label.setOffset(new BMap.Size(0, opts.icon.size/5));
-            label.setStyle(opts.label.styles);
+            label.setOffset(new BMap.Size(0, overlayOpts.icon.size/5));
+            label.setStyle(overlayOpts.label.styles);
             marker.setLabel(label);
             map.addOverlay(marker);
 
@@ -113,13 +115,13 @@ function addDeviceOverlay() {
                                 { anchor: new BMap.Size(12.5, 30), infoWindowAnchor: new BMap.Size(12.5, 0) })
                     });
 
-            var infoWindow = new BMap.InfoWindow(infoWindowContent, opts.infoWindow);
+            var infoWindow = new BMap.InfoWindow(infoWindowContent, overlayOpts.infoWindow);
             addClickHandler(marker, infoWindow);
             map.addOverlay(marker);
             markers[markerData[i].addressLocation] = marker;
         } else {
             markers[markerData[i].addressLocation].getIcon().setImageUrl("/images/" + markerData[i].status + ".png");
-            var infoWindow = new BMap.InfoWindow(infoWindowContent, opts.infoWindow);
+            var infoWindow = new BMap.InfoWindow(infoWindowContent, overlayOpts.infoWindow);
             addClickHandler(markers[markerData[i].addressLocation], infoWindow);
         }
     }
@@ -128,11 +130,6 @@ function addDeviceOverlay() {
 function addClickHandler(target, window) {
     target.addEventListener("click", function() {
         target.openInfoWindow(window);
-    });
-}
-function getData() {
-    $.getJSON("/home/mapData?center=" + center.lng + "," + center.lat + "&zoom=" + zoom, function (data) {
-        markerData = data;
     });
 }
 function getOverlayStyle() {
@@ -146,26 +143,27 @@ function getOverlayStyle() {
         overlayStyle = "DEVICE";
     }
 }
-function getOpts() {
+function getOverlayOpts() {
     switch (overlayStyle) {
         case "PROVINCE":
-            opts.icon.size = 60;
-            opts.label.styles = { color: "rgb(98,94,80)", fontSize : "12px" };
+            overlayOpts.icon.size = 60;
+            overlayOpts.label.styles = { color: "rgb(98,94,80)", fontSize : "12px" };
             break;
         case "CITY":
-            opts.icon.size = 70;
-            opts.label.styles = { color: "rgb(98,94,80)", fontSize : "14px" };
+            overlayOpts.icon.size = 70;
+            overlayOpts.label.styles = { color: "rgb(98,94,80)", fontSize : "14px" };
             break;
         case "DISTRICT":
-            opts.icon.size = 90;
-            opts.label.styles = { color: "rgb(98,94,80)", fontSize : "16px" };
+            overlayOpts.icon.size = 90;
+            overlayOpts.label.styles = { color: "rgb(98,94,80)", fontSize : "16px" };
             break;
         case "DEVICE":
-            opts.infoWindow = { width: 400, enableMessage: false };
+            overlayOpts.infoWindow = { width: 400, enableMessage: false };
             break;
     }
 }
 function refresh() {
+    if ($("#realMapContainer").is(":hidden")) return;
     if (!complete) return;
     complete = false;
 
@@ -176,7 +174,7 @@ function refresh() {
 var map;
 var markers = [];
 var overlayStyle = "";
-var opts = {icon: {}, label: {}};
+var overlayOpts = {icon: {}, label: {}};
 var center;
 var zoom; // 5-7国 8-11省 12-14区 15-设备
 var complete = false;

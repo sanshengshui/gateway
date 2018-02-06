@@ -326,9 +326,10 @@ $('#distpicker').distpicker(distpicker_params);
 var markerData = [];
 var changeAreaChart, changeTypeChart;
 $(document).ready(function() {
-    // 调整地图容器尺寸
-    //var maxHeight = $(window).height();
-    //$('#areaMapContainer').height(maxHeight - 230);
+    // 调整高度
+    var maxHeight = $(window).height();
+    $('#areaMapContainer').height(maxHeight - 245);
+    $('#realMapContainer').height(maxHeight - 185);
 
     $("#mapSwitch").click(function(){
         if ($("#areaMapContainer").is(":hidden")) {
@@ -791,6 +792,8 @@ $(document).ready(function() {
     }
 
     var drawAreaMap = function() {
+        if ($("#areaMapContainer").is(":hidden")) return;
+
         var option_areaMap = $.extend(true, {}, option_map);
 
         var mapName = city ? city : (province ? province : 'china');
@@ -856,7 +859,7 @@ $(document).ready(function() {
                 "lengthChange": false,
                 "ordering": false,
                 "ajax": "/alarm/list?status=0&areaCode=" + areaCode,
-                "scrollY": 210,
+                "scrollY": maxHeight - 580,
                 "paging": false,
                 "info": false,
                 "columns": [
@@ -897,7 +900,7 @@ $(document).ready(function() {
     }
     setInterval(function() {
         loadPage();
-    }, 10000);
+    }, 5000);
 
     var loadTime = function() {
         $("#nowTime").text(moment().format('HH:mm'));
