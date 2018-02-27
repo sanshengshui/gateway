@@ -4,15 +4,21 @@ import com.aiyolo.AuthenticateError;
 import com.aiyolo.common.GZipHelper;
 import com.aiyolo.common.SpringUtil;
 import com.aiyolo.common.StringHelper;
+import com.aiyolo.constant.ProtocolFieldConsts;
+import com.aiyolo.service.api.AgingTestService;
 import com.aiyolo.service.api.ApiService;
 import com.aiyolo.service.api.BaseService;
+import com.aiyolo.service.api.request.GetInfoRequest;
 import com.aiyolo.service.api.request.Request;
 import com.aiyolo.service.api.request.RequestObject;
+import com.aiyolo.service.api.response.AgingTestResponse;
 import com.aiyolo.service.api.response.ResponseObject;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -32,9 +38,11 @@ public class ApiController {
     private static final Log apiLogger = LogFactory.getLog("apiLog");
     private static final Log errorLogger = LogFactory.getLog("errorLog");
 
-    @Autowired BaseService baseService;
+    @Autowired
+    BaseService baseService;
 
-    @Autowired ObjectMapper objectMapper;
+    @Autowired
+    ObjectMapper objectMapper;
 
     private String parseRequestContent(HttpServletRequest request) {
         String body = "";
@@ -55,7 +63,8 @@ public class ApiController {
 
     @PostMapping("")
     @SuppressWarnings("unchecked")
-    public @ResponseBody <S extends ApiService, Req extends RequestObject, Res extends ResponseObject> Res api(HttpServletRequest request) {
+    public @ResponseBody
+    <S extends ApiService, Req extends RequestObject, Res extends ResponseObject> Res api(HttpServletRequest request) {
         String body = parseRequestContent(request);
         if (StringUtils.isEmpty(body)) {
             return (Res) baseService.responseRequestParameterError();
@@ -100,5 +109,29 @@ public class ApiController {
             apiLogger.info("Request: " + body.replace("\n", "") + ", Response: " + JSONObject.fromObject(response).toString());
         }
     }
+
+
+    @PostMapping("aging")
+    @SuppressWarnings("unchecked")
+    public @ResponseBody
+    AgingTestResponse agingTest(HttpServletRequest request) {
+
+        AgingTestService agingTestService = (AgingTestService) SpringUtil.getBean("agingTestService");
+
+        String body = parseRequestContent(request);
+        if (StringUtils.isEmpty(body)) {
+            return new AgingTestResponse();
+        }
+        JSONObject jsonObject = JSONObject.fromObject(body);
+
+        String imei = jsonObject.getString(ProtocolFieldConsts.IMEI);
+
+        AgingTestResponse response = agingTestService.doExecute(imei);
+        apiLogger.info("Request: " + body.replace("\n", "")
+                + ", Response: " + JSONObject.fromObject(response).toString());
+
+        return response;
+    }
+
 
 }
