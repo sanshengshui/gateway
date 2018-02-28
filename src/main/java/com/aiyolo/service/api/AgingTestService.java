@@ -50,12 +50,18 @@ public class AgingTestService
                 .collect(Collectors.toList());
 
         //        int lastStatus = 0;
-        long maxContinuousTime = 0L, lastStatusTime, maxTime = 0L, createdTime, startTime, continuousTime = 0L;
+        long maxContinuousTime = 0L, lastStatusTime = staUpdatedAtTime, maxTime = 0L, createdTime, startTime, continuousTime = 0L;
+        GatewayStatus gatewayStatusLast = null;
+
+        if (!gatewayStatusList.isEmpty()) {
+            gatewayStatusLast = gatewayStatusList.get(gatewayStatusList.size() - 1);
+        }
+
         if (gatewayStatusList.size() > 1) {
             startTime = lastStatusTime = maxTime = gatewayStatusList.get(0).getCreatedAt().getTime();
             for (int i = 1; i < gatewayStatusList.size(); i++) {
                 createdTime = gatewayStatusList.get(i).getCreatedAt().getTime();
-                maxTime = Math.max(createdTime, maxTime);
+                //                maxTime = Math.max(createdTime, maxTime);
                 long abs = Math.abs(createdTime - lastStatusTime);
                 if (abs > BEAT_TIME_OUT) {//两次间隔超过40分钟
                     //                    maxContinuousTime = Math.max(Math.abs(createdTime - startTime), maxContinuousTime);
@@ -68,17 +74,26 @@ public class AgingTestService
                 lastStatusTime = createdTime;
             }
             maxContinuousTime = Math.max(continuousTime, maxContinuousTime);
+            lastStatusTime = Math.max(startTime, lastStatusTime);
 
         }
 
 
         long currentTimeMillis = System.currentTimeMillis();
         String staStart = parseTimeLongToString(currentTimeMillis - staUpdatedAtTime);
-        String statusStart = parseTimeLongToString(currentTimeMillis - maxTime);
+        String statusStart = parseTimeLongToString(currentTimeMillis - lastStatusTime);
         String statusContinuous = parseTimeLongToString(maxContinuousTime);
 
-        return new AgingTestResponse(staStart, statusStart, statusContinuous
-                , maxContinuousTime >= 24 * 60 * 60 * 1000L);
+
+        String ext = "";
+
+        if (gatewayStatusLast != null) {
+            ext = gatewayStatusLast.toString();
+        }
+
+        boolean pass = maxContinuousTime >= 24 * 60 * 60 * 1000L;
+
+        return new AgingTestResponse(staStart, statusStart, statusContinuous, pass, ext);
     }
 
     private String parseTimeLongToString(long time) {

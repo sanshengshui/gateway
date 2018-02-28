@@ -4,7 +4,9 @@ import com.aiyolo.common.ArrayHelper;
 import com.aiyolo.entity.Gateway;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.service.GatewayService;
+
 import net.sf.json.JSONArray;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,13 +18,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/gateway")
 public class GatewayController {
 
-    @Autowired GatewayRepository gatewayRepository;
+    @Autowired
+    GatewayRepository gatewayRepository;
 
-    @Autowired GatewayService gatewayService;
+    @Autowired
+    GatewayService gatewayService;
 
     @RequestMapping("/map/{id}")
-    public String map(@PathVariable String id,Model model){
+    public String map(@PathVariable String id, Model model) {
         return id;
+    }
+
+    @RequestMapping("/hotmap/{id}")
+    public String hotmap(@PathVariable String id, Model model) {
+        Gateway gateway = gatewayService.getGatewayById(id);
+        if (gateway != null) {
+            model.addAttribute("gateway", gateway);
+            return "hotmap";
+        }
+
+        return "redirect:/404";
     }
 
     @RequestMapping("/view/{id}")
