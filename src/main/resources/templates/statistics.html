@@ -17,6 +17,51 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-header with-border">
+                            <h3 class="box-title">报警统计</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <form class="form-inline">
+                                <div class="form-group form-group-sm" sec:authorize="hasRole('ROLE_MANAGER')">
+                                    渠道: &nbsp;<select id="channelId" name="channelId" class="form-control"></select>
+                                </div>
+                                <div class="form-group form-group-sm" sec:authorize="hasRole('ROLE_MANAGER')">
+                                    代理: &nbsp;<select id="agent" name="agent" class="form-control"></select>
+                                </div>
+                                &emsp;
+                                <div id="distpicker" class="form-group form-group-sm">
+                                    <select id="province" name="province" class="form-control"></select>
+                                    <select id="city" name="city" class="form-control"></select>
+                                    <select id="district" name="district" class="form-control"></select>
+                                </div>
+                                <div class="form-group form-group-sm">
+                                    <input type="text" id="address" name="address" class="form-control"
+                                           placeholder="小区名称"/>
+                                </div>
+                                <button type="submit" class="btn btn-default btn-sm">查询</button>
+                                <button type="submit" class="btn btn-default btn-sm">重置</button>
+                            </form>
+                            <form class="form-inline">
+                                <button type="submit" class="btn btn-default btn-sm">全部</button>
+                                <button type="submit" class="btn btn-default btn-sm">分类统计</button>
+                                <button type="submit" class="btn btn-default btn-sm">区域统计</button>
+                                &emsp;
+                                <button type="submit" class="btn btn-default btn-sm">年统计</button>
+                                <button type="submit" class="btn btn-default btn-sm">月统计</button>
+                                <button type="submit" class="btn btn-default btn-sm">周统计</button>
+                            </form>
+
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header with-border">
                             <h3 class="box-title">分类统计</h3>
                             <div class="box-tools pull-right">
                                 <form class="form-inline">
@@ -115,6 +160,20 @@
     <th:block th:include="fragments/footer :: footer"></th:block>
 </div>
 
+<th:block th:include="fragments/footer :: js"></th:block>
+<script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/AdminLTE/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/js/moment.js"></script>
+<script src="/js/dict.js?area_code"></script>
+<script src="/js/distpicker.js"></script>
+<script src="/js/distpicker.init.js"></script>
+
+<script th:inline="javascript">
+    // 省市区联动
+    $('#distpicker').distpicker({
+        valueType: "code"
+    });
+</script>
 
 <!-- ECharts单文件引入 -->
 <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
