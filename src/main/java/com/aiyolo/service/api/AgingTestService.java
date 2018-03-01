@@ -55,6 +55,7 @@ public class AgingTestService
 
         if (!gatewayStatusList.isEmpty()) {
             gatewayStatusLast = gatewayStatusList.get(gatewayStatusList.size() - 1);
+
         }
 
         if (gatewayStatusList.size() > 1) {
@@ -74,24 +75,31 @@ public class AgingTestService
                 lastStatusTime = createdTime;
             }
             maxContinuousTime = Math.max(continuousTime, maxContinuousTime);
-            lastStatusTime = Math.max(startTime, lastStatusTime);
 
         }
 
+
+        String ext = "";
+
+        if (gatewayStatusLast != null) {
+            lastStatusTime = gatewayStatusLast.getCreatedAt().getTime();
+            ext = gatewayStatusLast.toString1();
+        }
 
         long currentTimeMillis = System.currentTimeMillis();
         String staStart = parseTimeLongToString(currentTimeMillis - staUpdatedAtTime);
         String statusStart = parseTimeLongToString(currentTimeMillis - lastStatusTime);
         String statusContinuous = parseTimeLongToString(maxContinuousTime);
 
-
-        String ext = "";
-
-        if (gatewayStatusLast != null) {
-            ext = gatewayStatusLast.toString();
-        }
-
         boolean pass = maxContinuousTime >= 24 * 60 * 60 * 1000L;
+
+        if (pass) {
+            pass = gatewayStatusLast.getChecked() == 0
+                    && gatewayStatusLast.getSos() == 0
+                    && gatewayStatusLast.getStatus() == 0
+                    && gatewayStatusLast.getHtmp() == 0
+            ;
+        }
 
         return new AgingTestResponse(staStart, statusStart, statusContinuous, pass, ext);
     }

@@ -49,9 +49,8 @@ public class GatewayStatus extends BaseEntity implements Serializable {
         this.htmp = htmp;
     }
 
-    @Override
-    public String toString() {
-        return "GatewayStatus{" +
+    public String toString1() {
+        return "{" +
                 "date='" + date + '\'' +
                 ", hour='" + hour + '\'' +
                 ", rssi=" + rssi +
@@ -63,15 +62,15 @@ public class GatewayStatus extends BaseEntity implements Serializable {
                 ", sos=" + sos +
                 ", checked=" + checked +
                 ", htmp=" + htmp +
-                "} " + super.toString();
+                "} ";
     }
 
-    //    @Override
-//    public String toString() {
-//        return String.format(
-//                "GatewayStatus[id=%d,  gl_imei='%s', date='%s', hour='%s']",
-//                id, glImei, date, hour);
-//    }
+    @Override
+    public String toString() {
+        return String.format(
+                "GatewayStatus[id=%d,  gl_imei='%s', date='%s', hour='%s']",
+                id, glImei, date, hour);
+    }
 
 
     public String getGlImei() {
