@@ -45,7 +45,10 @@ public class GatewayUpstaProcessor extends Processor {
             int check = messageBodyJson.getInt("check");
             int sos = messageBodyJson.getInt("sos");
             int htmp = messageBodyJson.getInt("htmp");
-            int needcfg = messageBodyJson.getInt("needcfg");
+            int needcfg = 0;
+            if (messageBodyJson.containsKey("needcfg")) {
+                needcfg = messageBodyJson.getInt("needcfg");
+            }
             GatewayStatus gatewayStatus = new GatewayStatus(
                     glImei,
                     mid,
@@ -110,14 +113,14 @@ public class GatewayUpstaProcessor extends Processor {
 
             //-------------------------增加下发mac配置---------------------------------
             if (needcfg > 0) {
-                Map<String, Object> headerMap = GatewayMaccfgRequest.getInstance().requestHeader(glImei);
-
-                Map<String, Object> data = new LinkedHashMap<>();
-                data.put(IMEI, glImei);
-                data.put(PIN, gateway.getGlPin());
-                Map<String, Object> bodyMap =  GatewayMaccfgRequest.getInstance().requestBody(data);
-
-                sender.sendMessage(headerMap, bodyMap);
+//                Map<String, Object> headerMap = GatewayMaccfgRequest.getInstance().requestHeader(glImei);
+//
+//                Map<String, Object> data = new LinkedHashMap<>();
+//                data.put(IMEI, glImei);
+//                data.put(PIN, gateway.getGlPin());
+//                Map<String, Object> bodyMap = GatewayMaccfgRequest.getInstance().requestBody(data);
+//
+//                sender.sendMessage(headerMap, bodyMap);
             }
 
 
