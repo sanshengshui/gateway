@@ -5,6 +5,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+
 @Entity
 public class DeviceAlarmCancel extends BaseEntity implements Serializable {
 
@@ -16,7 +18,7 @@ public class DeviceAlarmCancel extends BaseEntity implements Serializable {
     private Integer timestamp = 0;
 
     @ManyToOne
-    @JoinColumn(name = "imei", referencedColumnName = "imei", insertable = false, updatable = false)
+    @JoinColumn(name = IMEI, referencedColumnName = IMEI, insertable = false, updatable = false)
     private Device device;
 
     @ManyToOne

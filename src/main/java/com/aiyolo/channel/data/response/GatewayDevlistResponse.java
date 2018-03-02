@@ -9,6 +9,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+import static com.aiyolo.constant.ProtocolFieldConsts.PID;
+import static com.aiyolo.constant.ProtocolFieldConsts.PIN;
+
 public class GatewayDevlistResponse extends GatewayResponse {
 
     public static final String ACTION = "devlist";
@@ -28,9 +32,9 @@ public class GatewayDevlistResponse extends GatewayResponse {
             Map<String, Object> bodyMap = new LinkedHashMap<String, Object>();
 
             bodyMap.put("act", ACTION);
-            bodyMap.put("pid", request.getJSONObject("body").get("pid"));
-            bodyMap.put("imei", request.getJSONObject("body").get("imei"));
-            bodyMap.put("pin", request.getJSONObject("body").get("pin"));
+            bodyMap.put(PID, request.getJSONObject("body").get(PID));
+            bodyMap.put(IMEI, request.getJSONObject("body").get(IMEI));
+            bodyMap.put(PIN, request.getJSONObject("body").get(PIN));
             bodyMap.put("mid", request.getJSONObject("body").get("mid"));
             bodyMap.put("ret", 0);
 
@@ -40,8 +44,8 @@ public class GatewayDevlistResponse extends GatewayResponse {
                 for (int i = 0; i < devices.size(); i++) {
                     Map<String, String> dev = new HashMap<String, String>();
                     dev.put("dev", devices.get(i).getType());
-                    dev.put("pid", devices.get(i).getPid());
-                    dev.put("imei", devices.get(i).getImei());
+                    dev.put(PID, devices.get(i).getPid());
+                    dev.put(IMEI, devices.get(i).getImei());
 
                     devs.add(dev);
                 }

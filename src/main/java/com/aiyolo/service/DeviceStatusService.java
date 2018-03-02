@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.aiyolo.constant.DeviceOnlineStatusConsts.ONLINE;
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+import static com.aiyolo.constant.ProtocolFieldConsts.PID;
 
 @Service
 public class DeviceStatusService {
@@ -67,10 +69,10 @@ public class DeviceStatusService {
 
                 Map<String, Object> queryParamMap = new HashMap<String, Object>();
                 queryParamMap.put("imeiGateway", device.getGlImei());
-                queryParamMap.put("imei", device.getImei());
+                queryParamMap.put(IMEI, device.getImei());
                 queryParamMap.put("notice", noticeType);
                 queryParamMap.put("dev", device.getType());
-                queryParamMap.put("pid", device.getPid());
+                queryParamMap.put(PID, device.getPid());
 
                 DeviceStatus deviceStatus = deviceStatusRepository.findFirstByImeiOrderByIdDesc(device.getImei());
                 if (deviceStatus != null) {

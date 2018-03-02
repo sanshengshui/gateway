@@ -5,6 +5,8 @@ import org.apache.commons.collections.MapUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+
 public class AppNoticeGatewayRequest extends AppRequest {
 
     public static final String ACTION = "notice_gateway";
@@ -24,7 +26,7 @@ public class AppNoticeGatewayRequest extends AppRequest {
             Map<String, Object> bodyMap = new HashMap<String, Object>();
 
             bodyMap.put("act", ACTION);
-            bodyMap.put("imei", data.get("imei"));
+            bodyMap.put(IMEI, data.get(IMEI));
             bodyMap.put("notice", data.get("notice"));
             bodyMap.put("dev_num", MapUtils.getInteger(data, "dev_num", 0));
             bodyMap.put("err", MapUtils.getInteger(data, "err", 0));

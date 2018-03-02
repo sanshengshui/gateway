@@ -41,6 +41,7 @@ public class GatewayUpstaProcessor extends Processor {
             int check = messageBodyJson.getInt("check");
             int sos = messageBodyJson.getInt("sos");
             int htmp = messageBodyJson.getInt("htmp");
+            int needcfg = messageBodyJson.getInt("needcfg");
             GatewayStatus gatewayStatus = new GatewayStatus(
                     glImei,
                     mid,
@@ -54,10 +55,19 @@ public class GatewayUpstaProcessor extends Processor {
                     messageBodyJson.getInt("err"),
                     sos,
                     check,
-                    htmp);
+                    htmp,
+                    needcfg
+            );
 
             GatewayStatusRepository gatewayStatusRepository = (GatewayStatusRepository) SpringUtil.getBean("gatewayStatusRepository");
 
+            //-------------------------增加下发mac配置---------------------------------
+            if (needcfg > 0) {
+
+            }
+
+
+            //-------------------------增加下发mac配置---------------------------------
 
             //-------------------------增加网关报警和巡检---------------------------------
 

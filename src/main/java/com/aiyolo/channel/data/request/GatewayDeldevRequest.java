@@ -9,7 +9,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
 import static com.aiyolo.constant.ProtocolFieldConsts.PID;
+import static com.aiyolo.constant.ProtocolFieldConsts.PIN;
 
 public class GatewayDeldevRequest extends GatewayRequest {
 
@@ -32,8 +34,8 @@ public class GatewayDeldevRequest extends GatewayRequest {
             bodyMap.put("act", ACTION);
             bodyMap.put(PID, ChannelConsts.PRODUCT_ID);
             //            bodyMap.put(PID, product_id);
-            bodyMap.put("imei", data.get("imei"));
-            bodyMap.put("pin", data.get("pin"));
+            bodyMap.put(IMEI, data.get(IMEI));
+            bodyMap.put(PIN, data.get(PIN));
             bodyMap.put("mid", System.currentTimeMillis() / 1000);
 
             List<Map> devs = new ArrayList<Map>();
@@ -42,8 +44,8 @@ public class GatewayDeldevRequest extends GatewayRequest {
                 for (int i = 0; i < devices.size(); i++) {
                     Map<String, String> dev = new HashMap<String, String>();
                     dev.put("dev", devices.get(i).getType());
-                    dev.put("pid", devices.get(i).getPid());
-                    dev.put("imei", devices.get(i).getImei());
+                    dev.put(PID, devices.get(i).getPid());
+                    dev.put(IMEI, devices.get(i).getImei());
 
                     devs.add(dev);
                 }

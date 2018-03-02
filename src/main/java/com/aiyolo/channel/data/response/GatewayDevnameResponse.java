@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+import static com.aiyolo.constant.ProtocolFieldConsts.PID;
+import static com.aiyolo.constant.ProtocolFieldConsts.PIN;
+
 public class GatewayDevnameResponse extends GatewayResponse {
 
     public static final String ACTION = "devname";
@@ -26,9 +30,9 @@ public class GatewayDevnameResponse extends GatewayResponse {
             Map<String, Object> bodyMap = new LinkedHashMap<String, Object>();
 
             bodyMap.put("act", ACTION);
-            bodyMap.put("pid", request.getJSONObject("body").get("pid"));
-            bodyMap.put("imei", request.getJSONObject("body").get("imei"));
-            bodyMap.put("pin", request.getJSONObject("body").get("pin"));
+            bodyMap.put(PID, request.getJSONObject("body").get(PID));
+            bodyMap.put(IMEI, request.getJSONObject("body").get(IMEI));
+            bodyMap.put(PIN, request.getJSONObject("body").get(PIN));
             bodyMap.put("mid", request.getJSONObject("body").get("mid"));
             bodyMap.put("cat", request.getJSONObject("body").get("cat"));
             bodyMap.put("type", request.getJSONObject("body").get("type"));

@@ -24,6 +24,7 @@ public class GatewayStatus extends BaseEntity implements Serializable {
     private Integer sos = 0;
     private Integer checked = 0;
     private Integer htmp = 0;
+    private Integer needcfg = 0;
 
     @ManyToOne
     @JoinColumn(name = "glImei", referencedColumnName = "glImei", insertable = false, updatable = false)
@@ -33,7 +34,7 @@ public class GatewayStatus extends BaseEntity implements Serializable {
 
     public GatewayStatus(String glImei, Integer timestamp, String date, String hour
             , Integer rssi, Integer temperature, Integer humidity, Integer atmosphere, String version
-            , Integer status, Integer sos, Integer checked, Integer htmp) {
+            , Integer status, Integer sos, Integer checked, Integer htmp, Integer needcfg) {
         this.glImei = glImei;
         this.timestamp = timestamp;
         this.date = date;
@@ -47,6 +48,7 @@ public class GatewayStatus extends BaseEntity implements Serializable {
         this.sos = sos;
         this.checked = checked;
         this.htmp = htmp;
+        this.needcfg = needcfg;
     }
 
     public String toString1() {

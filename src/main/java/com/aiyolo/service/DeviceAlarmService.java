@@ -34,6 +34,8 @@ import javax.script.ScriptEngineManager;
 
 import java.util.*;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+
 @Service
 public class DeviceAlarmService {
 
@@ -132,7 +134,7 @@ public class DeviceAlarmService {
 
                 Map<String, Object> queryParamMap = new HashMap<String, Object>();
                 queryParamMap.put("imeiGateway", deviceAlarm.getGlImei());
-                queryParamMap.put("imei", deviceAlarm.getImei());
+                queryParamMap.put(IMEI, deviceAlarm.getImei());
                 queryParamMap.put("title", msgTitle);
                 queryParamMap.put("text", msgContent);
                 queryParamMap.put("timestamp", deviceAlarm.getTimestamp() * 1000L);

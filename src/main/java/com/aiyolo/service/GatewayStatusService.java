@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+
 @Service
 public class GatewayStatusService {
 
@@ -67,7 +69,7 @@ public class GatewayStatusService {
                 Map<String, Object> headerMap = AppNoticeGatewayRequest.getInstance().requestHeader(mobileIds);
 
                 Map<String, Object> queryParamMap = new HashMap<String, Object>();
-                queryParamMap.put("imei", glImei);
+                queryParamMap.put(IMEI, glImei);
                 queryParamMap.put("notice", noticeType);
 
                 List<Device> devices = deviceRepository.findByGlImei(glImei);

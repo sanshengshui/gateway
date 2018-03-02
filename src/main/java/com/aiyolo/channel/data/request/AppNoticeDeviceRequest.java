@@ -5,6 +5,9 @@ import org.apache.commons.collections.MapUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+import static com.aiyolo.constant.ProtocolFieldConsts.PID;
+
 public class AppNoticeDeviceRequest extends AppRequest {
 
     public static final String ACTION = "notice_device";
@@ -25,10 +28,10 @@ public class AppNoticeDeviceRequest extends AppRequest {
 
             bodyMap.put("act", ACTION);
             bodyMap.put("imeiGateway", data.get("imeiGateway"));
-            bodyMap.put("imei", data.get("imei"));
+            bodyMap.put(IMEI, data.get(IMEI));
             bodyMap.put("notice", data.get("notice"));
             bodyMap.put("dev", data.get("dev"));
-            bodyMap.put("pid", data.get("pid"));
+            bodyMap.put(PID, data.get(PID));
             bodyMap.put("online", MapUtils.getInteger(data, "online", 0));
             bodyMap.put("position", MapUtils.getString(data, "position", ""));
             bodyMap.put("name", MapUtils.getString(data, "name", ""));

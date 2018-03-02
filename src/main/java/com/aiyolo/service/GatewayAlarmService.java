@@ -22,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+
 
 @Service
 public class GatewayAlarmService {
@@ -117,7 +119,7 @@ public class GatewayAlarmService {
 
                 Map<String, Object> queryParamMap = new HashMap<String, Object>();
                 queryParamMap.put("imeiGateway", imei);
-                queryParamMap.put("imei", imei);
+                queryParamMap.put(IMEI, imei);
                 queryParamMap.put("title", msgTitle);
                 queryParamMap.put("text", msgContent);
                 queryParamMap.put("timestamp", timestamp);

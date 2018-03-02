@@ -56,7 +56,9 @@ public abstract class Processor {
                 ChannelConsts.PRODUCT_ID = messageHeaderJson.getString(ProtocolFieldConsts.PRODUCT_ID);
 
 
-                if (!messageBodyJson.containsKey(IMEI) || StringUtils.isEmpty(action)) {
+                if (
+                    //                        !messageBodyJson.containsKey(IMEI) ||
+                        StringUtils.isEmpty(action)) {
                     throw new RuntimeException("Gateway Params Error.");
                 }
                 if (!ArrayUtils.contains(InputDataTypeEnum.GATEWAY_PUSH.getValue(), action)) {
@@ -81,7 +83,12 @@ public abstract class Processor {
 
                 Gateway gateway = gatewayRepository.findFirstByGlImeiOrderByIdDesc(glImei);
                 if (gateway == null) {
-                    gatewayRepository.save(new Gateway(glImei, messageBodyJson.getString(PIN)));
+                    String pin = "";
+                    if (messageBodyJson.containsKey(PIN)) {
+                        pin = messageBodyJson.getString(PIN);
+                    }
+
+                    gatewayRepository.save(new Gateway(glImei, pin));
 
                     gatewayService.requestGatewayInfo(glImei);
                 } else {

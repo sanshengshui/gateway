@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.util.List;
 import java.util.Map;
 
+import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
+
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class GatewayDetailResponse extends Response {
 
@@ -28,7 +30,7 @@ public class GatewayDetailResponse extends Response {
     public GatewayDetailResponse(RequestObject request, Map<String, Object> gatewayDetail) {
         super(request.getAction(), ApiResponseStateEnum.SUCCESS);
 
-        this.imei = (String) gatewayDetail.get("imei");
+        this.imei = (String) gatewayDetail.get(IMEI);
         this.devs = (List<DeviceObject>) gatewayDetail.get("devs");
         this.err = (Integer) gatewayDetail.get("err");
         this.online = (Integer) gatewayDetail.get("online");
