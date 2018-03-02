@@ -1,5 +1,6 @@
 package com.aiyolo.channel.data.processor;
 
+import com.aiyolo.channel.data.request.GatewayMaccfgRequest;
 import com.aiyolo.channel.data.response.GatewayUpstaResponse;
 import com.aiyolo.common.SpringUtil;
 import com.aiyolo.entity.Checked;
@@ -18,10 +19,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
 import static com.aiyolo.constant.ProtocolFieldConsts.MID;
+import static com.aiyolo.constant.ProtocolFieldConsts.PIN;
 
 public class GatewayUpstaProcessor extends Processor {
 
@@ -61,13 +65,6 @@ public class GatewayUpstaProcessor extends Processor {
 
             GatewayStatusRepository gatewayStatusRepository = (GatewayStatusRepository) SpringUtil.getBean("gatewayStatusRepository");
 
-            //-------------------------增加下发mac配置---------------------------------
-            if (needcfg > 0) {
-
-            }
-
-
-            //-------------------------增加下发mac配置---------------------------------
 
             //-------------------------增加网关报警和巡检---------------------------------
 
@@ -109,6 +106,23 @@ public class GatewayUpstaProcessor extends Processor {
             Map<String, Object> resBodyMap = GatewayUpstaResponse.getInstance().responseBody(messageJson, gatewaySetting);
 
             sender.sendMessage(resHeaderMap, resBodyMap);
+
+
+            //-------------------------增加下发mac配置---------------------------------
+            if (needcfg > 0) {
+                Map<String, Object> headerMap = GatewayMaccfgRequest.getInstance().requestHeader(glImei);
+
+                Map<String, Object> data = new LinkedHashMap<>();
+                data.put(IMEI, glImei);
+                data.put(PIN, gateway.getGlPin());
+                Map<String, Object> bodyMap =  GatewayMaccfgRequest.getInstance().requestBody(data);
+
+                sender.sendMessage(headerMap, bodyMap);
+            }
+
+
+            //-------------------------增加下发mac配置---------------------------------
+
 
             // 推送给app
             GatewayStatusService gatewayStatusService = (GatewayStatusService) SpringUtil.getBean("gatewayStatusService");

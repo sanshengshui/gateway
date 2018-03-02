@@ -24,5 +24,18 @@ public class ProtocolFieldConsts {
     public static final String ACT = "act";
     public static final String MESSAGE = "message";
 
+    public static final String SRV = "srv";
+    public static final String PATH = "path";
+    public static final String PORT = "port";
+    public static final String INTV = "intv";
+    public static final String LEN = "len";
+
+
+
+
+
+
+
+
     public static final String UP_STA = "upsta";
 }

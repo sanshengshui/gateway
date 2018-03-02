@@ -74,6 +74,13 @@ public class GatewayStatus extends BaseEntity implements Serializable {
                 id, glImei, date, hour);
     }
 
+    public Integer getNeedcfg() {
+        return needcfg;
+    }
+
+    public void setNeedcfg(Integer needcfg) {
+        this.needcfg = needcfg;
+    }
 
     public String getGlImei() {
         return glImei;

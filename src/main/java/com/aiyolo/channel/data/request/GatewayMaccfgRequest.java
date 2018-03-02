@@ -5,11 +5,7 @@ import com.aiyolo.constant.ChannelConsts;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.aiyolo.constant.ProtocolFieldConsts.ACT;
-import static com.aiyolo.constant.ProtocolFieldConsts.IMEI;
-import static com.aiyolo.constant.ProtocolFieldConsts.MID;
-import static com.aiyolo.constant.ProtocolFieldConsts.PID;
-import static com.aiyolo.constant.ProtocolFieldConsts.PIN;
+import static com.aiyolo.constant.ProtocolFieldConsts.*;
 
 public class GatewayMaccfgRequest extends GatewayRequest {
 
@@ -26,21 +22,18 @@ public class GatewayMaccfgRequest extends GatewayRequest {
 
     @Override
     public Map<String, Object> requestBody(Map<String, Object> data) {
-        try {
-            Map<String, Object> bodyMap = new LinkedHashMap<String, Object>();
+        Map<String, Object> bodyMap = new LinkedHashMap<>();
+        bodyMap.put(ACT, ACTION);
+        bodyMap.putAll(data);
+        bodyMap.put(PID, ChannelConsts.PRODUCT_ID);
+        bodyMap.put(MID, System.currentTimeMillis() / 1000);
 
-            bodyMap.put(ACT, ACTION);
-            bodyMap.put(PID, ChannelConsts.PRODUCT_ID);
-//            bodyMap.put(PID, product_id);
-            bodyMap.put(IMEI, data.get(IMEI));
-            bodyMap.put(PIN, data.get(PIN));
-            bodyMap.put(MID, System.currentTimeMillis() / 1000);
-
-            return bodyMap;
-        } catch (Exception e) {
-            errorLogger.error("GatewayPairRequest异常！", e);
-        }
-        return null;
+        bodyMap.put(SRV, "test.igelian.com");
+        bodyMap.put(PATH, "/gateway_rec/s/gu");
+        bodyMap.put(PORT, 9111);
+        bodyMap.put(INTV, 540);
+        bodyMap.put(LEN, 300);
+        return bodyMap;
     }
 
 }
