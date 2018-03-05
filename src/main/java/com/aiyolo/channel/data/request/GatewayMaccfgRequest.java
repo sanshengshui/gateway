@@ -31,7 +31,7 @@ public class GatewayMaccfgRequest extends GatewayRequest {
         bodyMap.put(SRV, "test.igelian.com");
         bodyMap.put(PATH, "/gateway_rec/s/gu");
         bodyMap.put(PORT, 9111);
-        bodyMap.put(INTV, 540);
+        bodyMap.put(INTV, 0);
         bodyMap.put(LEN, 300);
         return bodyMap;
     }
