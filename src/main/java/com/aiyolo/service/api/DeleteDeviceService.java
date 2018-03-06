@@ -6,6 +6,7 @@ import com.aiyolo.entity.AppUserGateway;
 import com.aiyolo.entity.Device;
 import com.aiyolo.repository.AppUserGatewayRepository;
 import com.aiyolo.repository.DeviceRepository;
+import com.aiyolo.service.DeviceStatusService;
 import com.aiyolo.service.api.request.DeleteDeviceRequest;
 import com.aiyolo.service.api.request.RequestObject;
 import com.aiyolo.service.api.response.Response;
@@ -19,6 +20,8 @@ public class DeleteDeviceService extends BaseService {
 
     @Autowired
     DeviceRepository deviceRepository;
+    @Autowired
+    DeviceStatusService deviceStatusService;
     @Autowired
     AppUserGatewayRepository appUserGatewayRepository;
 
@@ -37,15 +40,16 @@ public class DeleteDeviceService extends BaseService {
         AppUserGateway appUserGateway = appUserGatewayRepository.findOneByUserIdAndGlImei(userId, imeiGateway);
         if (appUserGateway == null || appUserGateway.getGateway() == null) {
             return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到网关");
-        } else if (!appUserGateway.getRole().equals(Role4GatewayEnum.MANAGER)) {
+        } /*else if (!appUserGateway.getRole().equals(Role4GatewayEnum.MANAGER)) {
             return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_AUTHORITY.getResult(), "无权限");
-        } else {
+        } */else {
             Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imeiDev);
             if (device == null) {
                 return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_REQUEST_PARAMETER.getResult(), "未找到设备");
             } else if (!imeiGateway.equals(device.getGlImei())) {
                 return (Res) new Response(request.getAction(), ApiResponseStateEnum.ERROR_AUTHORITY.getResult(), "无权限");
             }
+
             deviceRepository.delete(device);
 
             return (Res) responseSuccess(request.getAction());

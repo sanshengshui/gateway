@@ -100,6 +100,29 @@ public class DeviceStatusService {
             errorLogger.error("pushDeviceStatus异常！device:" + device.toString(), e);
         }
     }
+    public void pushDeviceStatusDel(String glImei, String imei) {
+
+
+//        try {
+            String[] mobileIds = gatewayService.getGatewayUserMobileIds(glImei);
+            if (mobileIds != null && mobileIds.length > 0) {
+                // 推送给APP
+                Map<String, Object> headerMap = AppNoticeDeviceRequest.getInstance().requestHeader(mobileIds);
+
+                Map<String, Object> queryParamMap = new HashMap<String, Object>();
+                queryParamMap.put("imeiGateway", glImei);
+                queryParamMap.put(IMEI, imei);
+                queryParamMap.put("notice", 3);
+
+
+                Map<String, Object> bodyMap = AppNoticeDeviceRequest.getInstance().requestBody(queryParamMap);
+
+                sender.sendMessage(headerMap, bodyMap);
+            }
+//        } catch (Exception e) {
+//            errorLogger.error("pushDeviceStatus异常！device:" + device.toString(), e);
+//        }
+    }
 
     public void pushDeviceStatus(String imei) {
         Device device = deviceRepository.findFirstByImeiOrderByIdDesc(imei);

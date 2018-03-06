@@ -27,18 +27,20 @@ public class AppNoticeDeviceRequest extends AppRequest {
             Map<String, Object> bodyMap = new HashMap<String, Object>();
 
             bodyMap.put("act", ACTION);
-            bodyMap.put("imeiGateway", data.get("imeiGateway"));
-            bodyMap.put(IMEI, data.get(IMEI));
-            bodyMap.put("notice", data.get("notice"));
-            bodyMap.put("dev", data.get("dev"));
-            bodyMap.put(PID, data.get(PID));
-            bodyMap.put("online", MapUtils.getInteger(data, "online", 0));
-            bodyMap.put("position", MapUtils.getString(data, "position", ""));
-            bodyMap.put("name", MapUtils.getString(data, "name", ""));
-            bodyMap.put("rssi", MapUtils.getInteger(data, "rssi", 0));
-            bodyMap.put("val", MapUtils.getInteger(data, "val", 0));
-            bodyMap.put("bat", MapUtils.getInteger(data, "bat", 0));
-            bodyMap.put("check", MapUtils.getInteger(data, "check", 0));
+            bodyMap.putAll(data);
+
+//            bodyMap.put("imeiGateway", data.get("imeiGateway"));
+//            bodyMap.put(IMEI, data.get(IMEI));
+//            bodyMap.put("notice", data.get("notice"));
+//            bodyMap.put("dev", data.get("dev"));
+//            bodyMap.put(PID, data.get(PID));
+//            bodyMap.put("online", MapUtils.getInteger(data, "online", 0));
+//            bodyMap.put("position", MapUtils.getString(data, "position", ""));
+//            bodyMap.put("name", MapUtils.getString(data, "name", ""));
+//            bodyMap.put("rssi", MapUtils.getInteger(data, "rssi", 0));
+//            bodyMap.put("val", MapUtils.getInteger(data, "val", 0));
+//            bodyMap.put("bat", MapUtils.getInteger(data, "bat", 0));
+//            bodyMap.put("check", MapUtils.getInteger(data, "check", 0));
 
             return bodyMap;
         } catch (Exception e) {
