@@ -34,6 +34,11 @@ public class GatewaySettingController {
         return "gatewaySetting";
     }
 
+    @RequestMapping("/probe")
+    public String probe(Model model) {
+        return "probe";
+    }
+
     @RequestMapping(value = "/setting/save", method = RequestMethod.POST)
     public String save(@Valid GatewaySetting gatewaySetting, BindingResult bindingResult, RedirectAttributes redirectAttrs) {
         if (StringUtils.isNotEmpty(gatewaySetting.getGlImei()) && StringUtils.isNotEmpty(gatewaySetting.getAreaCode())) {
