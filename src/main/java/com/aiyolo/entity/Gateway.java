@@ -25,6 +25,9 @@ public class Gateway extends BaseEntity implements Serializable {
     private String locationAreaCode = "";
     private String locationAddress = "";
     private String addressLocation = "";
+    private Integer probe_status = 0;
+    private String report_url = "";
+    private Integer report_interval = 540;
 
     @OneToMany(mappedBy = "gateway")
     private List<Device> devices;
@@ -45,8 +48,8 @@ public class Gateway extends BaseEntity implements Serializable {
     @Override
     public String toString() {
         return String.format(
-                "Gateway[id=%d, gl_name='%s', gl_imei='%s', gl_pin='%s', user_name='%s', user_phones='%s', area_code='%s', village='%s', address='%s']",
-                id, glName, glImei, glPin, userName, userPhones, areaCode, village, address);
+                "Gateway[id=%d, gl_name='%s', gl_imei='%s', gl_pin='%s', user_name='%s', user_phones='%s', area_code='%s', village='%s', address='%s',probe_status=%d,report_url='%s',report_interval=%d]",
+                id, glName, glImei, glPin, userName, userPhones, areaCode, village, address, probe_status, report_url, report_interval);
     }
 
 
@@ -171,4 +174,27 @@ public class Gateway extends BaseEntity implements Serializable {
         this.addressLocation = addressLocation;
     }
 
+    public Integer getProbe_status() {
+        return probe_status;
+    }
+
+    public void setProbe_status(Integer probe_status) {
+        this.probe_status = probe_status;
+    }
+
+    public String getReport_url() {
+        return report_url;
+    }
+
+    public void setReport_url(String report_url) {
+        this.report_url = report_url;
+    }
+
+    public Integer getReport_interval() {
+        return report_interval;
+    }
+
+    public void setReport_interval(Integer report_interval) {
+        this.report_interval = report_interval;
+    }
 }

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:include="fragments/head :: head"></th:block>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <th:block th:include="fragments/header :: main-header"></th:block>
+    <th:block th:include="fragments/menu :: menu"></th:block>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <th:block th:include="fragments/header :: content-header"></th:block>
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">探针参数配置</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <!-- form start -->
+                        <form id="gateway" class="form-horizontal" th:object="${gateway}"
+                              th:action="@{/gateway/probe/save}"
+                              method="post">
+                            <input type="hidden" th:field="*{id}"/>
+                            <input type="hidden" id="userPhones" th:field="*{userPhones}"/>
+                            <div class="box-body">
+                                <div th:class="${#fields.hasErrors('report_url')} ? 'form-group has-error' : 'form-group'">
+                                    <label for="report_url" class="col-sm-2 control-label">数据上报URL：</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" id="report_url" class="form-control" th:field="*{report_url}"
+                                               required="true"/>
+                                    </div>
+                                    <span class="help-block" th:if="${#fields.hasErrors('report_url')}"
+                                          th:errors="*{report_url}">Username Error</span>
+                                </div>
+                                <div th:class="${#fields.hasErrors('report_interval')} ? 'form-group has-error' : 'form-group'">
+                                    <label for="report_interval" class="col-sm-2 control-label">数据上报间隔：</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" id="report_interval" class="form-control"
+                                               th:field="*{report_interval}"
+                                               required="true"/>
+                                    </div>
+                                    秒
+                                    <span class="help-block" th:if="${#fields.hasErrors('report_interval')}"
+                                          th:errors="*{report_interval}">Username Error</span>
+                                </div>
+                                <div th:class="${#fields.hasErrors('probe_status')} ? 'form-group has-error' : 'form-group'">
+                                    <label class="col-sm-2 control-label">探针功能开关：</label>
+
+                                    <div class="col-sm-6">
+                                        <input type="radio" th:field="*{probe_status}" required="true" value="0"/> 开
+                                        <input type="radio" th:field="*{probe_status}" required="true" value="1"/> 关
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                            <div class="box-footer">
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-6">
+                                        <button type="submit" class="btn btn-primary">确认</button>
+                                        &nbsp;&nbsp;
+                                        <button type="button" class="btn btn-default"
+                                                onclick="javascript:window.location.href='/gateway'">取消
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.box-footer -->
+                        </form>
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <th:block th:include="fragments/footer :: footer"></th:block>
+</div>
+
+<th:block th:include="fragments/footer :: js"></th:block>
+<script src="/js/distpicker.js"></script>
+<script src="/js/distpicker.init.js"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    fragment_polish("gateway");
+
+    var authorities = [[${#authentication.getAuthorities()}]];
+    distpickerInit(authorities);
+
+    var areaCode = [[${gateway.areaCode}]];
+
+    // 省市区联动
+    $('#distpicker').distpicker({
+        province: areaCode.substring(0, 2) + '0000',
+        city: areaCode.substring(0, 4) + '00',
+        district: areaCode,
+        valueType: "code",
+        placeholder: false
+    });
+
+    var userPhones = $("#userPhones").val();
+    if (userPhones) {
+        userPhones = JSON.parse(userPhones);
+        if (userPhones[0]) $("#userPhone0").val(userPhones[0]);
+        if (userPhones[1]) $("#userPhone1").val(userPhones[1]);
+        if (userPhones[2]) $("#userPhone2").val(userPhones[2]);
+        if (userPhones[3]) $("#userPhone3").val(userPhones[3]);
+    }
+
+    var checkAreaCode = function () {
+        if ($("#areaCode").val() != $("#locationAreaCode").val()) {
+            $("#locationAddress").addClass('bg-danger');
+            $("#locationAddress").parent().addClass('has-error');
+        } else {
+            $("#locationAddress").removeClass('bg-danger');
+            $("#locationAddress").parent().removeClass('has-error');
+        }
+    }
+    checkAreaCode();
+
+    $("#distpicker select").change(function () {
+        $("#areaCode").val($("#district").val() ? $("#district").val() : ($("#city").val() ? $("#city").val() : $("#province").val()));
+        checkAreaCode();
+    });
+
+    $("#gateway").submit(function (event) {
+        var userPhones = new Array(3);
+        userPhones[0] = $("#userPhone1").val();
+        userPhones[1] = $("#userPhone2").val();
+        userPhones[2] = $("#userPhone3").val();
+        $("#userPhones").val(JSON.stringify(userPhones));
+        return;
+    });
+    /*]]>*/
+</script>
+</body>
+</html>
