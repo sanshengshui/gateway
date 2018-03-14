@@ -1,13 +1,17 @@
 package com.aiyolo.controller;
 
+import com.aiyolo.channel.data.request.GatewayMaccfgRequest;
 import com.aiyolo.common.ArrayHelper;
 import com.aiyolo.constant.AlarmTemperatureConsts;
 import com.aiyolo.entity.Gateway;
 import com.aiyolo.entity.GatewaySetting;
+import com.aiyolo.queue.Sender;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.repository.GatewaySettingRepository;
 import com.aiyolo.service.GatewayService;
+
 import net.sf.json.JSONArray;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Map;
+
 import javax.validation.Valid;
 
 @Controller
@@ -26,9 +32,13 @@ public class GatewaySettingController {
     @Autowired
     GatewayRepository gatewayRepository;
 
-    @Autowired GatewaySettingRepository gatewaySettingRepository;
+    @Autowired
+    GatewaySettingRepository gatewaySettingRepository;
 
-    @Autowired GatewayService gatewayService;
+    @Autowired
+    GatewayService gatewayService;
+    @Autowired
+    Sender sender;
 
     @RequestMapping("/setting")
     public String setting(Model model) {
@@ -66,7 +76,11 @@ public class GatewaySettingController {
             gateway.setProbe_status(data.getProbe_status());
 
             gatewayRepository.save(gateway);
-
+            //-------------------------增加下发mac配置---------------------------------
+            Map<String, Object> headerMap = GatewayMaccfgRequest.getInstance().requestHeader(gateway.getGlImei());
+            Map<String, Object> bodyMap = GatewayMaccfgRequest.getInstance().requestBody(gateway);
+            sender.sendMessage(headerMap, bodyMap);
+            //-------------------------增加下发mac配置---------------------------------
             return "redirect:/gateway";
         }
 

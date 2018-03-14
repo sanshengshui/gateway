@@ -87,8 +87,11 @@ public abstract class Processor {
                     if (messageBodyJson.containsKey(PIN)) {
                         pin = messageBodyJson.getString(PIN);
                     }
-
-                    gatewayRepository.save(new Gateway(glImei, pin));
+                    gateway =new Gateway(glImei, pin);
+                    gateway.setProbe_status(1);
+                    gateway.setReport_interval(540);
+                    gateway.setReport_url("test.igelian.com");
+                    gatewayRepository.save(gateway);
 
                     gatewayService.requestGatewayInfo(glImei);
                 } else {

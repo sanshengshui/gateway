@@ -115,10 +115,11 @@ public class GatewayUpstaProcessor extends Processor {
             if (needcfg > 0) {
                 Map<String, Object> headerMap = GatewayMaccfgRequest.getInstance().requestHeader(glImei);
 
-                Map<String, Object> data = new LinkedHashMap<>();
-                data.put(IMEI, glImei);
-                data.put(PIN, gateway.getGlPin());
-                Map<String, Object> bodyMap = GatewayMaccfgRequest.getInstance().requestBody(data);
+//                Map<String, Object> data = new LinkedHashMap<>();
+//                data.put(IMEI, glImei);
+//                data.put(PIN, gateway.getGlPin());
+//                Map<String, Object> bodyMap = GatewayMaccfgRequest.getInstance().requestBody(data);
+                Map<String, Object> bodyMap = GatewayMaccfgRequest.getInstance().requestBody(gateway);
 
                 sender.sendMessage(headerMap, bodyMap);
             }
