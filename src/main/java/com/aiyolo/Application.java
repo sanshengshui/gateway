@@ -1,9 +1,11 @@
 package com.aiyolo;
 
+import com.aiyolo.constant.ChannelConsts;
 import com.aiyolo.constant.QueueConsts;
 import com.aiyolo.queue.Receiver;
 import com.aiyolo.queue.Sender;
 import com.aiyolo.service.storage.StorageProperties;
+
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
@@ -30,19 +32,21 @@ public class Application extends AsyncConfigurerSupport {
     public static final int concurrentConsumers = 2;
     public static final int maxConcurrentConsumers = 10;
 
-//    @Bean
-//    Queue inputQueue() {
-//        return new Queue(QueueConsts.inputQueueName, true);
-//    }
-//
-//    @Bean
-//    Queue outputQueue() {
-//        return new Queue(QueueConsts.outputQueueName, true);
-//    }
+    //    @Bean
+    //    Queue inputQueue() {
+    //        return new Queue(QueueConsts.inputQueueName, true);
+    //    }
+    //
+    //    @Bean
+    //    Queue outputQueue() {
+    //        return new Queue(QueueConsts.outputQueueName, true);
+    //    }
 
 
     @Value("${gelian.queue.input}")
     protected String inputQueueName;
+    @Value("${gelian.product_id}")
+    protected String product_id;
 
     @Bean
     Receiver receiver() {
@@ -51,6 +55,9 @@ public class Application extends AsyncConfigurerSupport {
 
     @Bean
     Sender sender() {
+        if (ChannelConsts.PRODUCT_ID == null) {
+            ChannelConsts.PRODUCT_ID = product_id;
+        }
         return new Sender();
     }
 
