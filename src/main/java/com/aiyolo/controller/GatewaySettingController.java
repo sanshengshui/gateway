@@ -72,10 +72,15 @@ public class GatewaySettingController {
         Gateway gateway = gatewayService.getGatewayById(data.getId());
         if (gateway != null) {
             gateway.setReport_url(data.getReport_url());
-            gateway.setReport_interval(data.getReport_interval());
-            gateway.setProbe_status(data.getProbe_status());
-
-            gatewayRepository.save(gateway);
+            if (data.getReport_interval() <= 0) {
+                gateway.setProbe_status(0);
+                gateway.setReport_interval(data.getReport_interval());
+                gatewayRepository.save(gateway);
+            } else {
+                gateway.setReport_interval(data.getReport_interval());
+                gateway.setProbe_status(data.getProbe_status());
+                gatewayRepository.save(gateway);
+            }
             //-------------------------增加下发mac配置---------------------------------
             Map<String, Object> headerMap = GatewayMaccfgRequest.getInstance().requestHeader(gateway.getGlImei());
             Map<String, Object> bodyMap = GatewayMaccfgRequest.getInstance().requestBody(gateway);
