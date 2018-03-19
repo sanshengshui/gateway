@@ -41,6 +41,7 @@
                             <table id="probe" class="table table-striped" width="100%">
                                 <thead>
                                 <tr>
+                                    <th>序号</th>
                                     <th>所属渠道</th>
                                     <th>所属代理</th>
                                     <th>小区名称</th>
@@ -98,6 +99,11 @@
             "ordering": false,
             "ajax": "/gateway/list",
             "columns": [
+                {
+                    "data": "", "render": function (data, type, full, meta) {
+                        return '<input class="checkbox_select" type="checkbox" style="width: 18px;height: 18px">';
+                    }
+                },
                 {"data": "channel.name"},
                 {"data": "user.username"},
                 {"data": "village"},
