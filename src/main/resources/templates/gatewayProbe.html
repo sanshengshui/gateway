@@ -32,7 +32,7 @@
                                                placeholder="详细地址"/>
                                     </div>
                                     <button type="submit" class="btn btn-default btn-sm">查询</button>
-                                    <button type="submit" class="btn btn-default btn-sm">批量设置</button>
+                                    <button type="button" id="btn" class="btn btn-default btn-sm">批量设置</button>
                                 </form>
                             </div><!-- /.box-tools -->
                         </div>
@@ -134,8 +134,20 @@
             table.ajax.url(url).load();
             return false;
         });
+
+        var aa = "";
+        $("#btn").click(function () {
+            $("input[name='checkbox']:checkbox:checked").each(function () {
+                aa += $(this).val()
+            })
+            document.write(aa);
+        });
     });
     /*]]>*/
+</script>
+<script>
+
+
 </script>
 </body>
 </html>

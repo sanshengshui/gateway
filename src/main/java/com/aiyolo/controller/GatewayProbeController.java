@@ -49,9 +49,9 @@ public class GatewayProbeController {
         Gateway gateway = gatewayService.getGatewayById(data.getId());
         if (gateway != null) {
             gateway.setReport_url(data.getReport_url());
-            if (data.getReport_interval() <= 0) {
-                gateway.setProbe_status(0);
-                gateway.setReport_interval(data.getReport_interval());
+            if (data.getProbe_status() == 0) {
+                gateway.setReport_interval(0);
+                gateway.setProbe_status(data.getProbe_status());
                 gatewayRepository.save(gateway);
             } else {
                 gateway.setReport_interval(data.getReport_interval());

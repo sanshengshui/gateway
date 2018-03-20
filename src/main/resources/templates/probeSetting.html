@@ -20,7 +20,7 @@
                         </div>
                         <!-- /.box-header -->
                         <!-- form start -->
-                        <form id="gateway" class="form-horizontal" th:object="${gateway}"
+                        <form id="probe" class="form-horizontal" th:object="${gateway}"
                               th:action="@{/gateway/probe/save}"
                               method="post">
                             <input type="hidden" th:field="*{id}"/>
@@ -53,16 +53,19 @@
                                         <input type="radio" th:field="*{probe_status}" required="true" value="1"/> 开
                                         <input type="radio" th:field="*{probe_status}" required="true" value="0"/> 关
                                     </div>
+                                    <span class="help-block" th:if="${#fields.hasErrors('probe_status')}"
+                                          th:errors="*{probe_status}">Username Error</span>
                                 </div>
                             </div>
                             <!-- /.box-body -->
                             <div class="box-footer">
                                 <div class="form-group">
                                     <div class="col-sm-offset-2 col-sm-6">
-                                        <button type="submit" class="btn btn-primary">确认</button>
+                                        <button type="submit" class="btn btn-primary">确认
+                                        </button>
                                         &nbsp;&nbsp;
                                         <button type="button" class="btn btn-default"
-                                                onclick="javascript:window.location.href='/gateway'">取消
+                                                onclick="javascript:window.location.href='/gateway/probe'">取消
                                         </button>
                                     </div>
                                 </div>
@@ -104,14 +107,6 @@
         placeholder: false
     });
 
-    var userPhones = $("#userPhones").val();
-    if (userPhones) {
-        userPhones = JSON.parse(userPhones);
-        if (userPhones[0]) $("#userPhone0").val(userPhones[0]);
-        if (userPhones[1]) $("#userPhone1").val(userPhones[1]);
-        if (userPhones[2]) $("#userPhone2").val(userPhones[2]);
-        if (userPhones[3]) $("#userPhone3").val(userPhones[3]);
-    }
 
     var checkAreaCode = function () {
         if ($("#areaCode").val() != $("#locationAreaCode").val()) {
@@ -129,14 +124,7 @@
         checkAreaCode();
     });
 
-    $("#gateway").submit(function (event) {
-        var userPhones = new Array(3);
-        userPhones[0] = $("#userPhone1").val();
-        userPhones[1] = $("#userPhone2").val();
-        userPhones[2] = $("#userPhone3").val();
-        $("#userPhones").val(JSON.stringify(userPhones));
-        return;
-    });
+
     /*]]>*/
 </script>
 </body>
