@@ -5,6 +5,7 @@ import com.aiyolo.entity.Gateway;
 import com.aiyolo.queue.Sender;
 import com.aiyolo.repository.GatewayRepository;
 import com.aiyolo.service.GatewayService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,12 +50,16 @@ public class GatewayProbeController {
         Gateway gateway = gatewayService.getGatewayById(data.getId());
         if (gateway != null) {
             gateway.setReport_url(data.getReport_url());
-            if (data.getReport_interval() <= 0) {
+            Integer report_interval = data.getReport_interval();
+            if (report_interval <= 0) {
                 gateway.setProbe_status(0);
-                gateway.setReport_interval(data.getReport_interval());
+                gateway.setReport_interval(0);
                 gatewayRepository.save(gateway);
             } else {
-                gateway.setReport_interval(data.getReport_interval());
+                if (report_interval > 540) {
+                    report_interval = 540;
+                }
+                gateway.setReport_interval(report_interval);
                 gateway.setProbe_status(data.getProbe_status());
                 gatewayRepository.save(gateway);
             }
